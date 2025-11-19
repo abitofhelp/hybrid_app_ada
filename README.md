@@ -1,4 +1,4 @@
-# Simple_Hybrid - Ada 2022 Application Starter
+# Hybrid_App_Ada - Ada 2022 Application Starter
 
 **Version:** 1.0.0
 **Date:** November 18, 2025
@@ -25,7 +25,7 @@ This is a **desktop/enterprise application template** showcasing:
 **5 Layers (Dependency Rule: All dependencies point INWARD)**:
 
 ```
-simple_hybrid/
+hybrid_app_ada/
 ├── src/
 │   ├── domain/                    # Pure Business Logic (ZERO dependencies)
 │   │   ├── error/                 # Error types & Result monad
@@ -65,7 +65,7 @@ simple_hybrid/
 ├── tools/                         # Build tools
 │   └── puml/                      # PlantUML JAR
 │
-├── simple_hybrid.gpr              # Main project file (single-project)
+├── hybrid_app_ada.gpr              # Main project file (single-project)
 ├── alire.toml                     # Alire manifest
 └── Makefile                       # Build automation
 ```

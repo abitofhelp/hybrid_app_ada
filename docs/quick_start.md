@@ -1,4 +1,4 @@
-# Simple_Hybrid Quick Start Guide
+# Hybrid_App_Ada Quick Start Guide
 
 **Version:** 1.0.0
 **Date:** November 18, 2025
@@ -36,8 +36,8 @@
 
 ```bash
 # Clone the repository
-git clone https://github.com/abitofhelp/simple_hybrid.git
-cd simple_hybrid
+git clone https://github.com/abitofhelp/hybrid_app_ada.git
+cd hybrid_app_ada
 
 # Build with Alire (automatically fetches dependencies)
 alr build
@@ -100,7 +100,7 @@ alr build --release
 
 ## Running the Application
 
-The Simple_Hybrid starter includes a simple greeter application demonstrating all architectural layers:
+The Hybrid_App_Ada starter includes a simple greeter application demonstrating all architectural layers:
 
 ### Basic Usage
 
@@ -138,7 +138,7 @@ The Simple_Hybrid starter includes a simple greeter application demonstrating al
 
 ## Understanding the Architecture
 
-Simple_Hybrid demonstrates **5-layer hexagonal architecture**:
+Hybrid_App_Ada demonstrates **5-layer hexagonal architecture**:
 
 ### Layer Overview
 
@@ -218,7 +218,7 @@ make test-all
 
 ## Running Tests
 
-Simple_Hybrid includes comprehensive testing:
+Hybrid_App_Ada includes comprehensive testing:
 
 ### Test Organization
 
@@ -258,7 +258,7 @@ make test-e2e
 
 ### Test Coverage
 
-Simple_Hybrid supports code coverage analysis using GNATcoverage.
+Hybrid_App_Ada supports code coverage analysis using GNATcoverage.
 
 #### First-Time Setup
 
@@ -510,7 +510,7 @@ For questions, issues, or contributions:
 
 ## License
 
-Simple_Hybrid is licensed under the BSD-3-Clause License.
+Hybrid_App_Ada is licensed under the BSD-3-Clause License.
 Copyright © 2025 Michael Gardner, A Bit of Help, Inc.
 
 See [LICENSE](../LICENSE) for full license text.

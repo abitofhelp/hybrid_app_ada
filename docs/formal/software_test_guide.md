@@ -1,6 +1,6 @@
 # Software Test Guide
 
-**Project:** Simple_Hybrid - Ada 2022 Application Starter
+**Project:** Hybrid_App_Ada - Ada 2022 Application Starter
 **Version:** 1.0.0
 **Date:** November 18, 2025
 **SPDX-License-Identifier:** BSD-3-Clause
@@ -14,7 +14,7 @@
 
 ### 1.1 Purpose
 
-This Software Test Guide describes the testing approach, test organization, execution procedures, and guidelines for the Simple_Hybrid project.
+This Software Test Guide describes the testing approach, test organization, execution procedures, and guidelines for the Hybrid_App_Ada project.
 
 ### 1.2 Scope
 
@@ -32,7 +32,7 @@ This document covers:
 
 ### 2.1 Testing Levels
 
-Simple_Hybrid uses three levels of testing:
+Hybrid_App_Ada uses three levels of testing:
 
 **Unit Tests** (48 tests)
 - Test individual components in isolation
@@ -107,7 +107,7 @@ test/
 
 ### 4.1 Design Rationale
 
-Simple_Hybrid uses a **custom lightweight test framework** instead of AUnit:
+Hybrid_App_Ada uses a **custom lightweight test framework** instead of AUnit:
 
 **Benefits**:
 - No external test framework dependency

@@ -39,7 +39,7 @@ YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
 echo -e "${BLUE}========================================${NC}"
-echo -e "${BLUE}  GNATcoverage for simple_hybrid${NC}"
+echo -e "${BLUE}  GNATcoverage for hybrid_app_ada${NC}"
 echo -e "${BLUE}========================================${NC}"
 
 # Setup directories

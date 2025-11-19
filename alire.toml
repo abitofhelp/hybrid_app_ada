@@ -1,11 +1,11 @@
-name = "simple_hybrid"
+name = "hybrid_app_ada"
 description = "Hybrid DDD/Clean/Hexagonal architecture greeter application in Ada 2022"
 version = "1.0.0"
 authors = ["Michael Gardner"]
 maintainers = ["Michael Gardner <mike@abitofhelp.com>"]
 maintainers-logins = ["abitofhelp"]
 licenses = "BSD-3-Clause"
-website = "https://github.com/abitofhelp/simple_hybrid"
+website = "https://github.com/abitofhelp/hybrid_app_ada"
 tags = ["hexagonal", "ddd", "clean", "functional", "monad", "example"]
 
 executables = ["greeter"]
@@ -24,10 +24,10 @@ aunit = "^24.0.0"
 functional = { path = "../functional" }
 
 [gpr-externals]
-SIMPLE_HYBRID_BUILD_MODE = ["dev", "release"]
+HYBRID_APP_ADA_BUILD_MODE = ["dev", "release"]
 
 [gpr-set-externals]
-SIMPLE_HYBRID_BUILD_MODE = "dev"
+HYBRID_APP_ADA_BUILD_MODE = "dev"
 
 [environment]
 

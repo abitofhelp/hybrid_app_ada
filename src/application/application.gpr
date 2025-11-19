@@ -7,7 +7,7 @@
 -- Purpose:
 --   Architectural boundary documentation for Application layer.
 --   This file exists for arch_guard.py validation only.
---   Actual builds use simple_hybrid.gpr (single-project mode).
+--   Actual builds use hybrid_app_ada.gpr (single-project mode).
 --
 -- Dependencies: Domain layer only
 -- Visibility: Used by Presentation and Bootstrap layers

@@ -1,7 +1,7 @@
 # =============================================================================
 # Project Makefile
 # =============================================================================
-# Project: simple_hybrid
+# Project: hybrid_app_ada
 # Purpose: Hexagonal architecture demonstration with port/adapter pattern
 #
 # This Makefile provides:
@@ -12,7 +12,7 @@
 #   - Development tools (watch, setup-hooks, ci)
 # =============================================================================
 
-PROJECT_NAME := simple_hybrid
+PROJECT_NAME := hybrid_app_ada
 
 .PHONY: all build build-dev build-opt build-release build-tests build-profiles check check-arch \
         clean clean-clutter clean-coverage clean-deep compress deps \
@@ -202,16 +202,16 @@ build-profiles: ## Validate library builds with all configuration profiles
 	FAILED=0; \
 	for profile in $$PROFILES; do \
 		echo "$(YELLOW)Testing profile: $$profile$(NC)"; \
-		if [ -f "config/profiles/$$profile/simple_hybrid_config.ads" ]; then \
-			cp -f config/simple_hybrid_config.ads config/simple_hybrid_config.ads.backup 2>/dev/null || true; \
-			cp -f config/profiles/$$profile/simple_hybrid_config.ads config/simple_hybrid_config.ads; \
+		if [ -f "config/profiles/$$profile/hybrid_app_ada_config.ads" ]; then \
+			cp -f config/hybrid_app_ada_config.ads config/hybrid_app_ada_config.ads.backup 2>/dev/null || true; \
+			cp -f config/profiles/$$profile/hybrid_app_ada_config.ads config/hybrid_app_ada_config.ads; \
 			if $(ALR) build --development -- -j8 2>&1 | grep -E 'error:|failed' > /dev/null; then \
 				echo "$(RED)✗ Profile $$profile: FAILED$(NC)"; \
 				FAILED=$$((FAILED + 1)); \
 			else \
 				echo "$(GREEN)✓ Profile $$profile: OK$(NC)"; \
 			fi; \
-			mv -f config/simple_hybrid_config.ads.backup config/simple_hybrid_config.ads 2>/dev/null || true; \
+			mv -f config/hybrid_app_ada_config.ads.backup config/hybrid_app_ada_config.ads 2>/dev/null || true; \
 			$(ALR) clean > /dev/null 2>&1; \
 		else \
 			echo "$(RED)✗ Profile $$profile: config file not found$(NC)"; \

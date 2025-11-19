@@ -1,15 +1,15 @@
 -- ===========================================================================
--- unit_tests.gpr - Unit Test Suite for Simple_Hybrid
+-- unit_tests.gpr - Unit Test Suite for Hybrid_App_Ada
 -- ===========================================================================
 -- Purpose:
 --   Unit test project for testing domain and application layers.
---   Inherits 'test' mode settings from simple_hybrid.gpr for consistency.
+--   Inherits 'test' mode settings from hybrid_app_ada.gpr for consistency.
 --
 -- Build: alr build -Xmode=test
 --        make build-tests
 -- ===========================================================================
 
-with "../../simple_hybrid.gpr";
+with "../../hybrid_app_ada.gpr";
 
 project Unit_Tests is
 
@@ -28,13 +28,13 @@ project Unit_Tests is
    package Compiler is
       --  Inherit compiler settings from main project (uses 'test' mode)
       for Default_Switches ("Ada") use
-         Simple_Hybrid.Compiler'Default_Switches("Ada");
+         Hybrid_App_Ada.Compiler'Default_Switches("Ada");
    end Compiler;
 
    package Binder is
       --  Inherit binder settings from main project
       for Switches ("Ada") use
-         Simple_Hybrid.Binder'Default_Switches("Ada");
+         Hybrid_App_Ada.Binder'Default_Switches("Ada");
    end Binder;
 
    package Builder is

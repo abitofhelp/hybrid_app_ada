@@ -30,7 +30,7 @@ procedure Unit_Runner is
 begin
    Put_Line ("");
    Put_Line ("========================================");
-   Put_Line ("     SIMPLE_HYBRID UNIT TEST SUITE");
+   Put_Line ("     HYBRID_APP_ADA UNIT TEST SUITE");
    Put_Line ("========================================");
    Put_Line ("");
 

@@ -1,11 +1,11 @@
 # Changelog
 
-**Project:** Simple_Hybrid - Ada 2022 Application Starter
+**Project:** Hybrid_App_Ada - Ada 2022 Application Starter
 **SPDX-License-Identifier:** BSD-3-Clause
 **License File:** See the LICENSE file in the project root.
 **Copyright:** © 2025 Michael Gardner, A Bit of Help, Inc.
 
-All notable changes to Simple_Hybrid will be documented in this file.
+All notable changes to Hybrid_App_Ada will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
@@ -27,7 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Migrated to safe parameterized Functional.Try pattern
   - Enhanced Functional library with `Try_To_Result_With_Param` and `Try_To_Option_With_Param`
   - Added backwards-compatible child packages for existing tests
-  - All 83 Functional library tests passing, all 105 simple_hybrid tests passing
+  - All 83 Functional library tests passing, all 105 hybrid_app_ada tests passing
 - **Architecture Validation**: Fixed path detection in `arch_guard.py` after script reorganization
 - **Build System**: Corrected Makefile FORMAT_DIRS syntax (missing backslash continuation)
 
@@ -43,7 +43,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Updated coverage workflow documentation
 
 ### Removed
-- Deleted tzif-specific scripts not applicable to simple_hybrid:
+- Deleted tzif-specific scripts not applicable to hybrid_app_ada:
   - `check_tzif_parser.py`
   - `generate_version_ada.py`
   - `compare_tzif_versions.py`

@@ -2,7 +2,7 @@
 !theme plain
 skinparam componentStyle rectangle
 
-title Simple_Hybrid - Package Structure\nActual Packages in Each Layer
+title Hybrid_App_Ada - Package Structure\nActual Packages in Each Layer
 
 frame "Bootstrap Layer" #FFEBCD {
   component "Bootstrap.CLI" as BootstrapCLI

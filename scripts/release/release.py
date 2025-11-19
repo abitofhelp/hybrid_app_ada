@@ -12,7 +12,7 @@ Release management script for the project.
 This script handles the complete release process including:
 - Temporary file cleanup (.bak, .o, .ali, .DS_Store, __pycache__)
 - Version synchronization across all alire.toml files
-- Version package generation (Simple_Hybrid.Version)
+- Version package generation (Hybrid_App_Ada.Version)
 - Ada source file docstring generation (Copyright year, documentation)
 - Formal documentation rebuild (SRS, SDS, Test Guide)
 - Markdown file metadata updates (version, date, copyright)
@@ -139,9 +139,9 @@ class AdaReleaseManager:
 
     def generate_version_package(self) -> bool:
         """Generate Version Ada package from alire.toml."""
-        # Convert project name to proper Ada casing (simple_hybrid -> Simple_Hybrid)
-        if self.project_name.lower() == "simple_hybrid":
-            package_name = "Simple_Hybrid"
+        # Convert project name to proper Ada casing (hybrid_app_ada -> Hybrid_App_Ada)
+        if self.project_name.lower() == "hybrid_app_ada":
+            package_name = "Hybrid_App_Ada"
         else:
             # Capitalize first letter and after underscores
             parts = self.project_name.split('_')
@@ -473,7 +473,7 @@ class AdaReleaseManager:
 
         return f"""# Changelog
 
-All notable changes to Simple_Hybrid - IANA Timezone Information Library for Ada 2022 will be documented in this file.
+All notable changes to Hybrid_App_Ada - IANA Timezone Information Library for Ada 2022 will be documented in this file.
 
 The format is based on [Common Changelog](https://common-changelog.org),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
@@ -494,11 +494,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [{version}] - {today}
 
-_Initial alpha release of Simple_Hybrid library._
+_Initial alpha release of Hybrid_App_Ada library._
 
 ### Added
 
-- Parse Simple_Hybrid binary files (versions 1, 2, and 3)
+- Parse Hybrid_App_Ada binary files (versions 1, 2, and 3)
 - Query timezone information by ID
 - Access timezone transition times and rules
 - Discover timezone sources from filesystem paths
@@ -871,8 +871,8 @@ _Initial alpha release of Simple_Hybrid library._
         if not self.sync_layer_versions(version):
             return False
 
-        # Step 4: Generate Simple_Hybrid.Version package
-        print("\n📝 Step 4: Generating Simple_Hybrid.Version package...")
+        # Step 4: Generate Hybrid_App_Ada.Version package
+        print("\n📝 Step 4: Generating Hybrid_App_Ada.Version package...")
         if not self.generate_version_package():
             return False
 

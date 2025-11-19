@@ -1,4 +1,4 @@
-# Simple_Hybrid Documentation Index
+# Hybrid_App_Ada Documentation Index
 
 **Version:** 1.0.0
 **Date:** November 18, 2025
@@ -11,7 +11,7 @@
 
 ## Welcome
 
-Welcome to the **Simple_Hybrid** documentation. This Ada 2022 application starter demonstrates professional hexagonal architecture with functional programming principles, static dependency injection, and railway-oriented error handling.
+Welcome to the **Hybrid_App_Ada** documentation. This Ada 2022 application starter demonstrates professional hexagonal architecture with functional programming principles, static dependency injection, and railway-oriented error handling.
 
 ---
 
@@ -62,7 +62,7 @@ Welcome to the **Simple_Hybrid** documentation. This Ada 2022 application starte
 
 ## Architecture Overview
 
-Simple_Hybrid implements a **5-layer hexagonal architecture** (also known as Ports and Adapters or Clean Architecture):
+Hybrid_App_Ada implements a **5-layer hexagonal architecture** (also known as Ports and Adapters or Clean Architecture):
 
 ### Layer Structure
 
@@ -209,7 +209,7 @@ This maintains clean boundaries while allowing Presentation to handle errors.
 ## Directory Structure
 
 ```
-simple_hybrid/
+hybrid_app_ada/
 ├── src/
 │   ├── domain/                 # Pure business logic
 │   │   ├── error/              # Result monad, error types
@@ -240,7 +240,7 @@ simple_hybrid/
 │   └── index.md                # This file
 ├── scripts/
 │   └── arch_guard.py           # Architecture validation
-├── simple_hybrid.gpr           # Main project file
+├── hybrid_app_ada.gpr           # Main project file
 ├── alire.toml                  # Alire manifest
 ├── Makefile                    # Build automation
 └── README.md                   # Project overview
@@ -346,9 +346,9 @@ For documentation issues or suggestions, please file an issue on GitHub.
 ### Getting Help
 
 - 📧 **Email**: support@abitofhelp.com
-- 🐛 **Issues**: [GitHub Issues](https://github.com/abitofhelp/simple_hybrid/issues)
+- 🐛 **Issues**: [GitHub Issues](https://github.com/abitofhelp/hybrid_app_ada/issues)
 - 📖 **Documentation**: This directory
-- 💬 **Discussions**: [GitHub Discussions](https://github.com/abitofhelp/simple_hybrid/discussions)
+- 💬 **Discussions**: [GitHub Discussions](https://github.com/abitofhelp/hybrid_app_ada/discussions)
 
 ### Contributing
 
@@ -362,7 +362,7 @@ We welcome contributions! See:
 
 ## License
 
-Simple_Hybrid is licensed under the **BSD-3-Clause License**.
+Hybrid_App_Ada is licensed under the **BSD-3-Clause License**.
 
 Copyright © 2025 Michael Gardner, A Bit of Help, Inc.
 
@@ -372,8 +372,8 @@ See [LICENSE](../LICENSE) for full license text.
 
 ## Project Links
 
-- **GitHub**: https://github.com/abitofhelp/simple_hybrid
-- **Alire**: https://alire.ada.dev (search for "simple_hybrid")
+- **GitHub**: https://github.com/abitofhelp/hybrid_app_ada
+- **Alire**: https://alire.ada.dev (search for "hybrid_app_ada")
 - **Author**: Michael Gardner (https://github.com/abitofhelp)
 - **Company**: A Bit of Help, Inc. (https://abitofhelp.com)
 

@@ -14,7 +14,7 @@ an Ada package with version constants that can be used throughout
 the application.
 
 Usage:
-    python3 tools/generate_version.py alire.toml shared/src/simple_hybrid-version.ads
+    python3 tools/generate_version.py alire.toml shared/src/hybrid_app_ada-version.ads
 """
 
 import sys
@@ -34,7 +34,7 @@ def parse_toml_info(toml_path: Path) -> tuple:
             if version_match:
                 version = version_match.group(1)
 
-            # Match: name = "simple_hybrid"
+            # Match: name = "hybrid_app_ada"
             name_match = re.match(r'^\s*name\s*=\s*"([^"]+)"', line)
             if name_match:
                 project_name = name_match.group(1)
@@ -79,9 +79,9 @@ def parse_version(version_str: str) -> dict:
 
 def to_ada_casing(project_name: str) -> str:
     """Convert project name to proper Ada package casing."""
-    # Special case for simple_hybrid -> Simple_Hybrid
-    if project_name.lower() == "simple_hybrid":
-        return "Simple_Hybrid"
+    # Special case for hybrid_app_ada -> Hybrid_App_Ada
+    if project_name.lower() == "hybrid_app_ada":
+        return "Hybrid_App_Ada"
     # For other names, capitalize first letter and after underscores
     parts = project_name.split('_')
     return '_'.join(part.capitalize() for part in parts)

@@ -27,7 +27,7 @@ procedure E2E_Runner is
 begin
    Put_Line ("");
    Put_Line ("========================================");
-   Put_Line ("     SIMPLE_HYBRID E2E TEST SUITE");
+   Put_Line ("     HYBRID_APP_ADA E2E TEST SUITE");
    Put_Line ("========================================");
    Put_Line ("");
 

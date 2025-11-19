@@ -28,7 +28,7 @@ procedure Integration_Runner is
 begin
    Put_Line ("");
    Put_Line ("========================================");
-   Put_Line ("  SIMPLE_HYBRID INTEGRATION TEST SUITE");
+   Put_Line ("  HYBRID_APP_ADA INTEGRATION TEST SUITE");
    Put_Line ("========================================");
    Put_Line ("");
 

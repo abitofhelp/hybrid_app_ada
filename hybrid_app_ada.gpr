@@ -1,5 +1,5 @@
 -- ===========================================================================
--- Simple_Hybrid.gpr - Hexagonal Architecture Greeter Application
+-- Hybrid_App_Ada.gpr - Hexagonal Architecture Greeter Application
 -- ===========================================================================
 -- Copyright (c) 2025 Michael Gardner, A Bit of Help, Inc.
 -- SPDX-License-Identifier: BSD-3-Clause
@@ -16,15 +16,15 @@
 -- Publishable: YES - The executable binary
 -- ===========================================================================
 
-with "config/simple_hybrid_config.gpr";
+with "config/hybrid_app_ada_config.gpr";
 
-project Simple_Hybrid is
+project Hybrid_App_Ada is
 
    for Source_Dirs use ("src/**");
    for Exec_Dir use "bin";
    for Main use ("greeter.adb");
 
-   for Object_Dir use "obj/" & Simple_Hybrid_Config.Build_Profile;
+   for Object_Dir use "obj/" & Hybrid_App_Ada_Config.Build_Profile;
    for Create_Missing_Dirs use "True";
 
    -- ==========================================================================
@@ -198,4 +198,4 @@ project Simple_Hybrid is
       for Artifacts (".") use ("share");
    end Install;
 
-end Simple_Hybrid;
+end Hybrid_App_Ada;

@@ -174,7 +174,7 @@ Automated release management, version synchronization, and GitHub release creati
 1. Cleans temporary files (.bak, .o, .ali, __pycache__)
 2. Updates root alire.toml version
 3. Syncs all layer alire.toml files to match
-4. Generates Simple_Hybrid.Version Ada package
+4. Generates Hybrid_App_Ada.Version Ada package
 5. ~~Generates Ada docstrings~~ (disabled - tzif-specific)
 6. Formats code (`make format`) if available
 7. ~~Rebuilds formal documentation~~ (disabled - tzif-specific)
@@ -249,23 +249,23 @@ python3 scripts/release/sync_versions.py 1.0.0
 **What it does:**
 1. Extracts version from alire.toml
 2. Parses semantic version (MAJOR.MINOR.PATCH-PRERELEASE+BUILD)
-3. Generates `shared/src/simple_hybrid-version.ads` with constants
+3. Generates `shared/src/hybrid_app_ada-version.ads` with constants
 
 **Usage:**
 ```bash
 # Called by release.py, or standalone:
-python3 scripts/release/generate_version.py alire.toml shared/src/simple_hybrid-version.ads
+python3 scripts/release/generate_version.py alire.toml shared/src/hybrid_app_ada-version.ads
 ```
 
 **Generated Package:**
 ```ada
-package Simple_Hybrid.Version is
+package Hybrid_App_Ada.Version is
    Major : constant Natural := 1;
    Minor : constant Natural := 0;
    Patch : constant Natural := 0;
    Version : constant String := "1.0.0";
    -- ... version checking functions
-end Simple_Hybrid.Version;
+end Hybrid_App_Ada.Version;
 ```
 
 ---

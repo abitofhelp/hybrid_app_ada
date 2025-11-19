@@ -1,6 +1,6 @@
 # Software Design Specification (SDS)
 
-**Project:** Simple_Hybrid - Ada 2022 Application Starter
+**Project:** Hybrid_App_Ada - Ada 2022 Application Starter
 **Version:** 1.0.0
 **Date:** November 18, 2025
 **SPDX-License-Identifier:** BSD-3-Clause
@@ -14,7 +14,7 @@
 
 ### 1.1 Purpose
 
-This Software Design Specification (SDS) describes the architectural design and detailed design of Simple_Hybrid, a professional Ada 2022 application starter demonstrating hexagonal architecture with functional programming principles.
+This Software Design Specification (SDS) describes the architectural design and detailed design of Hybrid_App_Ada, a professional Ada 2022 application starter demonstrating hexagonal architecture with functional programming principles.
 
 ### 1.2 Scope
 
@@ -32,7 +32,7 @@ This document covers:
 
 ### 2.1 Architecture Style
 
-Simple_Hybrid uses **Hexagonal Architecture** (Ports and Adapters / Clean Architecture).
+Hybrid_App_Ada uses **Hexagonal Architecture** (Ports and Adapters / Clean Architecture).
 
 **Benefits**:
 - Clear separation of concerns
@@ -491,8 +491,8 @@ For concurrent use cases (v2.0+):
 ### 9.1 Project Structure
 
 ```
-simple_hybrid/
-├── simple_hybrid.gpr     # Main project file (single project)
+hybrid_app_ada/
+├── hybrid_app_ada.gpr     # Main project file (single project)
 ├── alire.toml            # Alire manifest
 ├── Makefile              # Build automation
 └── src/                  # All sources in one tree

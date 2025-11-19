@@ -95,7 +95,7 @@ The `coverage.sh` script:
 ## Architecture
 
 ```
-simple_hybrid/
+hybrid_app_ada/
 ├── scripts/makefile/
 │   ├── build_gnatcov_runtime.py  # Builds runtime from gnatcov sources
 │   ├── coverage.sh               # Main coverage workflow
@@ -150,7 +150,7 @@ When someone clones this repository:
 1. **Clone project:**
    ```bash
    git clone <repo-url>
-   cd simple_hybrid
+   cd hybrid_app_ada
    ```
 
 2. **Let Alire install dependencies:**

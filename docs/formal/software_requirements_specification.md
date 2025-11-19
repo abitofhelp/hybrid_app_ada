@@ -1,6 +1,6 @@
 # Software Requirements Specification (SRS)
 
-**Project:** Simple_Hybrid - Ada 2022 Application Starter
+**Project:** Hybrid_App_Ada - Ada 2022 Application Starter
 **Version:** 1.0.0
 **Date:** November 18, 2025
 **SPDX-License-Identifier:** BSD-3-Clause
@@ -14,11 +14,11 @@
 
 ### 1.1 Purpose
 
-This Software Requirements Specification (SRS) describes the functional and non-functional requirements for Simple_Hybrid, a professional Ada 2022 application starter template demonstrating hexagonal architecture with functional programming principles.
+This Software Requirements Specification (SRS) describes the functional and non-functional requirements for Hybrid_App_Ada, a professional Ada 2022 application starter template demonstrating hexagonal architecture with functional programming principles.
 
 ### 1.2 Scope
 
-Simple_Hybrid provides:
+Hybrid_App_Ada provides:
 - Professional 5-layer hexagonal architecture implementation
 - Static dependency injection via Ada generics
 - Railway-oriented programming with Result monads
@@ -51,7 +51,7 @@ Simple_Hybrid provides:
 
 ### 2.1 Product Perspective
 
-Simple_Hybrid is a standalone application starter template implementing professional architectural patterns:
+Hybrid_App_Ada is a standalone application starter template implementing professional architectural patterns:
 
 **Architecture Layers**:
 1. **Domain**: Pure business logic (zero dependencies)

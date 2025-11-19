@@ -1,4 +1,4 @@
-# Simple_Hybrid Development Roadmap
+# Hybrid_App_Ada Development Roadmap
 
 **Version:** 1.0.0
 **Date:** November 18, 2025
@@ -11,7 +11,7 @@
 
 ## Overview
 
-This roadmap outlines planned enhancements and features for the Simple_Hybrid Ada 2022 application starter. The goal is to continuously improve the starter template while maintaining its focus on clean architecture, functional programming principles, and educational value.
+This roadmap outlines planned enhancements and features for the Hybrid_App_Ada Ada 2022 application starter. The goal is to continuously improve the starter template while maintaining its focus on clean architecture, functional programming principles, and educational value.
 
 ---
 
@@ -267,7 +267,7 @@ This roadmap outlines planned enhancements and features for the Simple_Hybrid Ad
 
 ## Contributing to the Roadmap
 
-Community feedback shapes Simple_Hybrid's development. If you have suggestions:
+Community feedback shapes Hybrid_App_Ada's development. If you have suggestions:
 
 1. **File an Issue**: Propose new features via GitHub Issues
 2. **Join Discussions**: Participate in roadmap planning discussions
