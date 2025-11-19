@@ -1,0 +1,35 @@
+name = "simple_hybrid"
+description = "Hybrid DDD/Clean/Hexagonal architecture greeter application in Ada 2022"
+version = "1.0.0"
+authors = ["Michael Gardner"]
+maintainers = ["Michael Gardner <mike@abitofhelp.com>"]
+maintainers-logins = ["abitofhelp"]
+licenses = "BSD-3-Clause"
+website = "https://github.com/abitofhelp/simple_hybrid"
+tags = ["hexagonal", "ddd", "clean", "functional", "monad", "example"]
+
+executables = ["greeter"]
+
+[build-switches]
+"*".Ada_Version = "Ada2022"
+"*".Style_Checks = "yes"
+
+[[depends-on]]
+functional = "^2.1.0"
+
+[[depends-on]]
+aunit = "^24.0.0"
+
+[[pins]]
+functional = { path = "../functional" }
+
+[gpr-externals]
+SIMPLE_HYBRID_BUILD_MODE = ["dev", "release"]
+
+[gpr-set-externals]
+SIMPLE_HYBRID_BUILD_MODE = "dev"
+
+[environment]
+
+[[depends-on]]
+gnatcov = "^22.0.1"

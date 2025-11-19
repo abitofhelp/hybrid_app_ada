@@ -1,0 +1,44 @@
+-- ===========================================================================
+-- e2e_tests.gpr - End-to-End Test Suite for Simple_Hybrid
+-- ===========================================================================
+-- Purpose:
+--   End-to-End test project for testing complete system through CLI.
+--   Tests execute the greeter binary and verify output (black-box testing).
+--   Does NOT import application code - tests from user's perspective.
+--   Inherits 'test' mode settings from simple_hybrid.gpr for consistency.
+--
+-- Build: alr build -Xmode=test
+--        make build-tests
+-- ===========================================================================
+
+with "../../simple_hybrid.gpr";
+
+project E2E_Tests is
+
+   for Source_Dirs use (".", "../common");
+   for Object_Dir use "../../obj/test/e2e";
+   for Exec_Dir use "../bin";
+
+   --  Main test programs (add your tests here)
+   --  E2E tests should execute bin/greeter and verify output
+   for Main use
+     ("e2e_runner.adb",
+      "test_greeter_cli.adb");
+
+   package Compiler is
+      --  Inherit compiler settings from main project (uses 'test' mode)
+      for Default_Switches ("Ada") use
+         Simple_Hybrid.Compiler'Default_Switches("Ada");
+   end Compiler;
+
+   package Binder is
+      --  Inherit binder settings from main project
+      for Switches ("Ada") use
+         Simple_Hybrid.Binder'Default_Switches("Ada");
+   end Binder;
+
+   package Builder is
+      for Switches ("Ada") use ("-g");  -- Debug symbols
+   end Builder;
+
+end E2E_Tests;

@@ -1,0 +1,44 @@
+-- ===========================================================================
+-- unit_tests.gpr - Unit Test Suite for Simple_Hybrid
+-- ===========================================================================
+-- Purpose:
+--   Unit test project for testing domain and application layers.
+--   Inherits 'test' mode settings from simple_hybrid.gpr for consistency.
+--
+-- Build: alr build -Xmode=test
+--        make build-tests
+-- ===========================================================================
+
+with "../../simple_hybrid.gpr";
+
+project Unit_Tests is
+
+   for Source_Dirs use (".", "../common");
+   for Object_Dir use "../../obj/test/unit";
+   for Exec_Dir use "../bin";
+
+   --  Main test programs (add your tests here)
+   for Main use
+     ("unit_runner.adb",
+      "test_domain_error_result.adb",
+      "test_domain_person.adb",
+      "test_application_command_greet.adb",
+      "test_application_usecase_greet.adb");
+
+   package Compiler is
+      --  Inherit compiler settings from main project (uses 'test' mode)
+      for Default_Switches ("Ada") use
+         Simple_Hybrid.Compiler'Default_Switches("Ada");
+   end Compiler;
+
+   package Binder is
+      --  Inherit binder settings from main project
+      for Switches ("Ada") use
+         Simple_Hybrid.Binder'Default_Switches("Ada");
+   end Binder;
+
+   package Builder is
+      for Switches ("Ada") use ("-g");  -- Debug symbols
+   end Builder;
+
+end Unit_Tests;

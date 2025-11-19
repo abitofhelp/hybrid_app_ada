@@ -1,0 +1,201 @@
+-- ===========================================================================
+-- Simple_Hybrid.gpr - Hexagonal Architecture Greeter Application
+-- ===========================================================================
+-- Copyright (c) 2025 Michael Gardner, A Bit of Help, Inc.
+-- SPDX-License-Identifier: BSD-3-Clause
+-- See LICENSE file in the project root.
+--
+-- Purpose:
+--   Main executable project for the greeter CLI application.
+--   Demonstrates hexagonal architecture (DDD/Clean/Hex) with dependency
+--   inversion, ports & adapters, and Result monad error handling.
+--   Contains domain, application, infrastructure, presentation, and
+--   bootstrap layers in a single project.
+--
+-- Produces: bin/greeter executable
+-- Publishable: YES - The executable binary
+-- ===========================================================================
+
+with "config/simple_hybrid_config.gpr";
+
+project Simple_Hybrid is
+
+   for Source_Dirs use ("src/**");
+   for Exec_Dir use "bin";
+   for Main use ("greeter.adb");
+
+   for Object_Dir use "obj/" & Simple_Hybrid_Config.Build_Profile;
+   for Create_Missing_Dirs use "True";
+
+   -- ==========================================================================
+   -- Build Mode Configuration
+   -- ==========================================================================
+   --
+   -- Available build modes:
+   --   development : Daily development (no optimization, all checks, full debug)
+   --   test        : Test suite builds (optimized for debugging, all checks)
+   --   release     : Production builds (optimized, all runtime checks enabled)
+   --   benchmark   : Performance testing (maximum optimization, use with caution)
+   --
+   -- Usage: alr build -Xmode=<mode>
+   --        make build MODE=<mode>
+   -- ==========================================================================
+   type Mode_Type is ("development", "test", "release", "benchmark");
+   Mode : Mode_Type := external ("mode", "development");
+
+   -- ==========================================================================
+   -- Compiler Package: Ada 2022 Standards and Best Practices
+   -- ==========================================================================
+   package Compiler is
+
+      -- Common switches applied to all build modes
+      Common_Switches := (
+         "-gnat2022",        -- Ada 2022 mode
+         "-gnatf",           -- Full error messages
+         "-gnatw.k",         -- Variable could be constant
+         "-gnatw.m",         -- Variable assigned but never read
+         "-gnatw.o",         -- Modified but unreferenced out parameters
+         "-gnatw.r",         -- Redundant constructs
+         "-gnatw.u",         -- Unreferenced entities
+         "-gnatw.X",         -- Disable warnings on local exception propagation
+         "-gnatw.Y",         -- Disable warnings from system units
+         "-gnatwa",          -- All warnings
+         "-gnatwl",          -- Elaboration warnings
+         "-gnatwu",          -- Unused entities warnings
+
+         -- Style checks (Ada Quality and Style Guide)
+         "-gnatW8",           -- UTF-8 encoding
+         "-gnaty3",          -- Check indentation of 3 spaces
+         "-gnatya",          -- Check attribute casing
+         "-gnatyb",          -- Check blanks at end of lines
+         "-gnatyc",          -- Check comment format
+         "-gnatyd",          -- Check no DOS line terminators
+         "-gnatye",          -- Check end labels
+         "-gnatyf",          -- Check form feeds/vertical tabs
+         "-gnatyh",          -- Check horizontal tabs
+         "-gnatyi",          -- Check if-then layout
+         "-gnatyk",          -- Check keyword casing
+         "-gnatyl",          -- Check layout
+         "-gnatym",          -- Check line length <= 79 (default)
+         "-gnatyM79",        -- Maximum line length of 79 characters (Ada standard)
+         "-gnatyn",          -- Check casing of entities in Standard
+         "-gnatyN",          -- Check casing of predefined identifiers
+         "-gnatyO",          -- Check overriding indicators
+         "-gnatyp",          -- Check pragma casing
+         "-gnatyr",          -- Check references
+         "-gnatyS",          -- Check no statements on same line as THEN or ELSE
+         "-gnatys",          -- Check separate specs
+         "-gnatyt",          -- Check token spacing
+         "-gnatyu",          -- Check unnecessary blank lines
+         "-gnatyx",          -- Check extra parentheses
+         "-gnatyy"          -- Enable default style checks
+      );
+
+      case Mode is
+         when "development" =>
+            --  Daily development: No optimization, all checks, full debug
+            --  Best for: Interactive debugging, development work
+            for Default_Switches ("Ada") use Common_Switches & (
+               "-g",            -- Debug info
+               "-gnata",        -- Enable assertions and contracts
+               "-gnatd.n",      -- Activate front-end inlining
+               "-gnateE",       -- Extra info in exceptions
+               "-gnatU",        -- Tag uninitialized scalars
+               "-gnatVa",       -- All validity checks
+               "-gnatwe"        -- Stop on warning
+            );
+
+         when "test" =>
+            --  Test suite builds: Optimized for debugging, all checks enabled
+            --  Best for: Running test suites with good performance and debuggability
+            --  Uses -Og: Optimizes for debugging (faster than -O0, still debuggable)
+            for Default_Switches ("Ada") use Common_Switches & (
+               "-fdata-sections",
+               "-ffunction-sections",
+               "-g",            -- Debug info
+               "-gnata",        -- Enable assertions and contracts
+               "-gnateE",       -- Extra info in exceptions
+               "-gnatU",        -- Tag uninitialized scalars
+               "-gnatVa",       -- All validity checks
+               "-gnatwe",       -- Stop on warning
+               "-Og"            -- Optimize for debugging
+            );
+
+         when "release" =>
+            --  Production builds: Optimized with all runtime checks enabled
+            --  Best for: Deployed binaries where safety is important
+            --  Note: Runtime checks ENABLED (no -gnatp) for production safety
+            --  Uses -O2 (generally better than -O3 due to less code bloat)
+            for Default_Switches ("Ada") use Common_Switches & (
+               "-O2",           -- Optimization level 2
+               "-gnatn"         -- Enable inlining
+            );
+
+         when "benchmark" =>
+            --  Performance testing: Maximum safe optimization
+            --  Best for: Performance benchmarking after thorough testing
+            --  WARNING: Use only after profiling shows benefit
+            --  Note: -O2 used instead of -O3 (usually faster in practice)
+            for Default_Switches ("Ada") use Common_Switches & (
+               "-O2",           -- Optimization level 2 (not -O3)
+               "-gnatn",        -- Enable inlining
+               "-ffunction-sections",
+               "-fdata-sections"
+               --  Note: Add -gnatp (suppress checks) ONLY if:
+               --    1. Profiling proves it necessary, AND
+               --    2. Code has been formally verified/thoroughly tested
+            );
+      end case;
+   end Compiler;
+
+   -- ==========================================================================
+   -- Binder Package: Runtime Configuration
+   -- ==========================================================================
+   package Binder is
+      case Mode is
+         when "development" | "test" =>
+            for Default_Switches ("Ada") use (
+               "-Es",        -- Symbolic traceback
+               "-E"          -- Store tracebacks in exceptions
+            );
+         when "release" | "benchmark" =>
+            for Default_Switches ("Ada") use ("-E");
+      end case;
+   end Binder;
+
+   -- ==========================================================================
+   -- Builder Package: Build Process Configuration
+   -- ==========================================================================
+   package Builder is
+      for Default_Switches ("Ada") use (
+         "-j0",           -- Use all available cores (0 = auto-detect)
+         "-s"             -- Recompile if compiler switches change
+      );
+   end Builder;
+
+   -- ==========================================================================
+   -- Format Package: Code Formatting Configuration
+   -- ==========================================================================
+   package Format is
+      for Configuration use ".gnatformat.yaml";
+   end Format;
+
+   -- ==========================================================================
+   -- Documentation Package: API Documentation
+   -- ==========================================================================
+   package Documentation is
+      for Documentation_Dir use "docs/api";
+   end Documentation;
+
+   -- ==========================================================================
+   -- Linker Package: Required Libraries
+   -- ==========================================================================
+   package Linker is
+      for Linker_Options use ("-lgnarl", "-lgnat");
+   end Linker;
+
+   package Install is
+      for Artifacts (".") use ("share");
+   end Install;
+
+end Simple_Hybrid;
