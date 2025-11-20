@@ -11,6 +11,7 @@ A **professional Ada 2022 application starter** demonstrating **hybrid DDD/Clean
 
 This is a **desktop/enterprise application template** showcasing:
 - **5-Layer Hexagonal Architecture** (Domain, Application, Infrastructure, Presentation, Bootstrap)
+- **Scripted Cloning/Template Instantiation** (rename entire project in seconds via Python script)
 - **Static Dispatch Dependency Injection** via generics (zero runtime overhead)
 - **Railway-Oriented Programming** with Result monads (no exceptions across boundaries)
 - **Presentation Isolation** pattern (only Domain is shareable across apps)
