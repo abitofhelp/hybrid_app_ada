@@ -17,9 +17,6 @@ executables = ["greeter"]
 [[depends-on]]
 functional = "^2.1.0"
 
-[[depends-on]]
-aunit = "^24.0.0"
-
 [[pins]]
 functional = { path = "../functional" }
 

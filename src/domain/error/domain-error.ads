@@ -52,7 +52,7 @@ is
    --  Categories of errors that can occur in the application
    type Error_Kind is
      (Validation_Error,      --  Domain validation failures (invalid input)
-      Infrastructure_Error); --  Infrastructure failures (I/O errors)
+      Infrastructure_Error); --  Infrastructure failures (I/O, network, DB)
 
    --  ========================================================================
    --  Error Type Record

@@ -59,26 +59,137 @@ is
       --  Opaque result type - internal representation hidden
       type Result is private;
 
+      --  =====================================================================
       --  Constructors
+      --  =====================================================================
+
       function Ok (Value : T) return Result
-      with Inline;
+      with
+         Inline,
+         Post => Is_Ok (Ok'Result);
 
       function Error (Kind : Error_Kind; Message : String) return Result
-      with Inline;
+      with
+         Inline,
+         Post => Is_Error (Error'Result);
 
+      --  =====================================================================
       --  Query functions
+      --  =====================================================================
+
       function Is_Ok (Self : Result) return Boolean
       with Inline;
 
       function Is_Error (Self : Result) return Boolean
       with Inline;
 
-      --  Value extraction (caller must check Is_Ok/Is_Error first)
+      --  =====================================================================
+      --  Value extraction
+      --  =====================================================================
+
       function Value (Self : Result) return T
       with Pre => Is_Ok (Self), Inline;
 
       function Error_Info (Self : Result) return Error_Type
       with Pre => Is_Error (Self), Inline;
+
+      --  =====================================================================
+      --  Unwrap operations (extract value or use default)
+      --  =====================================================================
+
+      function Unwrap_Or (Self : Result; Default : T) return T
+      with
+         Post => (if Is_Ok (Self) then Unwrap_Or'Result = Value (Self)
+                  else Unwrap_Or'Result = Default);
+      --  Get the value if Ok, otherwise return Default
+      --  Use this to provide a safe fallback value
+
+      generic
+         with function F return T;
+      function Unwrap_Or_With (Self : Result) return T;
+      --  Get the value if Ok, otherwise compute default lazily via F
+      --  Use when default is expensive to compute
+
+      function Expect (Self : Result; Message : String) return T
+      with Pre => Is_Ok (Self) or else raise Program_Error with Message;
+      --  Get the value or raise with custom message
+      --  Use only when you can document why Result must be Ok
+
+      --  =====================================================================
+      --  Functional operations (transform and chain)
+      --  =====================================================================
+
+      generic
+         with function F (X : T) return T;
+      function Map (Self : Result) return Result
+      with
+         Post => (if Is_Ok (Self) then Is_Ok (Map'Result)
+                  else Is_Error (Map'Result) and then
+                       Error_Info (Map'Result) = Error_Info (Self));
+      --  Transform the success value if Ok, propagate error if Error
+      --  Example: Double_Result := Int_Result.Map (Double'Access)
+
+      generic
+         with function F (X : T) return Result;
+      function And_Then (Self : Result) return Result
+      with
+         Post => (if Is_Error (Self) then And_Then'Result = Self);
+      --  Chain fallible operations (monadic bind)
+      --  If Self is Error, propagates error without calling F
+      --  If Self is Ok, calls F with value (F might return Error)
+      --  Example: Parse_File (Path).And_Then (Validate'Access)
+
+      generic
+         with function F (E : Error_Type) return Error_Type;
+      function Map_Error (Self : Result) return Result
+      with
+         Post => (if Is_Ok (Self) then Is_Ok (Map_Error'Result) and then
+                                       Value (Map_Error'Result) = Value (Self)
+                  else Is_Error (Map_Error'Result));
+      --  Transform the error value if Error, propagate Ok if Ok
+      --  Use to add context to errors as they propagate up call stack
+
+      --  =====================================================================
+      --  Fallback and recovery
+      --  =====================================================================
+
+      function Fallback (Primary : Result; Alternative : Result) return Result
+      with
+         Post => (if Is_Ok (Primary) then Fallback'Result = Primary
+                  else Fallback'Result = Alternative);
+      --  Try Primary, if Error then use Alternative
+      --  Both are eagerly evaluated
+
+      generic
+         with function F return Result;
+      function Fallback_With (Self : Result) return Result;
+      --  Try Self, if Error then compute alternative lazily via F
+      --  Use when alternative is expensive to compute
+
+      generic
+         with function Handle (E : Error_Type) return T;
+      function Recover (Self : Result) return T;
+      --  Turn error into value via Handle function
+      --  Always returns T (never fails)
+
+      generic
+         with function Handle (E : Error_Type) return Result;
+      function Recover_With (Self : Result) return Result;
+      --  Turn error into another Result via Handle function
+      --  Handle might succeed or return different error
+
+      --  =====================================================================
+      --  Side effects (for logging/debugging)
+      --  =====================================================================
+
+      generic
+         with procedure On_Ok (V : T);
+         with procedure On_Error (E : Error_Type);
+      function Tap (Self : Result) return Result
+      with Post => Tap'Result = Self;
+      --  Execute side effects without changing the Result
+      --  Returns the same Result for chaining
+      --  Example: Result.Tap (Log_Success'Access, Log_Error'Access)
 
    private
 

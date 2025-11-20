@@ -68,6 +68,149 @@ package body Domain.Error.Result is
          return Self.Error_Value;
       end Error_Info;
 
+      ---------------
+      -- Unwrap_Or --
+      ---------------
+
+      function Unwrap_Or (Self : Result; Default : T) return T is
+      begin
+         if Self.State = Ok_State then
+            return Self.Success_Value;
+         else
+            return Default;
+         end if;
+      end Unwrap_Or;
+
+      --------------------
+      -- Unwrap_Or_With --
+      --------------------
+
+      function Unwrap_Or_With (Self : Result) return T is
+      begin
+         if Self.State = Ok_State then
+            return Self.Success_Value;
+         else
+            return F;
+         end if;
+      end Unwrap_Or_With;
+
+      ------------
+      -- Expect --
+      ------------
+
+      function Expect (Self : Result; Message : String) return T is
+         pragma Unreferenced (Message);
+      begin
+         --  Precondition ensures Is_Ok or raises Program_Error
+         return Self.Success_Value;
+      end Expect;
+
+      ---------
+      -- Map --
+      ---------
+
+      function Map (Self : Result) return Result is
+      begin
+         if Self.State = Ok_State then
+            return Ok (F (Self.Success_Value));
+         else
+            return Self;  -- Propagate error
+         end if;
+      end Map;
+
+      --------------
+      -- And_Then --
+      --------------
+
+      function And_Then (Self : Result) return Result is
+      begin
+         if Self.State = Ok_State then
+            return F (Self.Success_Value);
+         else
+            return Self;  -- Propagate error
+         end if;
+      end And_Then;
+
+      ---------------
+      -- Map_Error --
+      ---------------
+
+      function Map_Error (Self : Result) return Result is
+      begin
+         if Self.State = Error_State then
+            return (State => Error_State, Error_Value => F (Self.Error_Value));
+         else
+            return Self;  -- Propagate Ok
+         end if;
+      end Map_Error;
+
+      --------------
+      -- Fallback --
+      --------------
+
+      function Fallback
+        (Primary : Result; Alternative : Result) return Result is
+      begin
+         if Primary.State = Ok_State then
+            return Primary;
+         else
+            return Alternative;
+         end if;
+      end Fallback;
+
+      -------------------
+      -- Fallback_With --
+      -------------------
+
+      function Fallback_With (Self : Result) return Result is
+      begin
+         if Self.State = Ok_State then
+            return Self;
+         else
+            return F;
+         end if;
+      end Fallback_With;
+
+      -------------
+      -- Recover --
+      -------------
+
+      function Recover (Self : Result) return T is
+      begin
+         if Self.State = Ok_State then
+            return Self.Success_Value;
+         else
+            return Handle (Self.Error_Value);
+         end if;
+      end Recover;
+
+      ------------------
+      -- Recover_With --
+      ------------------
+
+      function Recover_With (Self : Result) return Result is
+      begin
+         if Self.State = Ok_State then
+            return Self;
+         else
+            return Handle (Self.Error_Value);
+         end if;
+      end Recover_With;
+
+      ---------
+      -- Tap --
+      ---------
+
+      function Tap (Self : Result) return Result is
+      begin
+         if Self.State = Ok_State then
+            On_Ok (Self.Success_Value);
+         else
+            On_Error (Self.Error_Value);
+         end if;
+         return Self;  -- Return unchanged for chaining
+      end Tap;
+
    end Generic_Result;
 
 end Domain.Error.Result;
