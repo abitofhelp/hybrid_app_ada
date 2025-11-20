@@ -34,21 +34,10 @@ is
    --  Maximum name length for DTO (matches domain constraint)
    Max_Name_Length : constant := 100;
 
-   --  Bounded string for name in DTO
+   --  Bounded string for name in DTO. The DTO itself does not enforce
+   --  validity rules; domain logic is responsible for validation.
    package Name_Strings is new
      Ada.Strings.Bounded.Generic_Bounded_Length (Max => Max_Name_Length);
-
-   --  Predicate function for valid names
-   --  Ensures name is not empty (checked at runtime when subtype is used)
-   --  Note: Max length is enforced by Bounded_String itself
-   function Is_Valid_Name (S : Name_Strings.Bounded_String) return Boolean
-   is (Name_Strings.Length (S) > 0)
-   with Inline;
-
-   --  Subtype with predicate to ensure names are always valid (non-empty)
-   --  The Predicate aspect will check this constraint at runtime
-   subtype Valid_Name is Name_Strings.Bounded_String
-   with Dynamic_Predicate => Is_Valid_Name (Valid_Name);
 
    --  ========================================================================
    --  Greet_Command DTO
@@ -56,16 +45,17 @@ is
 
    --  Data Transfer Object for greet use case.
    --  Simple data structure that crosses presentation -> application
-   --  boundary. Uses Valid_Name subtype to ensure name is never empty
+   --  boundary. It may carry invalid data; the domain layer is responsible
+   --  for validating the name and returning appropriate Result errors.
 
    type Greet_Command is record
-      Name : Valid_Name;
+      Name : Name_Strings.Bounded_String;
    end record;
 
-   --  Helper function to create DTO from String
-   --  Precondition ensures name is valid before construction
-   function Create (Name : String) return Greet_Command
-   with Pre => Name'Length > 0 and Name'Length <= Max_Name_Length;
+   --  Helper function to create DTO from String. This function does not
+   --  perform validation; it simply packages the raw input. Validation is
+   --  performed in Domain.Value_Object.Person.Create via Result.
+   function Create (Name : String) return Greet_Command;
 
    --  Helper function to extract name as String
    function Get_Name (Cmd : Greet_Command) return String;

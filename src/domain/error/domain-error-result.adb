@@ -99,10 +99,12 @@ package body Domain.Error.Result is
       ------------
 
       function Expect (Self : Result; Message : String) return T is
-         pragma Unreferenced (Message);
       begin
-         --  Precondition ensures Is_Ok or raises Program_Error
-         return Self.Success_Value;
+         if Self.State = Ok_State then
+            return Self.Success_Value;
+         else
+            raise Program_Error with Message;
+         end if;
       end Expect;
 
       ---------

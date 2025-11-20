@@ -70,7 +70,8 @@ is
    --  Validation rules:
    --   1. Name must not be empty
    --   2. Name must not exceed Max_Name_Length
-   --   3. Name is trimmed (leading/trailing whitespace removed)
+   --   3. Name may contain spaces and Unicode characters; whitespace is
+   --      preserved exactly as provided
    --
    --  Returns: Result[Person] - Ok if valid, Error if validation fails
    function Create (Name : String) return Person_Result.Result

@@ -14,7 +14,7 @@ pragma Ada_2022;
 --    - Handles UI concerns: argument parsing, formatting, error display
 --    - Calls application layer use cases (through inward ports)
 --    - Does NOT contain business logic (delegates to application)
---    - Does NOT depend on Infrastructure (only Application + Domain)
+--    - Does NOT depend on Infrastructure (only Application)
 --
 --  Design Pattern:
 --    Presentation layer in Clean Architecture / Hexagonal Architecture.
