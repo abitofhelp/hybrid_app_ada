@@ -44,24 +44,38 @@ project Hybrid_App_Ada is
    Mode : Mode_Type := external ("mode", "development");
 
    -- ==========================================================================
+   -- Platform Detection for Cross-Platform Support
+   -- ==========================================================================
+   --
+   -- Supported platforms: macOS, Linux, Windows
+   -- Uses Alire_Host_OS from config (set by Alire based on build host)
+   -- ==========================================================================
+   type OS_Type is ("macos", "linux", "windows");
+   OS : OS_Type := external ("OS", Hybrid_App_Ada_Config.Alire_Host_OS);
+
+   -- ==========================================================================
    -- Compiler Package: Ada 2022 Standards and Best Practices
    -- ==========================================================================
    package Compiler is
 
       -- Common switches applied to all build modes
       Common_Switches := (
-         "-gnat2022",        -- Ada 2022 mode
-         "-gnatf",           -- Full error messages
-         "-gnatw.k",         -- Variable could be constant
-         "-gnatw.m",         -- Variable assigned but never read
-         "-gnatw.o",         -- Modified but unreferenced out parameters
-         "-gnatw.r",         -- Redundant constructs
-         "-gnatw.u",         -- Unreferenced entities
-         "-gnatw.X",         -- Disable warnings on local exception propagation
-         "-gnatw.Y",         -- Disable warnings from system units
-         "-gnatwa",          -- All warnings
-         "-gnatwl",          -- Elaboration warnings
-         "-gnatwu",          -- Unused entities warnings
+                                 -- Flags that enable dead code elimination
+        "-fdata-sections",       -- Each variable gets its own ELF section
+        "-ffunction-sections",   -- Each function gets its own ELF section
+
+         "-gnat2022",            -- Ada 2022 mode
+         "-gnatf",               -- Full error messages
+         "-gnatw.k",             -- Variable could be constant
+         "-gnatw.m",             -- Variable assigned but never read
+         "-gnatw.o",             -- Modified but unreferenced out parameters
+         "-gnatw.r",             -- Redundant constructs
+         "-gnatw.u",             -- Unreferenced entities
+         "-gnatw.X",             -- Disable warnings on local exception propagation
+         "-gnatw.Y",             -- Disable warnings from system units
+         "-gnatwa",              -- All warnings
+         "-gnatwl",              -- Elaboration warnings
+         "-gnatwu",              -- Unused entities warnings
 
          -- Style checks (Ada Quality and Style Guide)
          "-gnatW8",           -- UTF-8 encoding
@@ -110,8 +124,6 @@ project Hybrid_App_Ada is
             --  Best for: Running test suites with good performance and debuggability
             --  Uses -Og: Optimizes for debugging (faster than -O0, still debuggable)
             for Default_Switches ("Ada") use Common_Switches & (
-               "-fdata-sections",
-               "-ffunction-sections",
                "-g",            -- Debug info
                "-gnata",        -- Enable assertions and contracts
                "-gnateE",       -- Extra info in exceptions
@@ -138,9 +150,7 @@ project Hybrid_App_Ada is
             --  Note: -O2 used instead of -O3 (usually faster in practice)
             for Default_Switches ("Ada") use Common_Switches & (
                "-O2",           -- Optimization level 2 (not -O3)
-               "-gnatn",        -- Enable inlining
-               "-ffunction-sections",
-               "-fdata-sections"
+               "-gnatn"         -- Enable inlining
                --  Note: Add -gnatp (suppress checks) ONLY if:
                --    1. Profiling proves it necessary, AND
                --    2. Code has been formally verified/thoroughly tested
@@ -188,10 +198,49 @@ project Hybrid_App_Ada is
    end Documentation;
 
    -- ==========================================================================
-   -- Linker Package: Required Libraries
+   -- Linker Package: Platform-Specific Configuration
+   -- ==========================================================================
+   --
+   -- Linker flags vary by platform:
+   --   macOS   : Uses Apple ld64 linker, requires -Wl,-dead_strip
+   --   Linux   : Uses GNU ld linker, requires -Wl,--gc-sections
+   --   Windows : Uses MinGW (GNU ld), requires -Wl,--gc-sections
+   --
+   -- All platforms:
+   --   -lgnarl   : GNAT runtime library for tasking (required by libadalang)
+   --   -lpthread : POSIX threads (required on Unix-like systems)
+   --
+   -- Dead code elimination flags work with -ffunction-sections and
+   -- -fdata-sections (set in Compiler package) to remove unused code
+   -- from the final binary, reducing size significantly when linking
+   -- against large libraries like libadalang, libgpr2, gnatcoll, etc.
    -- ==========================================================================
    package Linker is
-      for Linker_Options use ("-lgnarl", "-lgnat");
+      case OS is
+         when "macos" =>
+            --  macOS uses Apple's ld64 which doesn't support GNU's --gc-sections
+            for Switches ("Ada") use (
+               "-lgnarl",
+               "-lpthread",
+               "-Wl,-dead_strip"    -- Apple ld64: Remove unused code/data
+            );
+
+         when "linux" =>
+            --  Linux uses GNU ld
+            for Switches ("Ada") use (
+               "-lgnarl",
+               "-lpthread",
+               "-Wl,--gc-sections"  -- GNU ld: Garbage collect unused sections
+            );
+
+         when "windows" =>
+            --  Windows (MinGW) uses GNU ld
+            for Switches ("Ada") use (
+               "-lgnarl",
+               "-lpthread",
+               "-Wl,--gc-sections"  -- GNU ld: Garbage collect unused sections
+            );
+      end case;
    end Linker;
 
    package Install is
