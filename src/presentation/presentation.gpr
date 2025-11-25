@@ -1,0 +1,55 @@
+-- ==========================================================================
+-- Presentation Layer GPR - Presentation Library Build Configuration
+-- ==========================================================================
+-- Copyright (c) 2025 Michael Gardner, A Bit of Help, Inc.
+-- SPDX-License-Identifier: BSD-3-Clause
+--
+-- Purpose:
+--   Builds the presentation layer as a standalone static library.
+--   Only depends on Application layer (NOT Domain directly).
+--   Configured to prevent transitive dependency exposure.
+-- ==========================================================================
+
+with "../../shared_config.gpr";
+with "../application/application.gpr";
+
+library project Presentation is
+
+   for Source_Dirs use (".", "cli", "cli/command");
+   for Object_Dir use "../../obj/presentation";
+   for Library_Dir use "../../lib/presentation";
+   for Library_Name use "presentation";
+   for Library_Kind use "static";
+
+   --  ======================================================================
+   --  Stand-Alone Library Configuration - ARCHITECTURAL ENFORCEMENT
+   --  ======================================================================
+   --
+   --  WHY: Presentation layer handles user interface (CLI).
+   --       It depends ONLY on Application layer, NOT Domain directly.
+   --
+   --  CRITICAL RULE:
+   --    Presentation → Application only (no transitive Domain access)
+   --    Application.gpr's Library_Interface excludes Domain.* packages
+   --
+   --  HOW IT WORKS:
+   --    - Library_Standalone prevents transitive dependencies
+   --    - Library_Interface lists Presentation.* packages
+   --    - Uses Application.Error (not Domain.Error) for error types
+   --
+   --  VALIDATED BY: scripts/arch_guard.py
+   --  ======================================================================
+
+   for Library_Standalone use "standard";
+
+   for Library_Interface use
+     ("Presentation",
+      "Presentation.CLI",
+      "Presentation.CLI.Command",
+      "Presentation.CLI.Command.Greet");
+
+   package Compiler renames Shared_Config.Compiler;
+   package Binder renames Shared_Config.Binder;
+   package Builder renames Shared_Config.Builder;
+
+end Presentation;

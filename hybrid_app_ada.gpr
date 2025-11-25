@@ -9,18 +9,32 @@
 --   Main executable project for the greeter CLI application.
 --   Demonstrates hexagonal architecture (DDD/Clean/Hex) with dependency
 --   inversion, ports & adapters, and Result monad error handling.
---   Contains domain, application, infrastructure, presentation, and
---   bootstrap layers in a single project.
+--
+--   ARCHITECTURE ENFORCEMENT:
+--   Uses layer-specific GPR files with Library_Standalone to enforce
+--   architectural boundaries at compile time:
+--   - Domain: No dependencies (innermost layer)
+--   - Application: Depends only on Domain
+--   - Infrastructure: Depends on Domain + Application
+--   - Presentation: Depends only on Application (NOT Domain directly)
+--   - Bootstrap: Depends on all layers (composition root)
 --
 -- Produces: bin/greeter executable
 -- Publishable: YES - The executable binary
+--
+-- Build Options:
+--   alr build                    - Build with Alire (uses this GPR)
+--   gprbuild -P src/bootstrap/bootstrap.gpr  - Build via layer GPRs
 -- ===========================================================================
 
 with "config/hybrid_app_ada_config.gpr";
+with "src/bootstrap/bootstrap.gpr";
 
 project Hybrid_App_Ada is
 
-   for Source_Dirs use ("src/**");
+   --  Delegate to Bootstrap project for actual sources
+   --  This ensures layer GPRs are used for architectural enforcement
+   for Source_Dirs use ();
    for Exec_Dir use "bin";
    for Main use ("greeter.adb");
 

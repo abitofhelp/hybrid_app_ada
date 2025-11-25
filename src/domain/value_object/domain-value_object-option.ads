@@ -21,13 +21,13 @@ pragma Ada_2022;
 --
 --    package String_Option is new Domain.Value_Object.Option (T => String);
 --
---    Opt : String_Option.Option := String_Option.Some ("value");
+--    Opt : String_Option.Option := String_Option.Of_Value ("value");
 --    if String_Option.Is_Some (Opt) then
 --       Process (String_Option.Value (Opt));
 --    end if;
 --
 --  Design Pattern:
---    - Some (value): Contains a value
+--    - Of_Value (value): Contains a value (named to avoid reserved 'Some')
 --    - None: No value present
 --    - Forces explicit handling of missing values at compile time
 --
@@ -57,11 +57,12 @@ is
       --  Constructors
       --  =====================================================================
 
-      function Some (Value : T) return Option
+      function Of_Value (Value : T) return Option
       with
          Inline,
-         Post => Is_Some (Some'Result);
-      --  Create an Option containing a value
+         Post => Is_Some (Of_Value'Result);
+      --  Create an Option containing a value (named 'Of_Value' since 'Some'
+      --  is a reserved word in Ada 2012+ for quantified expressions)
 
       function None return Option
       with

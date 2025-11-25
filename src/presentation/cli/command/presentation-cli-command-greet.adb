@@ -67,11 +67,17 @@ package body Presentation.CLI.Command.Greet is
 
                --  Add detailed error handling based on Error_Kind
                case Error_Info.Kind is
-                  when Application.Error.Validation_Error     =>
+                  when Application.Error.Validation_Error =>
                      Put_Line ("Please provide a valid name.");
 
-                  when Application.Error.Infrastructure_Error =>
+                  when Application.Error.IO_Error =>
+                     Put_Line ("An I/O error occurred.");
+
+                  when Application.Error.System_Error =>
                      Put_Line ("A system error occurred.");
+
+                  when Application.Error.Unknown_Error =>
+                     Put_Line ("An unexpected error occurred.");
                end case;
 
                return 1;  --  Exit code 1 indicates error

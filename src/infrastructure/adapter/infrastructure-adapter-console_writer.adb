@@ -14,14 +14,14 @@ pragma Ada_2022;
 with Ada.Text_IO;
 with Ada.Exceptions;
 with Domain.Error;
-with Application.Model.Unit;
+with Domain.Unit;
 with Functional.Result;
 with Functional.Try;
 
 package body Infrastructure.Adapter.Console_Writer is
 
    use Application.Port.Outward.Writer;
-   use Application.Model.Unit;
+   use Domain.Unit;
    use Ada.Exceptions;
 
    --  ========================================================================
@@ -49,7 +49,7 @@ package body Infrastructure.Adapter.Console_Writer is
    pragma Style_Checks (On);
    begin
       return
-        (Kind    => Domain.Error.Infrastructure_Error,
+        (Kind    => Domain.Error.IO_Error,
          Message =>
            Domain.Error.Error_Strings.To_Bounded_String
              ("Console write failed: " & Exception_Name (Exc)));

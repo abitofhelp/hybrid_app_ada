@@ -30,7 +30,9 @@ pragma Ada_2022;
 --    Error : constant Error_Type := ...
 --    case Error.Kind is
 --       when Validation_Error => ...
---       when Infrastructure_Error => ...
+--       when IO_Error => ...
+--       when System_Error => ...
+--       when Unknown_Error => ...
 --    end case;
 --
 --  See Also:
@@ -55,9 +57,10 @@ is
    subtype Error_Kind is Domain.Error.Error_Kind;
 
    --  Bring Error_Kind values into scope for convenience
-   Validation_Error     : constant Error_Kind := Domain.Error.Validation_Error;
-   Infrastructure_Error : constant Error_Kind :=
-     Domain.Error.Infrastructure_Error;
+   Validation_Error : constant Error_Kind := Domain.Error.Validation_Error;
+   IO_Error         : constant Error_Kind := Domain.Error.IO_Error;
+   System_Error     : constant Error_Kind := Domain.Error.System_Error;
+   Unknown_Error    : constant Error_Kind := Domain.Error.Unknown_Error;
 
    --  Concrete error record (kind + message)
    subtype Error_Type is Domain.Error.Error_Type;

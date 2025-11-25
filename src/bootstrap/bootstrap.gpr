@@ -1,0 +1,56 @@
+-- ==========================================================================
+-- Bootstrap Layer GPR - Main Executable Build Configuration
+-- ==========================================================================
+-- Copyright (c) 2025 Michael Gardner, A Bit of Help, Inc.
+-- SPDX-License-Identifier: BSD-3-Clause
+--
+-- Purpose:
+--   Builds the bootstrap layer as the main executable project.
+--   Can depend on all layers for dependency injection wiring.
+--   This is the composition root that produces the final executable.
+-- ==========================================================================
+
+with "../../shared_config.gpr";
+with "../domain/domain.gpr";
+with "../application/application.gpr";
+with "../infrastructure/infrastructure.gpr";
+with "../presentation/presentation.gpr";
+
+project Bootstrap is
+
+   --  Include bootstrap sources and main entry point
+   for Source_Dirs use (".", "cli", "..");
+   for Object_Dir use "../../obj/bootstrap";
+   for Exec_Dir use "../../bin";
+   for Main use ("greeter.adb");
+
+   --  ======================================================================
+   --  Bootstrap: Composition Root / Aggregate Root
+   --  ======================================================================
+   --
+   --  WHY: Bootstrap is the ONLY place where all layers meet.
+   --       It performs dependency injection via generic instantiation.
+   --       As the aggregate root, it orchestrates the entire application
+   --       lifecycle and serves as the single entry point.
+   --
+   --  ARCHITECTURE:
+   --    Bootstrap depends on ALL layers (special case - outermost)
+   --    - Domain: Core business logic
+   --    - Application: Use cases and ports
+   --    - Infrastructure: Adapter implementations
+   --    - Presentation: CLI handlers
+   --
+   --  RESPONSIBILITIES:
+   --    - Instantiate generics with concrete implementations
+   --    - Wire all layers together (dependency injection)
+   --    - Produce the final executable
+   --    - Serve as the aggregate root for application startup
+   --
+   --  VALIDATED BY: scripts/arch_guard.py
+   --  ======================================================================
+
+   package Compiler renames Shared_Config.Compiler;
+   package Binder renames Shared_Config.Binder;
+   package Builder renames Shared_Config.Builder;
+
+end Bootstrap;

@@ -50,9 +50,12 @@ is
    --  ========================================================================
 
    --  Categories of errors that can occur in the application
+   --  More granular than a single "Infrastructure_Error" for better handling
    type Error_Kind is
-     (Validation_Error,      --  Domain validation failures (invalid input)
-      Infrastructure_Error); --  Infrastructure failures (I/O, network, DB)
+     (Validation_Error,  --  Domain validation failures (invalid input, business rules)
+      IO_Error,          --  I/O operations (file, network, console)
+      System_Error,      --  System-level errors (OS, runtime, resources)
+      Unknown_Error);    --  Unexpected errors (catch-all for unanticipated cases)
 
    --  ========================================================================
    --  Error Type Record

@@ -46,7 +46,7 @@ package Infrastructure.Adapter.Console_Writer is
    --
    --  Returns:
    --  - Ok(Unit) if write successful
-   --  - Error(Infrastructure_Error) if IO operation fails
+   --  - Error(IO_Error) if IO operation fails
 
    function Write
      (Message : String)

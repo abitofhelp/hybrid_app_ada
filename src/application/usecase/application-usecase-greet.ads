@@ -72,7 +72,7 @@ package Application.Usecase.Greet with Preelaborate is
    --
    --  Error scenarios:
    --  - Validation_Error: Invalid person name (empty, too long)
-   --  - Infrastructure_Error: Console write failure (rare, but possible)
+   --  - IO_Error: Console write failure (rare, but possible)
 
    function Execute
      (Cmd : Application.Command.Greet.Greet_Command)

@@ -1,17 +1,20 @@
 -- ===========================================================================
--- Application.gpr - Application Layer (Architectural Documentation)
+-- Application Layer GPR - Application Library Build Configuration
 -- ===========================================================================
 -- Copyright (c) 2025 Michael Gardner, A Bit of Help, Inc.
 -- SPDX-License-Identifier: BSD-3-Clause
 --
 -- Purpose:
---   Architectural boundary documentation for Application layer.
---   This file exists for arch_guard.py validation only.
---   Actual builds use hybrid_app_ada.gpr (single-project mode).
+--   Builds the application layer as a standalone static library.
+--   Only depends on Domain layer.
+--   Configured to prevent transitive dependency exposure.
 --
 -- Dependencies: Domain layer only
--- Visibility: Used by Presentation and Bootstrap layers
+-- Visibility: Used by Infrastructure, Presentation, and Bootstrap layers
 -- ===========================================================================
+
+with "../../shared_config.gpr";
+with "../domain/domain.gpr";
 
 library project Application is
 
@@ -59,5 +62,9 @@ library project Application is
       "Application.Port.Outward.Writer",
       "Application.Usecase",
       "Application.Usecase.Greet");
+
+   package Compiler renames Shared_Config.Compiler;
+   package Binder renames Shared_Config.Binder;
+   package Builder renames Shared_Config.Builder;
 
 end Application;

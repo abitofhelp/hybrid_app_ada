@@ -10,14 +10,14 @@ package body Domain.Value_Object.Option is
 
    package body Generic_Option is
 
-      ----------
-      -- Some --
-      ----------
+      --------------
+      -- Of_Value --
+      --------------
 
-      function Some (Value : T) return Option is
+      function Of_Value (Value : T) return Option is
       begin
          return (Kind => Some_Kind, Value_Data => Value);
-      end Some;
+      end Of_Value;
 
       ----------
       -- None --
@@ -88,7 +88,7 @@ package body Domain.Value_Object.Option is
       function Map (Self : Option) return Option is
       begin
          if Self.Kind = Some_Kind then
-            return Some (F (Self.Value_Data));
+            return Of_Value (F (Self.Value_Data));
          else
             return Self;  -- Propagate None
          end if;

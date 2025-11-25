@@ -25,13 +25,13 @@ pragma Ada_2022;
 --    4. Zero runtime overhead - compile-time resolution
 --
 --  See Also:
---    Domain.Result - Result type definition
---    Application.Model.Unit - Unit type for void returns
+--    Domain.Error.Result - Result type definition
+--    Domain.Unit - Unit type for void returns
 --    Infrastructure.Adapter.Console_Writer - Example
 --    implementation of this port
 
 with Domain.Error.Result;
-with Application.Model.Unit;
+with Domain.Unit;
 
 package Application.Port.Outward.Writer
   with Preelaborate
@@ -39,7 +39,7 @@ is
 
    --  Instantiate Result[Unit] for write operations
    package Unit_Result is new
-     Domain.Error.Result.Generic_Result (T => Application.Model.Unit.Unit);
+     Domain.Error.Result.Generic_Result (T => Domain.Unit.Unit);
 
    --  ========================================================================
    --  Generic Writer
