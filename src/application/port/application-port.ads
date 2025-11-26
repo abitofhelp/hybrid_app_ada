@@ -12,12 +12,12 @@ pragma Ada_2022;
 --  Architecture Notes:
 --    - Part of the APPLICATION layer
 --    - Implements HEXAGONAL/PORTS & ADAPTERS pattern
---    - Inward ports: How external actors use the application (use cases)
---    - Outward ports: How the application uses external systems
+--    - Inbound ports: How external actors use the application (use cases)
+--    - Outbound ports: How the application uses external systems
 --
 --  See Also:
---    Application.Port.Inward - Input ports (how to call the app)
---    Application.Port.Outward - Output ports (what the app needs)
+--    Application.Port.Inbound - Input ports (how to call the app)
+--    Application.Port.Outbound - Output ports (what the app needs)
 --  =========================================================================
 
 package Application.Port

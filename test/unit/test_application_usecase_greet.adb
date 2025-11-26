@@ -15,7 +15,7 @@ with Ada.Text_IO;
 with Ada.Strings.Fixed;
 with Ada.Strings.Unbounded;
 with Application.Command.Greet;
-with Application.Port.Outward.Writer;
+with Application.Port.Outbound.Writer;
 with Application.Model.Unit;
 with Application.Usecase.Greet;
 with Domain.Error;
@@ -26,7 +26,7 @@ procedure Test_Application_Usecase_Greet is
    use Ada.Text_IO;
    use Ada.Strings.Unbounded;
    use Application.Command.Greet;
-   use Application.Port.Outward.Writer;
+   use Application.Port.Outbound.Writer;
    use Application.Model.Unit;
    use Domain.Error;
 
@@ -77,8 +77,8 @@ procedure Test_Application_Usecase_Greet is
    begin
       return
         Unit_Result.Error
-          (Kind    => Infrastructure_Error,
-           Message => "Mock writer infrastructure failure");
+          (Kind    => IO_Error,
+           Message => "Mock writer IO failure");
    end Mock_Writer_Failure;
    pragma Style_Checks (On);
 
@@ -153,8 +153,8 @@ begin
             Info : constant Error_Type := Unit_Result.Error_Info (Result);
          begin
             Run_Test
-              ("Execute with writer failure - error kind is Infrastructure",
-               Info.Kind = Infrastructure_Error);
+              ("Execute with writer failure - error kind is IO_Error",
+               Info.Kind = IO_Error);
             Run_Test
               ("Execute with writer failure - error message contains 'Mock'",
                Ada.Strings.Fixed.Index

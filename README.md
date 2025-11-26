@@ -21,7 +21,7 @@ This is a **desktop/enterprise application template** showcasing:
 
 ### Layer Structure
 
-![Layer Dependencies](docs/diagrams/01_layer_dependencies.svg)
+![Layer Dependencies](docs/diagrams/layer_dependencies.svg)
 
 **5 Layers (Dependency Rule: All dependencies point INWARD)**:
 
@@ -73,7 +73,7 @@ hybrid_app_ada/
 
 ### Key Architectural Rules
 
-![Application Error Pattern](docs/diagrams/02_application_error_pattern.svg)
+![Application Error Pattern](docs/diagrams/application_error_pattern.svg)
 
 **Critical Boundary Rule:**
 > **Presentation is the ONLY outer layer prevented from direct Domain access**
@@ -108,7 +108,7 @@ end Application.Error;
 
 ## Static Dispatch Dependency Injection
 
-![Static vs Dynamic Dispatch](docs/diagrams/05_static_vs_dynamic_dispatch.svg)
+![Static vs Dynamic Dispatch](docs/diagrams/dynamic_static_dispatch.svg)
 
 ### Most Developers Think: Dynamic Dispatch (Interfaces)
 
@@ -147,7 +147,7 @@ end Execute;
 ```ada
 -- Step 1: Wire Infrastructure → Port
 package Writer_Port_Instance is new
-  Application.Port.Outward.Writer.Generic_Writer
+  Application.Port.Outbound.Writer.Generic_Writer
     (Write => Infrastructure.Adapter.Console_Writer.Write);
 
 -- Step 2: Wire Use Case → Port
@@ -157,7 +157,7 @@ package Greet_UseCase_Instance is new
 
 -- Step 3: Wire Command → Use Case
 package Greet_Command_Instance is new
-  Presentation.CLI.Command.Greet
+  Presentation.Adapter.CLI.Command.Greet
     (Execute_Greet_UseCase => Greet_UseCase_Instance.Execute);
 
 -- Step 4: Run
@@ -177,7 +177,7 @@ return Greet_Command_Instance.Run;
 
 ## Error Handling: Railway-Oriented Programming
 
-![Error Handling Flow](docs/diagrams/04_error_handling_flow.svg)
+![Error Handling Flow](docs/diagrams/error_handling_flow.svg)
 
 **NO EXCEPTIONS across layer boundaries.** All errors propagate via Result monad:
 
@@ -449,11 +449,12 @@ The `scripts/arch_guard.py` script validates:
 ## Documentation
 
 - **Diagrams:** `docs/diagrams/*.svg` (generated from PlantUML)
-  - 01_layer_dependencies.svg - 5-layer architecture
-  - 02_application_error_pattern.svg - Re-export pattern
-  - 03_package_structure.svg - Actual packages
-  - 04_error_handling_flow.svg - Error propagation
-  - 05_static_vs_dynamic_dispatch.svg - DI pattern comparison
+  - layer_dependencies.svg - 5-layer architecture
+  - application_error_pattern.svg - Re-export pattern
+  - package_structure.svg - Actual packages
+  - error_handling_flow.svg - Error propagation
+  - static_dispatch.svg - Static DI with generics
+  - dynamic_static_dispatch.svg - Static vs dynamic comparison
 - **SDS:** `docs/software_design_specification.md`
 - **SRS:** `docs/software_requirements_specification.md`
 - **Test Guide:** `docs/software_test_guide.md`

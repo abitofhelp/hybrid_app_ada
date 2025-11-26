@@ -14,7 +14,7 @@ pragma Ada_2022;
 --    - Use cases = Application business logic orchestration
 --    - Depends on: Domain (for entities/logic), Ports (for I/O)
 --    - Does NOT depend on: Infrastructure or Presentation
---    - Use cases ARE the inward ports (application's public API)
+--    - Use cases ARE the inbound ports (application's public API)
 --
 --  Design Pattern:
 --    Use case pattern from Clean Architecture:

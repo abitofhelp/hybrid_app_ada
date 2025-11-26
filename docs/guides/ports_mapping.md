@@ -169,7 +169,7 @@ func (uc *GreetUseCase[W]) Execute(ctx context.Context, cmd GreetCommand) mo.Res
 }
 ```
 
-**Usage in Presentation** (`presentation/cli/greet_command.go`):
+**Usage in Presentation** (`presentation/adapter/cli/greet_command.go`):
 
 ```go
 type GreetCommand struct {

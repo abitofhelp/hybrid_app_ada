@@ -20,7 +20,7 @@ with Functional.Try;
 
 package body Infrastructure.Adapter.Console_Writer is
 
-   use Application.Port.Outward.Writer;
+   use Application.Port.Outbound.Writer;
    use Domain.Unit;
    use Ada.Exceptions;
 
@@ -106,7 +106,7 @@ package body Infrastructure.Adapter.Console_Writer is
 
    function Write
      (Message : String)
-      return Application.Port.Outward.Writer.Unit_Result.Result
+      return Application.Port.Outbound.Writer.Unit_Result.Result
    is
       FR : constant Unit_Functional_Result.Result := Write_With_Try (Message);
    begin

@@ -1,16 +1,16 @@
 pragma Ada_2022;
 --  =========================================================================
---  Application.Port.Outward - Parent package for outward/output ports
+--  Application.Port.Outbound - Parent package for outbound/output ports
 --  =========================================================================
 --  Copyright (c) 2025 Michael Gardner, A Bit of Help, Inc.
 --  SPDX-License-Identifier: BSD-3-Clause
 --
 --  Purpose:
---    Parent package for outward-facing ports (output ports).
---    Outward ports define what external services the application needs.
+--    Parent package for outbound-facing ports (output ports).
+--    Outbound ports define what external services the application needs.
 --
 --  Architecture Notes:
---    - Outward ports = Application's REQUIRED dependencies
+--    - Outbound ports = Application's REQUIRED dependencies
 --    - Implemented by: Infrastructure layer (adapters)
 --    - Application DEFINES the interface it needs
 --    - Infrastructure CONFORMS to that interface
@@ -22,12 +22,12 @@ pragma Ada_2022;
 --    - Bootstrap: Wires them together via generic instantiation
 --
 --  See Also:
---    Application.Port.Outward.Writer - Writer output port
+--    Application.Port.Outbound.Writer - Writer output port
 --    Infrastructure.Adapter - Implementations of output ports
 --  =========================================================================
 
-package Application.Port.Outward
+package Application.Port.Outbound
   with Pure
 is
 
-end Application.Port.Outward;
+end Application.Port.Outbound;

@@ -1,0 +1,171 @@
+@startuml static_dispatch
+!theme plain
+skinparam linetype ortho
+
+title Static Dispatch via Generics\nDependency Injection in Ada
+
+package "Infrastructure Layer" #E6F3FF {
+  class "Console_Writer" as CW <<package>> {
+    +Write(Message : String) : Result
+    --
+    Concrete implementation
+    of output port
+  }
+}
+
+package "Application Layer" #E8F5E9 {
+  class "Console_Port" as Port <<generic package>> {
+    generic
+      with function Write(...) : Result
+    --
+    **Output Port Contract**
+    Defines what infrastructure
+    must provide
+  }
+
+  class "Use_Case" as UC <<generic package>> {
+    generic
+      with function Console_Write(...) : Result
+    +Execute(Cmd) : Result
+    --
+    **Use Case Logic**
+    Generic over writer function
+  }
+}
+
+package "Presentation Layer" #FFE4E1 {
+  class "Greet_Command" as Cmd <<generic package>> {
+    generic
+      with function Execute(...) : Result
+    +Run() : Integer
+    --
+    **CLI Handler**
+    Generic over use case
+  }
+}
+
+package "Bootstrap Layer" #FFEBCD {
+  class "Composition Root" as Boot <<main procedure>> {
+    Console_Port_Inst
+    Greet_UC
+    Greet_Cmd
+    --
+    **Wires Everything**
+    All generics instantiated
+    with concrete functions
+  }
+}
+
+' Relationships
+CW ..> Port : implements
+Port ..> UC : provides function
+UC ..> Cmd : provides function
+Boot -down-> CW : instantiates with
+Boot -down-> Port : instantiates
+Boot -down-> UC : instantiates
+Boot -down-> Cmd : instantiates
+
+note right of Boot #CCFFCC
+  **Bootstrap Instantiation**
+  ═══════════════════════════════════
+
+  ```ada
+  -- 1. Infrastructure provides concrete Write
+  --    (Console_Writer.Write already exists)
+
+  -- 2. Instantiate Console Port with concrete Write
+  package Console_Port_Inst is new
+    Application.Console_Port.Port
+      (Write => Console_Writer.Write);
+
+  -- 3. Instantiate Use Case with Port's Write
+  package Greet_UC is new
+    Application.Usecase.Greet.Use_Case
+      (Console_Write => Console_Port_Inst.Write_Message);
+
+  -- 4. Instantiate Command with Use Case's Execute
+  package Greet_Cmd is new
+    Presentation.Greet_Command.Command
+      (Execute_Greet_Use_Case => Greet_UC.Execute);
+
+  -- 5. Run the application
+  Exit_Code := Greet_Cmd.Run;
+  ```
+end note
+
+note bottom of UC
+  **Generic Use Case**
+  ═══════════════════════════════════
+
+  ```ada
+  generic
+     with function Console_Write (Message : String)
+       return Console_Port.Unit_Result.Result;
+  package Application.Usecase.Greet.Use_Case is
+
+     function Execute (Cmd : Greet_Command.Command)
+       return Console_Port.Unit_Result.Result;
+
+  end Application.Usecase.Greet.Use_Case;
+  ```
+
+  **Key:** `with function` parameter
+  binds concrete function at instantiation
+end note
+
+note bottom of Cmd
+  **Generic Command**
+  ═══════════════════════════════════
+
+  ```ada
+  generic
+     with function Execute_Greet_Use_Case
+       (Cmd : Application.Greet_Command.Command)
+        return Application.Console_Port.Unit_Result.Result;
+  package Presentation.Greet_Command.Command is
+
+     function Run return Integer;
+
+  end Presentation.Greet_Command.Command;
+  ```
+
+  **Key:** `with function` parameter
+  binds use case at instantiation
+end note
+
+legend right
+  **Static Dispatch Benefits**
+  ═══════════════════════════════════════
+
+  **Performance:**
+  • Zero runtime overhead
+  • All calls resolved at compile time
+  • Subprogram calls can be inlined
+  • No tagged type dispatching
+
+  **Type Safety:**
+  • Full compile-time checking
+  • Instantiation errors caught early
+  • No runtime type mismatches
+
+  **Architecture:**
+  • Clean dependency inversion
+  • Infrastructure implements ports
+  • Application defines contracts
+  • Bootstrap wires everything
+
+  **Ada Generic Pattern**
+  ═══════════════════════════════════════
+  • `generic` introduces formal parameters
+  • `with function` is a formal subprogram
+  • Instantiation binds concrete functions
+  • Compiler generates specialized code
+
+  **Same Pattern as Go Generics:**
+  • Go: `GreetUseCase[W WriterPort]`
+  • Ada: `generic with function Write`
+  • Both achieve static dispatch
+  • Both have zero runtime overhead
+endlegend
+
+@enduml

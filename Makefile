@@ -15,7 +15,7 @@
 PROJECT_NAME := hybrid_app_ada
 
 .PHONY: all build build-dev build-opt build-release build-tests build-profiles check check-arch \
-        clean clean-clutter clean-coverage clean-deep compress deps \
+        clean clean-clutter clean-coverage clean-deep compress deps diagrams \
 		help prereqs rebuild refresh stats test test-all test-coverage \
 		test-integration test-unit test-e2e test-examples test-python \
 		build-examples examples run-examples install-tools build-coverage-runtime
@@ -558,6 +558,15 @@ install-tools: ## Install development tools (GMP, gcovr, gnatformat)
 build-coverage-runtime: ## Build GNATcoverage runtime library
 	@echo "$(CYAN)Building GNATcoverage runtime...$(NC)"
 	@$(PYTHON3) scripts/makefile/build_gnatcov_runtime.py
+
+diagrams: ## Generate SVG diagrams from PlantUML sources
+	@echo "$(CYAN)Generating SVG diagrams from PlantUML...$(NC)"
+	@command -v plantuml >/dev/null 2>&1 || { echo "$(RED)Error: plantuml not found. Install with: brew install plantuml$(NC)"; exit 1; }
+	@cd docs/diagrams && for f in *.puml; do \
+		echo "  Processing $$f..."; \
+		plantuml -tsvg "$$f"; \
+	done
+	@echo "$(GREEN)✓ Diagrams generated$(NC)"
 
 .DEFAULT_GOAL := help
 

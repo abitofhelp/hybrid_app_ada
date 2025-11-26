@@ -1,6 +1,6 @@
 pragma Ada_2022;
 --  =========================================================================
---  Application.Port.Outward.Writer - Output port for writing operations
+--  Application.Port.Outbound.Writer - Output port for writing operations
 --  =========================================================================
 --  Copyright (c) 2025 Michael Gardner, A Bit of Help, Inc.
 --  SPDX-License-Identifier: BSD-3-Clause
@@ -33,7 +33,7 @@ pragma Ada_2022;
 with Domain.Error.Result;
 with Domain.Unit;
 
-package Application.Port.Outward.Writer
+package Application.Port.Outbound.Writer
   with Preelaborate
 is
 
@@ -64,4 +64,4 @@ is
 
    end Generic_Writer;
 
-end Application.Port.Outward.Writer;
+end Application.Port.Outbound.Writer;

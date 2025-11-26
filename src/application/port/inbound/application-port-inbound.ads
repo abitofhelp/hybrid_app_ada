@@ -1,31 +1,31 @@
 pragma Ada_2022;
 --  =========================================================================
---  Application.Port.Inward - Parent package for inward/input ports
+--  Application.Port.Inbound - Parent package for inbound/input ports
 --  =========================================================================
 --  Copyright (c) 2025 Michael Gardner, A Bit of Help, Inc.
 --  SPDX-License-Identifier: BSD-3-Clause
 --
 --  Purpose:
---    Parent package for inward-facing ports (input ports).
---    Inward ports define how external actors invoke the application.
---    In this project, use cases ARE the inward ports.
+--    Parent package for inbound-facing ports (input ports).
+--    Inbound ports define how external actors invoke the application.
+--    In this project, use cases ARE the inbound ports.
 --
 --  Architecture Notes:
---    - Inward ports = Application's PUBLIC API
+--    - Inbound ports = Application's PUBLIC API
 --    - Called by: Presentation layer (CLI, Web, API)
 --    - Examples: Execute use case functions
---    - Flow: Presentation → Inward Port (Use Case) → Domain
+--    - Flow: Presentation → Inbound Port (Use Case) → Domain
 --
 --  Design Pattern:
---    Use cases themselves serve as inward ports, accepting DTOs
+--    Use cases themselves serve as inbound ports, accepting DTOs
 --    (commands) from the presentation layer.
 --
 --  See Also:
---    Application.Usecase - Use cases implement inward ports
+--    Application.Usecase - Use cases implement inbound ports
 --  =========================================================================
 
-package Application.Port.Inward
+package Application.Port.Inbound
   with Pure
 is
 
-end Application.Port.Inward;
+end Application.Port.Inbound;

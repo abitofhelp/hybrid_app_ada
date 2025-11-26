@@ -12,7 +12,7 @@ pragma Ada_2022;
 --  Architecture Notes:
 --    - Part of the PRESENTATION layer (outermost)
 --    - Handles UI concerns: argument parsing, formatting, error display
---    - Calls application layer use cases (through inward ports)
+--    - Calls application layer use cases (through inbound ports)
 --    - Does NOT contain business logic (delegates to application)
 --    - Does NOT depend on Infrastructure (only Application)
 --
@@ -21,7 +21,8 @@ pragma Ada_2022;
 --    Thin layer that translates user actions into use case calls.
 --
 --  See Also:
---    Presentation.CLI - Command-line interface implementation
+--    Presentation.Adapter - Driving adapters (CLI, REST, etc.)
+--    Presentation.Adapter.CLI - Command-line interface implementation
 --    Application.Usecase - Use cases called by presentation
 --  =========================================================================
 

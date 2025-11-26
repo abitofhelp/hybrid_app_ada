@@ -10,7 +10,7 @@ Both implementations follow **identical architecture** (Hybrid DDD/Clean/Hexagon
 
 ## File-by-File Mapping
 
-### Domain Layer (Pure Business Logic - ZERO external dependencies)
+### Domain Layer (Pure Business Logic - ZERO external crate dependencies)
 
 | Go | Ada | Notes |
 |----|-----|-------|
@@ -116,7 +116,7 @@ end Use_Case;
 
 | Go | Ada | Notes |
 |----|-----|-------|
-| `presentation/cli/greet_command.go` | `presentation/presentation-cli_controller.ads/adb` | ✅ Same: CLI command handler |
+| `presentation/adapter/cli/greet_command.go` | `presentation/adapter/cli/command/presentation-adapter-cli-command-greet.ads/adb` | ✅ Same: CLI command handler |
 
 **Naming**:
 - ⚠️ Go: `GreetCommand` → Ada: `CLI_Controller` (different name, same role)

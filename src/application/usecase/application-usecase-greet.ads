@@ -33,7 +33,7 @@ pragma Ada_2022;
 --    Application.Port.Out.Writer - Output port interface
 --  =========================================================================
 
-with Application.Port.Outward.Writer;
+with Application.Port.Outbound.Writer;
 with Application.Command.Greet;
 
 --  ========================================================================
@@ -46,14 +46,14 @@ with Application.Command.Greet;
 --  This demonstrates STATIC DEPENDENCY INJECTION via generics:
 --  - No runtime overhead (compared to interface dispatch)
 --  - Compile-time verification of port compatibility
---  - Dependencies still point inward (Application doesn't import
+--  - Dependencies still point inbound (Application doesn't import
 --    Infrastructure)
 
 generic
    with
      function Writer
        (Message : String)
-        return Application.Port.Outward.Writer.Unit_Result.Result;
+        return Application.Port.Outbound.Writer.Unit_Result.Result;
 package Application.Usecase.Greet with Preelaborate is
 
    --  ======================================================================
@@ -76,6 +76,6 @@ package Application.Usecase.Greet with Preelaborate is
 
    function Execute
      (Cmd : Application.Command.Greet.Greet_Command)
-      return Application.Port.Outward.Writer.Unit_Result.Result;
+      return Application.Port.Outbound.Writer.Unit_Result.Result;
 
 end Application.Usecase.Greet;

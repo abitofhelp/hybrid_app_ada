@@ -18,7 +18,7 @@ pragma Ada_2022;
 --    5. Bootstrap - Composition root wiring all layers together
 --
 --  Design Principles:
---    - Dependency Inversion: Dependencies point inward toward Domain
+--    - Dependency Inversion: Dependencies point inbound toward Domain
 --    - Static DI: Generic instantiation for zero-runtime-cost injection
 --    - Railway-Oriented Programming: Result monad for error handling
 --    - Ports & Adapters: Application defines interfaces,Infrastructure conform

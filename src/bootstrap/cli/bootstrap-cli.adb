@@ -8,9 +8,9 @@ pragma Ada_2022;
 
 --  Import all layers
 with Infrastructure.Adapter.Console_Writer;
-with Application.Port.Outward.Writer;
+with Application.Port.Outbound.Writer;
 with Application.Usecase.Greet;
-with Presentation.CLI.Command.Greet;
+with Presentation.Adapter.CLI.Command.Greet;
 
 package body Bootstrap.CLI is
 
@@ -25,12 +25,12 @@ package body Bootstrap.CLI is
       --  =====================================================================
 
       --  DEPENDENCY INVERSION in action:
-      --  - Application.Port.Outward.Writer defines the interface (port)
+      --  - Application.Port.Outbound.Writer defines the interface (port)
       --  - Infrastructure.Adapter.Console_Writer provides implementation
       --  - We wire them together here in the composition root
 
       package Writer_Port_Instance is new
-        Application.Port.Outward.Writer.Generic_Writer
+        Application.Port.Outbound.Writer.Generic_Writer
           (Write => Infrastructure.Adapter.Console_Writer.Write);
 
       --  =====================================================================
@@ -53,7 +53,7 @@ package body Bootstrap.CLI is
       --  Again, static dispatch - zero runtime overhead.
 
       package Greet_Command_Instance is new
-        Presentation.CLI.Command.Greet
+        Presentation.Adapter.CLI.Command.Greet
           (Execute_Greet_UseCase => Greet_UseCase_Instance.Execute);
 
    begin

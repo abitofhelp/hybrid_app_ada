@@ -169,7 +169,7 @@ Hybrid_App_Ada demonstrates **5-layer hexagonal architecture**:
 ```
 User Input ("Alice")
     ↓
-Presentation.CLI.Command.Greet (parses input)
+Presentation.Adapter.CLI.Command.Greet (parses input)
     ↓
 Application.UseCase.Greet (validates via Domain)
     ↓
@@ -414,7 +414,7 @@ ls -lh test/bin/
 
 - **[Software Design Specification](formal/software_design_specification.md)** - Deep dive into architecture
 - **[Architecture Diagrams](diagrams/)** - Visual documentation
-- **[Layer Dependencies](diagrams/01_layer_dependencies.svg)** - See dependency flow
+- **[Layer Dependencies](diagrams/layer_dependencies.svg)** - See dependency flow
 
 ### Read the Source Code
 
@@ -462,7 +462,8 @@ cat test/common/test_framework.ads
 
 ### Learn Dependency Injection
 
-- **[Static vs Dynamic Dispatch](diagrams/05_static_vs_dynamic_dispatch.svg)** - Generic-based DI
+- **[Static Dispatch](diagrams/static_dispatch.svg)** - Generic-based DI pattern
+- **[Static vs Dynamic](diagrams/dynamic_static_dispatch.svg)** - Pattern comparison
 - See Bootstrap wiring examples
 - Understand compile-time polymorphism
 

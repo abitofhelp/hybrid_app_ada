@@ -15,7 +15,7 @@ with "../application/application.gpr";
 
 library project Presentation is
 
-   for Source_Dirs use (".", "cli", "cli/command");
+   for Source_Dirs use (".", "adapter", "adapter/cli", "adapter/cli/command");
    for Object_Dir use "../../obj/presentation";
    for Library_Dir use "../../lib/presentation";
    for Library_Name use "presentation";
@@ -44,9 +44,10 @@ library project Presentation is
 
    for Library_Interface use
      ("Presentation",
-      "Presentation.CLI",
-      "Presentation.CLI.Command",
-      "Presentation.CLI.Command.Greet");
+      "Presentation.Adapter",
+      "Presentation.Adapter.CLI",
+      "Presentation.Adapter.CLI.Command",
+      "Presentation.Adapter.CLI.Command.Greet");
 
    package Compiler renames Shared_Config.Compiler;
    package Binder renames Shared_Config.Binder;

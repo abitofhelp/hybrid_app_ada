@@ -21,7 +21,7 @@ pragma Ada_2022;
 --
 --  See Also:
 --    Infrastructure.Adapter - Adapter implementations
---    Application.Port.Outward - Port interfaces that adapters implement
+--    Application.Port.Outbound - Port interfaces that adapters implement
 --  =========================================================================
 
 package Infrastructure

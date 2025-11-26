@@ -18,12 +18,12 @@ pragma Ada_2022;
 --  Wiring Flow:
 --    1. Infrastructure.Console_Writer implements Writer port signature
 --    2. Instantiate Application.Usecase.Greet with Console_Writer
---    3. Instantiate Presentation.CLI.Command.Greet with instantiated use case
+--    3. Instantiate Presentation.Adapter.CLI.Command.Greet with use case
 --    4. Execute the wired command
 --
 --  Design Pattern:
 --    Composition Root pattern - centralized dependency wiring.
---    All dependencies flow inward, bootstrap connects them.
+--    All dependencies flow inbound, bootstrap connects them.
 --
 --  See Also:
 --    Bootstrap - Parent package

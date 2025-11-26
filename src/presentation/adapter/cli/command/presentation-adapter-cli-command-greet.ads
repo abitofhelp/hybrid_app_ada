@@ -1,6 +1,6 @@
 pragma Ada_2022;
 --  =========================================================================
---  Presentation.CLI.Command.Greet - CLI command for greet use case
+--  Presentation.Adapter.CLI.Command.Greet - CLI command for greet use case
 --  =========================================================================
 --  Copyright (c) 2025 Michael Gardner, A Bit of Help, Inc.
 --  SPDX-License-Identifier: BSD-3-Clause
@@ -26,8 +26,8 @@ pragma Ada_2022;
 --    - Command doesn't know about Infrastructure
 --
 --  Mapping to Go:
---    Go: presentation/cli/greet_command.go (GreetCommand struct)
---    Ada: presentation/presentation-greet_command.ads (generic package)
+--    Go: presentation/adapter/cli/greet_command.go (GreetCommand struct)
+--    Ada: presentation/adapter/cli/command/presentation-adapter-cli-command-greet.ads
 --
 --  Why Generic?
 --    - Allows static dispatch (zero runtime overhead)
@@ -38,7 +38,7 @@ pragma Ada_2022;
 --    Application.Usecase.Greet - Use case this command calls
 --  =========================================================================
 
-with Application.Port.Outward.Writer;
+with Application.Port.Outbound.Writer;
 with Application.Command.Greet;
 
 --  ========================================================================
@@ -54,8 +54,8 @@ generic
    with
      function Execute_Greet_UseCase
        (Cmd : Application.Command.Greet.Greet_Command)
-        return Application.Port.Outward.Writer.Unit_Result.Result;
-package Presentation.CLI.Command.Greet is
+        return Application.Port.Outbound.Writer.Unit_Result.Result;
+package Presentation.Adapter.CLI.Command.Greet is
 
    --  ======================================================================
    --  Run: Execute the CLI controller logic
@@ -79,4 +79,4 @@ package Presentation.CLI.Command.Greet is
 
    function Run return Integer;
 
-end Presentation.CLI.Command.Greet;
+end Presentation.Adapter.CLI.Command.Greet;

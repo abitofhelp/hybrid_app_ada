@@ -11,7 +11,7 @@ with Domain.Value_Object.Person;
 
 package body Application.Usecase.Greet is
 
-   use Application.Port.Outward.Writer;
+   use Application.Port.Outbound.Writer;
 
    -------------
    -- Execute --
@@ -19,7 +19,7 @@ package body Application.Usecase.Greet is
 
    function Execute
      (Cmd : Application.Command.Greet.Greet_Command)
-      return Application.Port.Outward.Writer.Unit_Result.Result
+      return Application.Port.Outbound.Writer.Unit_Result.Result
    is
       --  Step 1: Extract name from DTO
       Name : constant String := Application.Command.Greet.Get_Name (Cmd);

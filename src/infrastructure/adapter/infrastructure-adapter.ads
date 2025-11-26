@@ -23,7 +23,7 @@ pragma Ada_2022;
 --
 --  See Also:
 --    Infrastructure.Adapter.Console_Writer - Console output adapter
---    Application.Port.Outward - Port interfaces
+--    Application.Port.Outbound - Port interfaces
 --  =========================================================================
 
 package Infrastructure.Adapter

@@ -96,13 +96,14 @@ Hybrid_App_Ada implements a **5-layer hexagonal architecture** (also known as Po
 
 Located in `diagrams/` directory:
 
-- **01_layer_dependencies.svg** - Shows 5-layer dependency flow
-- **02_application_error_pattern.svg** - Re-export pattern for Presentation isolation
-- **03_package_structure.svg** - Actual package hierarchy
-- **04_error_handling_flow.svg** - Error propagation through layers
-- **05_static_vs_dynamic_dispatch.svg** - Generic vs interface comparison
+- **layer_dependencies.svg** - Shows 5-layer dependency flow
+- **application_error_pattern.svg** - Re-export pattern for Presentation isolation
+- **package_structure.svg** - Actual package hierarchy
+- **error_handling_flow.svg** - Error propagation through layers
+- **static_dispatch.svg** - Static DI with generics
+- **dynamic_static_dispatch.svg** - Static vs dynamic comparison
 
-All diagrams are generated from PlantUML sources (.puml files).
+All diagrams are generated from PlantUML sources (.puml files) via `make diagrams`.
 
 ---
 
@@ -218,7 +219,7 @@ hybrid_app_ada/
 │   │   ├── command/            # Input DTOs
 │   │   ├── error/              # Re-exports for Presentation
 │   │   ├── model/              # Output DTOs
-│   │   ├── port/               # Port interfaces (inward/outward)
+│   │   ├── port/               # Port interfaces (inbound/outbound)
 │   │   └── usecase/            # Use case orchestration
 │   ├── infrastructure/         # Adapters (driven)
 │   │   └── adapter/            # Console writer, etc.
@@ -299,8 +300,8 @@ See [Quick Start Guide](quick_start.md#build-targets) for complete list.
 ### For Experienced Developers
 
 1. **Architecture Patterns**: See [SDS - Design Patterns](formal/software_design_specification.md#design-patterns)
-2. **Static DI Deep Dive**: See diagrams/05_static_vs_dynamic_dispatch.svg
-3. **Railway-Oriented Programming**: See diagrams/04_error_handling_flow.svg
+2. **Static DI Deep Dive**: See diagrams/static_dispatch.svg and diagrams/dynamic_static_dispatch.svg
+3. **Railway-Oriented Programming**: See diagrams/error_handling_flow.svg
 4. **Add Use Case**: Follow pattern in existing code
 5. **Contribute**: See roadmap for future enhancements
 

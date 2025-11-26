@@ -1,16 +1,16 @@
-@startuml 01_layer_dependencies
+@startuml layer_dependencies
 !theme plain
 skinparam linetype ortho
 skinparam nodesep 80
 skinparam ranksep 100
 
-title Hybrid_App_Ada - 5-Layer Architecture\nHexagonal (Ports & Adapters) + Clean + DDD
+title 5-Layer Architecture\nHexagonal (Ports & Adapters) + Clean + DDD
 
 package "Bootstrap Layer" as Bootstrap #FFEBCD {
   note right of Bootstrap
     **Composition Root**
     - Wires all dependencies
-    - Generic instantiation
+    - **Generic instantiation**
     - Application lifecycle
     - Can depend on ALL layers
   end note
@@ -18,7 +18,7 @@ package "Bootstrap Layer" as Bootstrap #FFEBCD {
 
 package "Presentation Layer" as Presentation #FFE4E1 {
   component "CLI" as CLI
-  component "Controllers" as Controllers
+  component "Commands" as Commands
   note right of Presentation
     **Driving Adapters**
     - User interfaces (CLI, API)
@@ -30,7 +30,7 @@ package "Presentation Layer" as Presentation #FFE4E1 {
 
 package "Infrastructure Layer" as Infrastructure #E6F3FF {
   component "Adapters" as Adapters
-  component "File System" as FileSystem
+  component "Console Writer" as ConsoleWriter
   note right of Infrastructure
     **Driven Adapters**
     - Implements Output Ports
@@ -57,13 +57,13 @@ package "Application Layer" as Application #E8F5E9 {
 }
 
 package "Domain Layer" as Domain #FFF9E6 {
-  component "Entities" as Entities
   component "Value Objects" as VOs
   component "Domain.Error" as DomainError
+  component "Generic_Result" as Result
   note right of Domain
     **Business Logic Core**
     - Pure domain concepts
-    - Zero dependencies
+    - ZERO external deps
     - Shareable across apps
   end note
 }
@@ -78,7 +78,7 @@ Presentation -down-> Application : calls Input Ports\nuses Application.Error
 Presentation -[hidden]down-> Domain
 
 Infrastructure -down-> Application : implements Output Ports
-Infrastructure -down-> Domain : uses Entities/VOs
+Infrastructure -down-> Domain : uses Value Objects
 
 Application -down-> Domain : orchestrates
 

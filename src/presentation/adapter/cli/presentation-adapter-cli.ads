@@ -1,6 +1,6 @@
 pragma Ada_2022;
 --  =========================================================================
---  Presentation.CLI - Parent package for CLI presentation
+--  Presentation.Adapter.CLI - Parent package for CLI presentation adapter
 --  =========================================================================
 --  Copyright (c) 2025 Michael Gardner, A Bit of Help, Inc.
 --  SPDX-License-Identifier: BSD-3-Clause
@@ -19,11 +19,11 @@ pragma Ada_2022;
 --    Controller pattern - translates CLI interactions into use case calls.
 --
 --  See Also:
---    Presentation.CLI.Command - CLI command handlers
+--    Presentation.Adapter.CLI.Command - CLI command handlers
 --  =========================================================================
 
-package Presentation.CLI
+package Presentation.Adapter.CLI
   with Preelaborate
 is
 
-end Presentation.CLI;
+end Presentation.Adapter.CLI;

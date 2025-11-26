@@ -23,7 +23,7 @@ pragma Ada_2022;
 --    - Smart constructor (Create) enforces validation
 --    - Uses bounded strings (memory safe, no heap allocation)
 --    - Returns Result type (no exceptions)
---    - Pure domain logic - ZERO external dependencies
+--    - Pure domain logic - ZERO external crate dependencies
 --
 --  See Also:
 --    Domain.Error.Result - Result type for error handling

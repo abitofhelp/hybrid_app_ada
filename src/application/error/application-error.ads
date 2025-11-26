@@ -37,7 +37,7 @@ pragma Ada_2022;
 --
 --  See Also:
 --    Domain.Error - The canonical error type definitions
---    Application.Port.Outward.Writer - Uses Result[Unit] with these errors
+--    Application.Port.Outbound.Writer - Uses Result[Unit] with these errors
 --  =========================================================================
 
 with Domain.Error;

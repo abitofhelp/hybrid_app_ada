@@ -484,7 +484,7 @@ Infrastructure ────┘
 | FR-01 | Domain.Value_Object.Person | 48 unit tests | ✅ |
 | FR-02 | Application.Usecase.Greet | 26 integration | ✅ |
 | FR-03 | Infrastructure.Adapter.Console_Writer | Integration | ✅ |
-| FR-04 | Presentation.CLI.Command.Greet | 8 E2E tests | ✅ |
+| FR-04 | Presentation.Adapter.CLI.Command.Greet | 8 E2E tests | ✅ |
 | FR-05 | Bootstrap.CLI | E2E tests | ✅ |
 | FR-06 | Domain.Error.Result | All tests | ✅ |
 | FR-07 | Generic instantiation | Compile-time | ✅ |

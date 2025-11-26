@@ -12,13 +12,13 @@ pragma Ada_2022;
 
 with Ada.Text_IO;
 with Infrastructure.Adapter.Console_Writer;
-with Application.Port.Outward.Writer;
+with Application.Port.Outbound.Writer;
 with Test_Framework;
 
 procedure Test_Infrastructure_Console_Writer is
 
    use Ada.Text_IO;
-   use Application.Port.Outward.Writer;
+   use Application.Port.Outbound.Writer;
 
    --  Test statistics
    Total_Tests  : Natural := 0;

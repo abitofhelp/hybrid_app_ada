@@ -29,7 +29,7 @@ pragma Ada_2022;
 --    Functional.Try - Exception-to-Result bridge used internally
 --  =========================================================================
 
-with Application.Port.Outward.Writer;
+with Application.Port.Outbound.Writer;
 
 package Infrastructure.Adapter.Console_Writer is
 
@@ -50,6 +50,6 @@ package Infrastructure.Adapter.Console_Writer is
 
    function Write
      (Message : String)
-      return Application.Port.Outward.Writer.Unit_Result.Result;
+      return Application.Port.Outbound.Writer.Unit_Result.Result;
 
 end Infrastructure.Adapter.Console_Writer;

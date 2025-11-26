@@ -106,16 +106,16 @@ begin
    declare
       R    : constant Int_Result.Result :=
         Int_Result.Error
-          (Kind => Infrastructure_Error, Message => "Test infra error");
+          (Kind => IO_Error, Message => "Test IO error");
       Info : Error_Type;
    begin
       if Int_Result.Is_Error (R) then
          Info := Int_Result.Error_Info (R);
          Run_Test
-           ("Error info - correct kind", Info.Kind = Infrastructure_Error);
+           ("Error info - correct kind", Info.Kind = IO_Error);
          Run_Test
            ("Error info - correct message",
-            Error_Strings.To_String (Info.Message) = "Test infra error");
+            Error_Strings.To_String (Info.Message) = "Test IO error");
       else
          Run_Test ("Error info extraction - Result should be Error", False);
       end if;
@@ -180,7 +180,7 @@ begin
       R1   : constant Int_Result.Result :=
         Int_Result.Error (Kind => Validation_Error, Message => "Error 1");
       R2   : constant Int_Result.Result :=
-        Int_Result.Error (Kind => Infrastructure_Error, Message => "Error 2");
+        Int_Result.Error (Kind => IO_Error, Message => "Error 2");
       Info1 : Error_Type;
       Info2 : Error_Type;
    begin
@@ -195,7 +195,7 @@ begin
             Error_Strings.To_String (Info1.Message) = "Error 1");
          Run_Test
            ("Multiple errors - R2 has correct kind",
-            Info2.Kind = Infrastructure_Error);
+            Info2.Kind = IO_Error);
          Run_Test
            ("Multiple errors - R2 has correct message",
             Error_Strings.To_String (Info2.Message) = "Error 2");

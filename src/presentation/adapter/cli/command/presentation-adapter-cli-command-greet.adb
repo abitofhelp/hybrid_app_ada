@@ -1,6 +1,6 @@
 pragma Ada_2022;
 --  =========================================================================
---  Presentation.CLI.Command.Greet - Implementation of greet command
+--  Presentation.Adapter.CLI.Command.Greet - Implementation of greet command
 --  =========================================================================
 --  Copyright (c) 2025 Michael Gardner, A Bit of Help, Inc.
 --  SPDX-License-Identifier: BSD-3-Clause
@@ -10,7 +10,7 @@ with Ada.Command_Line;
 with Ada.Text_IO;
 with Application.Error;
 
-package body Presentation.CLI.Command.Greet is
+package body Presentation.Adapter.CLI.Command.Greet is
 
    use Ada.Command_Line;
    use Ada.Text_IO;
@@ -43,11 +43,11 @@ package body Presentation.CLI.Command.Greet is
          --  This is the key architectural boundary:
          --  Presentation -> Application (through input port)
          Result :
-           constant Application.Port.Outward.Writer.Unit_Result.Result :=
+           constant Application.Port.Outbound.Writer.Unit_Result.Result :=
              Execute_Greet_UseCase (Cmd);
       begin
          --  Handle the result from the use case
-         if Application.Port.Outward.Writer.Unit_Result.Is_Ok (Result) then
+         if Application.Port.Outbound.Writer.Unit_Result.Is_Ok (Result) then
             --  Success! Greeting was displayed via console port
             --  Use case already wrote to console, just exit cleanly
             return 0;  --  Exit code 0 indicates success
@@ -56,7 +56,7 @@ package body Presentation.CLI.Command.Greet is
             --  Use case failed - display error to user
             declare
                Error_Info    : constant Application.Error.Error_Type :=
-                 Application.Port.Outward.Writer.Unit_Result.Error_Info
+                 Application.Port.Outbound.Writer.Unit_Result.Error_Info
                    (Result);
                Error_Message : constant String :=
                  Application.Error.Error_Strings.To_String
@@ -86,4 +86,4 @@ package body Presentation.CLI.Command.Greet is
       end;
    end Run;
 
-end Presentation.CLI.Command.Greet;
+end Presentation.Adapter.CLI.Command.Greet;

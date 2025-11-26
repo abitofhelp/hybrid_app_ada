@@ -12,7 +12,7 @@ pragma Ada_2022;
 
 with Ada.Text_IO;
 with Application.Command.Greet;
-with Application.Port.Outward.Writer;
+with Application.Port.Outbound.Writer;
 with Application.Usecase.Greet;
 with Infrastructure.Adapter.Console_Writer;
 with Test_Framework;
@@ -21,7 +21,7 @@ procedure Test_Greet_Full_Flow is
 
    use Ada.Text_IO;
    use Application.Command.Greet;
-   use Application.Port.Outward.Writer;
+   use Application.Port.Outbound.Writer;
 
    --  Test statistics
    Total_Tests  : Natural := 0;
@@ -46,7 +46,7 @@ procedure Test_Greet_Full_Flow is
    --  ========================================================================
 
    package Writer_Port_Instance is new
-     Application.Port.Outward.Writer.Generic_Writer
+     Application.Port.Outbound.Writer.Generic_Writer
        (Write => Infrastructure.Adapter.Console_Writer.Write);
 
    --  Instantiate use case with real console writer

@@ -1,8 +1,8 @@
-@startuml 03_package_structure
+@startuml package_structure
 !theme plain
 skinparam componentStyle rectangle
 
-title Hybrid_App_Ada - Package Structure\nActual Packages in Each Layer
+title Package Structure\nActual Packages in Each Layer
 
 frame "Bootstrap Layer" #FFEBCD {
   component "Bootstrap.CLI" as BootstrapCLI
@@ -11,20 +11,31 @@ frame "Bootstrap Layer" #FFEBCD {
     - Wires all dependencies
     - Generic instantiation
     - Application entry point
+
+    ```ada
+    package Greet_UC is new
+      Application.Usecase.Greet
+        (Writer => Console_Writer.Write);
+    package Greet_Cmd is new
+      Presentation.Adapter.CLI.Command.Greet
+        (Execute_Greet_UseCase => Greet_UC.Execute);
+    ```
   end note
 }
 
 frame "Presentation Layer" #FFE4E1 {
-  component "Presentation.CLI.Command.Greet" as PresentationGreet
+  component "Presentation.Adapter.CLI.Command.Greet" as PresentationGreet
   note right of PresentationGreet
     **Depends on:**
-    - Application.Command.Greet
-    - Application.Usecase.Greet
-    - Application.Port.Outward.Writer
+    - Application.Command
+    - Application.Port.Outbound.Writer
     - **Application.Error** ✅
 
     **Cannot access:**
     ❌ Domain.* packages
+
+    **Generic over Execute_Greet_UseCase:**
+    with function Execute_Greet_UseCase (...) return Result
   end note
 }
 
@@ -32,18 +43,20 @@ frame "Infrastructure Layer" #E6F3FF {
   component "Infrastructure.Adapter.Console_Writer" as InfraConsole
   note right of InfraConsole
     **Depends on:**
-    - Application.Port.Outward.Writer
+    - Application.Port.Outbound.Writer
     - Domain.Error (direct) ✅
-    - Domain.Value_Object
+    - Domain.Unit
+
+    **Implements Writer Port:**
+    Console_Writer.Write(Message)
   end note
 }
 
 frame "Application Layer" #E8F5E9 {
   component "Application.Error" as AppError #FFFF99
-  component "Application.Command.Greet" as AppCommand
-  component "Application.Usecase.Greet" as AppUsecase
-  component "Application.Port.Outward.Writer" as AppWriter
-  component "Application.Model.Unit" as AppUnit
+  component "Application.Command" as AppCommand
+  component "Application.Usecase" as AppUsecase
+  component "Application.Port.Outbound.Writer" as AppPort
 
   note right of AppError
     **Re-exports Domain.Error**
@@ -51,14 +64,11 @@ frame "Application Layer" #E8F5E9 {
 
     ```ada
     with Domain.Error;
-
     package Application.Error is
-      subtype Error_Type is
-        Domain.Error.Error_Type;
-      subtype Error_Kind is
-        Domain.Error.Error_Kind;
-      package Error_Strings renames
-        Domain.Error.Error_Strings;
+       subtype Error_Type is Domain.Error.Error_Type;
+       subtype Error_Kind is Domain.Error.Error_Kind;
+       Validation_Error : constant Error_Kind
+         := Domain.Error.Validation_Error;
     end Application.Error;
     ```
   end note
@@ -66,28 +76,27 @@ frame "Application Layer" #E8F5E9 {
 
 frame "Domain Layer" #FFF9E6 {
   component "Domain.Error" as DomainError
-  component "Domain.Error.Result.Generic_Result[T]" as DomainResult
-  component "Domain.Value_Object.Person" as DomainPerson
+  component "Domain.Result.Generic_Result" as DomainResult
+  component "Domain.Person" as DomainPerson
 
   note right of DomainError
-    **Zero dependencies**
+    **Zero external deps**
     Pure domain logic
     Canonical error types
   end note
 }
 
-' Dependencies (center-seeking - all point inward)
+' Dependencies (center-seeking - all point inbound)
 PresentationGreet -down-> AppCommand : uses DTO
-PresentationGreet -down-> AppUsecase : calls
-PresentationGreet -down-> AppWriter : uses Result
+PresentationGreet -down-> AppUsecase : uses Execute
 PresentationGreet -down-> AppError : uses ✅
 
-InfraConsole -down-> AppWriter : implements
+InfraConsole -down-> AppPort : implements Port
 InfraConsole -down-> DomainError : uses ✅
 
 AppCommand -down-> DomainPerson : uses
 AppUsecase -down-> DomainPerson : validates
-AppWriter -down-> DomainResult : instantiates
+AppPort -down-> DomainResult : uses
 AppError -down-> DomainError : re-exports
 
 ' Forbidden dependency (shown as violation)
@@ -96,14 +105,15 @@ PresentationGreet .right.> DomainError #red : ❌ FORBIDDEN\nNo transitive acces
 legend bottom
   **Package Naming Convention**
   ════════════════════════════════════
-  All packages use hierarchical naming:
+  All packages use hierarchical paths:
   • Parent.Child.Grandchild pattern
-  • Singular nouns (not plural)
-  • Lowercase filenames with dashes
+  • Underscore_Pascal_Case
+  • GPR project per layer
 
   **Example:**
-  • Package: Domain.Value_Object.Person
-  • File: domain-value_object-person.ads
+  • Package: Domain.Person
+  • File: domain-person.ads/adb
+  • Type: Person
 
   **Dependency Rules**
   ════════════════════════════════════
@@ -112,14 +122,12 @@ legend bottom
   ✅ Application → Domain.* packages
   ❌ Presentation → Domain.* packages (forbidden!)
 
-  **Key Insight:**
-  Infrastructure and Application CAN access Domain.
-  Presentation is the ONLY layer that cannot.
-
-  **Why?**
-  Domain is shareable across applications.
-  Presentation is application-specific.
-  Application acts as the contract layer.
+  **Static Dispatch with Generics**
+  ════════════════════════════════════
+  • Use_Case with function Console_Write - generic over writer
+  • Command with function Execute - generic over use case
+  • Concrete functions bound at instantiation
+  • Zero runtime overhead (no dispatching)
 endlegend
 
 @enduml

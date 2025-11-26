@@ -105,7 +105,7 @@ Hybrid_App_Ada uses **Hexagonal Architecture** (Ports and Adapters / Clean Archi
   - Commands: `Application.Command.Greet`
   - Models: `Application.Model.Unit`
   - Inbound Ports: Use case interfaces
-  - Outbound Ports: `Application.Port.Outward.Writer`
+  - Outbound Ports: `Application.Port.Outbound.Writer`
   - Error Re-export: `Application.Error`
 - **Rules**:
   - Stateless use cases
@@ -126,7 +126,7 @@ Hybrid_App_Ada uses **Hexagonal Architecture** (Ports and Adapters / Clean Archi
 #### Presentation Layer
 - **Purpose**: User interface implementation
 - **Components**:
-  - CLI Commands: `Presentation.CLI.Command.Greet`
+  - CLI Commands: `Presentation.Adapter.CLI.Command.Greet`
   - Argument parsing
   - Error formatting
 - **Rules**:
@@ -307,14 +307,14 @@ end Write;
 
 ### 3.4 Presentation Layer Design
 
-**Presentation.CLI.Command.Greet** (Generic):
+**Presentation.Adapter.CLI.Command.Greet** (Generic):
 ```ada
 generic
    with function Execute_Greet_UseCase (Cmd : Greet_Command)
       return Unit_Result.Result;
-package Presentation.CLI.Command.Greet is
+package Presentation.Adapter.CLI.Command.Greet is
    function Run return Integer;
-end Presentation.CLI.Command.Greet;
+end Presentation.Adapter.CLI.Command.Greet;
 ```
 
 **Design Decisions**:
@@ -328,7 +328,7 @@ end Presentation.CLI.Command.Greet;
 ```ada
 function Run return Integer is
    -- Step 1: Wire Infrastructure → Port
-   package Writer_Port is new Application.Port.Outward.Writer.Generic_Writer
+   package Writer_Port is new Application.Port.Outbound.Writer.Generic_Writer
      (Write => Infrastructure.Adapter.Console_Writer.Write);
 
    -- Step 2: Wire Use Case → Port
@@ -336,7 +336,7 @@ function Run return Integer is
      (Writer => Writer_Port.Write_Message);
 
    -- Step 3: Wire Command → Use Case
-   package Greet_Command is new Presentation.CLI.Command.Greet
+   package Greet_Command is new Presentation.Adapter.CLI.Command.Greet
      (Execute_Greet_UseCase => Greet_UseCase.Execute);
 
    -- Step 4: Execute
@@ -402,7 +402,7 @@ main (greeter.adb): calls Bootstrap.CLI.Run
     ↓
 Bootstrap.CLI.Run: wires dependencies, calls Presentation
     ↓
-Presentation.CLI.Command.Greet.Run: parses args, creates Greet_Command
+Presentation.Adapter.CLI.Command.Greet.Run: parses args, creates Greet_Command
     ↓
 Application.Usecase.Greet.Execute: validates, orchestrates
     ↓

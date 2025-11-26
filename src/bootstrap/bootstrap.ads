@@ -13,7 +13,7 @@ pragma Ada_2022;
 --  Architecture Notes:
 --    - Bootstrap is the ONLY place where all layers meet
 --    - Bootstrap depends on ALL layers (special case)
---    - All other layers follow the dependency rule (pointing inward)
+--    - All other layers follow the dependency rule (pointing inbound)
 --    - Bootstrap performs static dependency injection via generics
 --
 --  Mapping to Go:

@@ -21,7 +21,7 @@ abstract project Shared_Config is
    -- ==========================================================================
    -- Build Mode Configuration
    -- ==========================================================================
-   type Mode_Type is ("debug", "release", "optimize");
+   type Mode_Type is ("debug", "release", "optimize", "test");
    Mode : Mode_Type := external ("mode", "debug");
 
    -- ==========================================================================
@@ -99,6 +99,15 @@ abstract project Shared_Config is
                "-ffunction-sections",
                "-fdata-sections"
             );
+
+         when "test" =>
+            for Default_Switches ("Ada") use Common_Switches & (
+               "-g",            -- Debug info
+               "-gnatVa",       -- All validity checks
+               "-gnateE",       -- Extra info in exceptions
+               "-gnata",        -- Enable assertions and contracts
+               "-gnatU"         -- Tag uninitialized scalars
+            );
       end case;
    end Compiler;
 
@@ -107,7 +116,7 @@ abstract project Shared_Config is
    -- ==========================================================================
    package Binder is
       case Mode is
-         when "debug" =>
+         when "debug" | "test" =>
             for Default_Switches ("Ada") use (
                "-Es",        -- Symbolic traceback
                "-E"          -- Store tracebacks in exceptions

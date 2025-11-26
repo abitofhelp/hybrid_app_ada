@@ -1,6 +1,6 @@
 pragma Ada_2022;
 --  =========================================================================
---  Presentation.CLI.Command - Parent package for CLI command handlers
+--  Presentation.Adapter.CLI.Command - Parent package for CLI command handlers
 --  =========================================================================
 --  Copyright (c) 2025 Michael Gardner, A Bit of Help, Inc.
 --  SPDX-License-Identifier: BSD-3-Clause
@@ -23,11 +23,11 @@ pragma Ada_2022;
 --    that coordinates between CLI args and use cases.
 --
 --  See Also:
---    Presentation.CLI.Command.Greet - Greet command handler
+--    Presentation.Adapter.CLI.Command.Greet - Greet command handler
 --  =========================================================================
 
-package Presentation.CLI.Command
+package Presentation.Adapter.CLI.Command
   with Preelaborate
 is
 
-end Presentation.CLI.Command;
+end Presentation.Adapter.CLI.Command;
