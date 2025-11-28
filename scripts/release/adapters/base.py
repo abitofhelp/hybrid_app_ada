@@ -234,16 +234,25 @@ class BaseReleaseAdapter(ABC):
             stdout if capture_output, "SUCCESS" if succeeded, None on failure
         """
         try:
-            result = subprocess.run(
-                cmd,
-                cwd=cwd,
-                capture_output=capture_output,
-                text=True
-            )
+            if capture_output:
+                # Capture output with encoding error handling for colorized output
+                result = subprocess.run(
+                    cmd,
+                    cwd=cwd,
+                    capture_output=True,
+                    encoding='utf-8',
+                    errors='replace'  # Handle non-UTF-8 chars (e.g., ANSI color codes)
+                )
+            else:
+                result = subprocess.run(
+                    cmd,
+                    cwd=cwd,
+                    text=True
+                )
             if result.returncode != 0:
                 if check:
                     print(f"Command failed: {' '.join(cmd)}")
-                    if result.stderr:
+                    if capture_output and result.stderr:
                         print(f"Error: {result.stderr}")
                 return None
             return result.stdout if capture_output else "SUCCESS"

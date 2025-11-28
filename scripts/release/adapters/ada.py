@@ -243,7 +243,7 @@ class AdaReleaseAdapter(BaseReleaseAdapter):
 
     def run_build(self, config) -> bool:
         """
-        Run Ada build.
+        Run Ada release build.
 
         Args:
             config: ReleaseConfig instance
@@ -251,28 +251,28 @@ class AdaReleaseAdapter(BaseReleaseAdapter):
         Returns:
             True if build successful
         """
-        print("Running Ada build...")
+        print("Running Ada release build...")
 
-        # Try make first (if Makefile exists with build target)
+        # Try make first (if Makefile exists with build-release target)
         makefile = config.project_root / 'Makefile'
         if makefile.exists():
             # Run make clean first
             self.run_command(['make', 'clean'], config.project_root, capture_output=True)
 
-            # Then build
-            result = self.run_command(['make', 'build'], config.project_root)
+            # Use build-release for production builds
+            result = self.run_command(['make', 'build-release'], config.project_root)
             if result:
-                print("  Build successful (via make)")
+                print("  Release build successful (via make)")
                 return True
 
-        # Fallback to alr build
+        # Fallback to alr build with release validation
         result = self.run_command(
-            ['alr', 'build'],
+            ['alr', 'build', '--release'],
             config.project_root
         )
 
         if result:
-            print("  Build successful")
+            print("  Release build successful")
             return True
 
         print("  Build failed")
@@ -290,16 +290,27 @@ class AdaReleaseAdapter(BaseReleaseAdapter):
         """
         print("Running Ada tests...")
 
-        # Try make test (most Ada projects use make for tests)
+        # Try make test-all (comprehensive test target)
         makefile = config.project_root / 'Makefile'
         if makefile.exists():
+            # Try test-all first (includes unit, integration, e2e)
+            result = self.run_command(
+                ['make', 'test-all'],
+                config.project_root,
+                capture_output=True
+            )
+            if result is not None:
+                print("  All tests passed (via make test-all)")
+                return True
+
+            # Fallback to test target
             result = self.run_command(
                 ['make', 'test'],
                 config.project_root,
                 capture_output=True
             )
             if result is not None:
-                print("  All tests passed (via make)")
+                print("  All tests passed (via make test)")
                 return True
 
         # No standard fallback for Ada - make test is the convention

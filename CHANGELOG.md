@@ -11,7 +11,7 @@
 **Project:** Hybrid_App_Ada - Ada 2022 Application Starter
 **SPDX-License-Identifier:** BSD-3-Clause
 **License File:** See the LICENSE file in the project root.
-**Copyright:** © 2025 Michael Gardner, A Bit of Help, Inc.
+**Copyright:** © 2025 Michael Gardner, A Bit of Help, Inc.  
 
 All notable changes to Hybrid_App_Ada will be documented in this file.
 
@@ -85,10 +85,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `scripts/release/validate_release.py`
 
 ### Fixed
-- **Release validator improvements**: Fixed false positives in documentation consistency checker
+- **Release script improvements**:
+  - Fixed validator false positives for tree-context file references
+  - Use `make build-release` instead of `make build` for production builds
+  - Use `make test-all` for comprehensive test execution
+  - Handle UTF-8 encoding errors in colorized command output (ANSI escape codes)
   - Skip pattern templates like `test_<layer>_<component>.adb` in file reference checks
   - Check test files in `test/unit/`, `test/integration/`, `test/e2e/` subdirectories
-  - Skip file references inside tree blocks (contextual references)
   - Recognize tree roots (e.g., `test/`) and skip subdirectory validation for rooted trees
 - **Code Quality**: Resolved all compiler warnings and style violations (357 automated fixes)
   - Fixed array aggregate syntax to Ada 2022 standard (`[]` for aggregates)
