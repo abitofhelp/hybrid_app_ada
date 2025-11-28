@@ -1,4 +1,4 @@
-# Hybrid_App_Ada - Ada 2022 Application Starter
+# Ada 2022 Enterprise Starter with Hybrid DDD/Clean/Hexagonal Architecture
 
 **Version:** 1.0.0  
 **Date:** November 27, 2025  
