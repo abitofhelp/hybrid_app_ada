@@ -31,13 +31,18 @@ package Application.Command.Greet
   with Preelaborate
 is
 
-   --  Maximum name length for DTO (matches domain constraint)
-   Max_Name_Length : constant := 100;
+   --  Maximum name length for DTO boundary (larger than domain constraint).
+   --  DTO accepts up to 256 chars; Domain validates and rejects > 100 chars.
+   --  This intentional boundary isolation:
+   --    1. Allows Domain to shrink constraints without breaking Command
+   --    2. Defense in depth (two validation points)
+   --    3. SPARK-compatible (bounded strings throughout)
+   Max_DTO_Name_Length : constant := 256;
 
    --  Bounded string for name in DTO. The DTO itself does not enforce
    --  validity rules; domain logic is responsible for validation.
    package Name_Strings is new
-     Ada.Strings.Bounded.Generic_Bounded_Length (Max => Max_Name_Length);
+     Ada.Strings.Bounded.Generic_Bounded_Length (Max => Max_DTO_Name_Length);
 
    --  ========================================================================
    --  Greet_Command DTO

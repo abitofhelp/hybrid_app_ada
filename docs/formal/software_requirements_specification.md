@@ -2,7 +2,7 @@
 
 **Project:** Hybrid_App_Ada - Ada 2022 Application Starter
 **Version:** 1.0.0
-**Date:** November 18, 2025
+**Date:** 2025-11-27
 **SPDX-License-Identifier:** BSD-3-Clause
 **License File:** See the LICENSE file in the project root.
 **Copyright:** © 2025 Michael Gardner, A Bit of Help, Inc.
@@ -34,6 +34,7 @@ Hybrid_App_Ada provides:
 - **SDS**: Software Design Specification
 - **CLI**: Command Line Interface
 - **DI**: Dependency Injection
+- **DTO**: Data Transfer Object
 - **Result Monad**: Functional programming error handling pattern
 - **Hexagonal Architecture**: Also known as Ports and Adapters or Clean Architecture
 
@@ -66,7 +67,7 @@ Hybrid_App_Ada is a standalone application starter template implementing profess
 2. **Static Dependency Injection**: Compile-time wiring via generics
 3. **Railway-Oriented Programming**: Result monad error handling
 4. **Architecture Enforcement**: Automated boundary validation
-5. **Test Infrastructure**: Custom test framework, 82 tests
+5. **Test Infrastructure**: Custom test framework, 90 tests
 6. **Build Automation**: Comprehensive Makefile
 7. **Documentation**: Complete SRS, SDS, Test Guide
 
@@ -94,28 +95,29 @@ Hybrid_App_Ada is a standalone application starter template implementing profess
 **Description**: Pure business logic with zero external dependencies
 
 **Requirements**:
-- FR-01.1: Value objects must be immutable
-- FR-01.2: Validation must occur in value object creation
+- FR-01.1: Value objects must be immutable (validated at construction)
+- FR-01.2: Validation must occur in value object creation (Create function)
 - FR-01.3: Domain must have zero infrastructure dependencies
-- FR-01.4: Business rules must be pure functions
-- FR-01.5: Result monads must handle all errors
+- FR-01.4: Business rules must be pure functions (no side effects)
+- FR-01.5: Result monads must handle all errors (no exceptions)
+- FR-01.6: Domain provides raw data (Get_Name), not formatted output
 
-**Test Coverage**: 48 unit tests
+**Test Coverage**: 74 unit tests
 
 ### 3.2 Application Layer (FR-02)
 
 **Priority**: Critical
-**Description**: Use case orchestration and port definitions
+**Description**: Use case orchestration, port definitions, output formatting
 
 **Requirements**:
 - FR-02.1: Define inbound ports (use case interfaces)
 - FR-02.2: Define outbound ports (infrastructure interfaces)
 - FR-02.3: Implement use cases using Domain logic
-- FR-02.4: Commands must be immutable DTOs
-- FR-02.5: Models must be immutable output DTOs
-- FR-02.6: Re-export Domain.Error for Presentation access
+- FR-02.4: Commands must be DTOs with larger bounds than Domain validation
+- FR-02.5: Re-export Domain.Error for Presentation access
+- FR-02.6: Format output at application layer (Format_Greeting)
 
-**Test Coverage**: 26 integration tests
+**Test Coverage**: Integration tests
 
 ### 3.3 Infrastructure Layer (FR-03)
 
@@ -129,7 +131,7 @@ Hybrid_App_Ada is a standalone application starter template implementing profess
 - FR-03.4: Convert exceptions to Result errors
 - FR-03.5: Provide console writer adapter
 
-**Test Coverage**: Covered by integration tests
+**Test Coverage**: 8 integration tests
 
 ### 3.4 Presentation Layer (FR-04)
 
@@ -139,7 +141,7 @@ Hybrid_App_Ada is a standalone application starter template implementing profess
 **Requirements**:
 - FR-04.1: Cannot access Domain layer directly
 - FR-04.2: Must use Application.Error for error handling
-- FR-04.3: Must use Application.Model for output
+- FR-04.3: Must use Application.Command for input
 - FR-04.4: Command line argument parsing
 - FR-04.5: User-friendly error messages
 - FR-04.6: Exit code mapping (0=success, 1=error)
@@ -170,9 +172,10 @@ Hybrid_App_Ada is a standalone application starter template implementing profess
 - FR-06.2: Result monad for all fallible operations
 - FR-06.3: Error types with kind and message
 - FR-06.4: Validation_Error for business rule violations
-- FR-06.5: Infrastructure_Error for system failures
+- FR-06.5: IO_Error for system failures
 - FR-06.6: Is_Ok/Is_Error predicates
 - FR-06.7: Value/Error_Info accessors
+- FR-06.8: And_Then_Into for cross-type Result chaining
 
 **Test Coverage**: All tests verify error handling
 
@@ -268,6 +271,7 @@ Hybrid_App_Ada is a standalone application starter template implementing profess
 - FR-12.4: Consistent naming conventions
 - FR-12.5: File headers with copyright and SPDX
 - FR-12.6: Comprehensive docstrings
+- FR-12.7: Design decision comments where non-obvious
 
 **Test Coverage**: Build verification
 
@@ -291,7 +295,7 @@ Hybrid_App_Ada is a standalone application starter template implementing profess
 
 **Priority**: High
 
-- NFR-02.1: All 82 tests must pass (100% pass rate)
+- NFR-02.1: All 90 tests must pass (100% pass rate)
 - NFR-02.2: No memory leaks
 - NFR-02.3: Deterministic error handling (no exceptions)
 - NFR-02.4: Type-safe boundaries (compile-time verification)
@@ -316,7 +320,7 @@ Hybrid_App_Ada is a standalone application starter template implementing profess
 
 - NFR-04.1: Clear layer separation (enforced by arch_guard.py)
 - NFR-04.2: Self-documenting code with docstrings
-- NFR-04.3: Comprehensive test coverage (82 tests)
+- NFR-04.3: Comprehensive test coverage (90 tests)
 - NFR-04.4: Standard file naming conventions
 - NFR-04.5: Consistent code style
 - NFR-04.6: Version control friendly (single project)
@@ -369,12 +373,13 @@ Hybrid_App_Ada is a standalone application starter template implementing profess
 - **SC-10**: Must use static dispatch (generics, not interfaces)
 - **SC-11**: No exceptions across layer boundaries
 - **SC-12**: All errors via Result monad
+- **SC-13**: DTO bounds larger than Domain validation bounds
 
 ### 5.3 Regulatory Constraints
 
-- **SC-13**: BSD-3-Clause license
-- **SC-14**: SPDX identifiers in all source files
-- **SC-15**: Copyright attribution to Michael Gardner, A Bit of Help, Inc.
+- **SC-14**: BSD-3-Clause license
+- **SC-15**: SPDX identifiers in all source files
+- **SC-16**: Copyright attribution to Michael Gardner, A Bit of Help, Inc.
 
 ---
 
@@ -384,12 +389,12 @@ Hybrid_App_Ada is a standalone application starter template implementing profess
 
 | Requirement | Test Type | Test Count | Status |
 |-------------|-----------|------------|--------|
-| FR-01 (Domain) | Unit | 48 | ✅ Pass |
-| FR-02 (Application) | Integration | 26 | ✅ Pass |
-| FR-03 (Infrastructure) | Integration | Covered | ✅ Pass |
+| FR-01 (Domain) | Unit | 74 | ✅ Pass |
+| FR-02 (Application) | Unit + Integration | Covered | ✅ Pass |
+| FR-03 (Infrastructure) | Integration | 8 | ✅ Pass |
 | FR-04 (Presentation) | E2E | 8 | ✅ Pass |
 | FR-05 (Bootstrap) | E2E | Covered | ✅ Pass |
-| FR-06 (Error Handling) | All | 82 | ✅ Pass |
+| FR-06 (Error Handling) | All | 90 | ✅ Pass |
 | FR-07 (DI) | Compile-time | N/A | ✅ Verified |
 | FR-08 (Arch Validation) | Python Unit | 5 | ✅ Pass |
 | FR-09 (Build System) | Manual | All targets | ✅ Verified |
@@ -401,7 +406,7 @@ Hybrid_App_Ada is a standalone application starter template implementing profess
 
 - **Code Review**: All code reviewed before release
 - **Static Analysis**: Zero compiler warnings enforced
-- **Dynamic Testing**: 82 automated tests (100% pass rate)
+- **Dynamic Testing**: 90 automated tests (100% pass rate)
 - **Architecture Validation**: arch_guard.py enforcement
 - **Coverage Analysis**: GNATcoverage support
 - **Documentation Review**: Complete formal specifications
@@ -414,34 +419,34 @@ Hybrid_App_Ada is a standalone application starter template implementing profess
 
 **Source Code**:
 - Ada specification files (.ads): 26
-- Ada implementation files (.adb): 11
+- Ada implementation files (.adb): 10
 - Total lines of code: ~3,500
 
 **Tests**:
 - Total test files: 11
-- Total tests: 82
-  - Unit tests: 48
-  - Integration tests: 26
+- Total tests: 90
+  - Unit tests: 74
+  - Integration tests: 8
   - E2E tests: 8
 - Pass rate: 100%
 
 **Documentation**:
 - Formal specs: 3 (SRS, SDS, Test Guide)
 - Guides: 2 (Quick Start, Roadmap)
-- UML diagrams: 5
+- UML diagrams: 6
 - README: Complete with examples
 
 **Build System**:
 - Makefile targets: 30+
-- Dependencies: 3 (functional, aunit, gnatcov)
+- Dependencies: functional ^1.0.0
 
 ### 7.2 Layer Responsibilities Summary
 
 | Layer | Responsibilities | Dependencies | Tests |
 |-------|------------------|--------------|-------|
-| Domain | Business logic, validation | NONE | Unit (48) |
-| Application | Use cases, ports | Domain | Integration (26) |
-| Infrastructure | Adapters (driven) | App + Domain | Integration |
+| Domain | Business logic, validation | NONE | Unit (74) |
+| Application | Use cases, ports, formatting | Domain | Unit + Integration |
+| Infrastructure | Adapters (driven) | App + Domain | Integration (8) |
 | Presentation | UI (driving) | Application ONLY | E2E (8) |
 | Bootstrap | DI wiring | ALL | E2E |
 
@@ -456,7 +461,7 @@ Application checks Is_Error
     ↓
 If error: propagate up via Result
     ↓
-Presentation pattern matches Error_Kind
+Presentation pattern matches Error_Kind via Application.Error
     ↓
 User-friendly message displayed
     ↓
@@ -481,9 +486,9 @@ Infrastructure ────┘
 
 | FR ID | Design Element | Test Coverage | Status |
 |-------|---------------|---------------|--------|
-| FR-01 | Domain.Value_Object.Person | 48 unit tests | ✅ |
-| FR-02 | Application.Usecase.Greet | 26 integration | ✅ |
-| FR-03 | Infrastructure.Adapter.Console_Writer | Integration | ✅ |
+| FR-01 | Domain.Value_Object.Person | 74 unit tests | ✅ |
+| FR-02 | Application.Usecase.Greet | Unit + Integration | ✅ |
+| FR-03 | Infrastructure.Adapter.Console_Writer | 8 integration | ✅ |
 | FR-04 | Presentation.Adapter.CLI.Command.Greet | 8 E2E tests | ✅ |
 | FR-05 | Bootstrap.CLI | E2E tests | ✅ |
 | FR-06 | Domain.Error.Result | All tests | ✅ |
@@ -498,7 +503,7 @@ Infrastructure ────┘
 
 **Document Control**:
 - Version: 1.0.0
-- Last Updated: November 18, 2025
+- Last Updated: 2025-11-27
 - Status: Released
 - Copyright © 2025 Michael Gardner, A Bit of Help, Inc.
 - License: BSD-3-Clause

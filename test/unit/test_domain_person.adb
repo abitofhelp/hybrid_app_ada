@@ -8,8 +8,8 @@ with Domain;
 --
 --  Purpose:
 --    Unit tests for Domain.Value_Object.Person value object.
---    Tests Create validation, Get_Name accessor, and Greeting_Message
---    generation.
+--    Tests Create validation and Get_Name accessor.
+--    (Greeting format moved to Application layer)
 --  ======================================================================
 
 with Ada.Text_IO;
@@ -200,68 +200,6 @@ begin
               ("Create name with special chars - Get_Name correct",
                Get_Name (P) = "Anne-Marie O'Brien");
          end;
-      end if;
-   end;
-
-   --  ========================================================================
-   --  Test: Greeting_Message format
-   --  ========================================================================
-
-   declare
-      Result : constant Person_Result.Result := Create ("Carol");
-   begin
-      if Person_Result.Is_Ok (Result) then
-         declare
-            P       : constant Person := Person_Result.Value (Result);
-            Message : constant String := Greeting_Message (P);
-         begin
-            Run_Test
-              ("Greeting_Message - starts with 'Hello, '",
-               Message'Length >= 7
-               and then
-               Message (Message'First .. Message'First + 6) = "Hello, ");
-            Run_Test
-              ("Greeting_Message - ends with '!'",
-               Message (Message'Last) = '!');
-            Run_Test
-              ("Greeting_Message - contains name",
-               Ada.Strings.Fixed.Index (Message, "Carol") > 0);
-            Run_Test
-              ("Greeting_Message - exact format",
-               Message = "Hello, Carol!");
-         end;
-      else
-         Run_Test ("Greeting_Message test setup failed", False);
-      end if;
-   end;
-
-   --  ========================================================================
-   --  Test: Greeting_Message with different names
-   --  ========================================================================
-
-   declare
-      Result1 : constant Person_Result.Result := Create ("Alice");
-      Result2 : constant Person_Result.Result := Create ("Bob");
-   begin
-      if Person_Result.Is_Ok (Result1)
-         and then Person_Result.Is_Ok (Result2)
-      then
-         declare
-            P1  : constant Person := Person_Result.Value (Result1);
-            P2  : constant Person := Person_Result.Value (Result2);
-            Msg1 : constant String := Greeting_Message (P1);
-            Msg2 : constant String := Greeting_Message (P2);
-         begin
-            Run_Test
-              ("Greeting_Message - different for different names",
-               Msg1 /= Msg2);
-            Run_Test
-              ("Greeting_Message - correct for Alice", Msg1 = "Hello, Alice!");
-            Run_Test
-              ("Greeting_Message - correct for Bob", Msg2 = "Hello, Bob!");
-         end;
-      else
-         Run_Test ("Multiple Greeting_Message test setup failed", False);
       end if;
    end;
 

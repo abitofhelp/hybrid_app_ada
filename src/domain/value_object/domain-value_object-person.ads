@@ -10,12 +10,13 @@ pragma Ada_2022;
 --    Defines the Person value object representing a person's name.
 --    Value object: immutable, validated at construction, uses bounded strings.
 --    Returns Result type for validation (no exceptions).
+--    Domain provides data (Get_Name), Application formats output.
 --
 --  Usage:
 --    Result := Create ("Alice");
 --    if Person_Result.Is_Ok (Result) then
 --       Person := Person_Result.Value (Result);
---       Message := Greeting_Message (Person);
+--       Name := Get_Name (Person);  --  Use in application layer
 --    end if;
 --
 --  Design Notes:
@@ -47,10 +48,21 @@ is
    --  Person Value Object
    --  ========================================================================
 
-   --  Person Value Object (public record - validation enforced via
-   --  smart constructor). We expose the record publicly to allow generic
-   --  instantiation. Clients should ONLY create via Create function to
-   --  ensure validation.
+   --  ========================================================================
+   --  DESIGN DECISION: Public Record for Generic Instantiation
+   --  ========================================================================
+   --  Person is a public record (not private) to enable generic instantiation:
+   --    package Person_Result is new Generic_Result (T => Person);
+   --
+   --  Ada generics require visibility into the type structure. If Person were
+   --  private, external code couldn't instantiate Generic_Result with it.
+   --
+   --  Trade-off: Direct construction (bypassing Create) is possible but
+   --  strongly discouraged. Clients MUST use Create for validation.
+   --
+   --  Future SPARK: When SPARK is added, Type_Invariant => Is_Valid_Person
+   --  will enforce the invariant even for direct construction.
+   --  ========================================================================
    type Person is record
       Name_Value : Name_Strings.Bounded_String;
    end record;
@@ -59,7 +71,17 @@ is
    package Person_Result is new
      Domain.Error.Result.Generic_Result (T => Person);
 
-   --  Validation function - used internally by Create
+   --  ========================================================================
+   --  DESIGN DECISION: Is_Valid_Person Not Called in Create
+   --  ========================================================================
+   --  Is_Valid_Person is NOT called inside Create because:
+   --    1. Create performs inline validation (empty check, length check)
+   --    2. Calling Is_Valid_Person in Create would be redundant
+   --    3. Is_Valid_Person exists for external use:
+   --       - Type invariant documentation
+   --       - Runtime assertions/debugging: pragma Assert (Is_Valid_Person (P))
+   --       - Future SPARK Type_Invariant annotation
+   --  ========================================================================
    function Is_Valid_Person (P : Person) return Boolean;
 
    --  ========================================================================
@@ -97,19 +119,5 @@ is
      Post =>
        Get_Name'Result'Length > 0
        and Get_Name'Result'Length <= Max_Name_Length;
-
-   --  Generate a greeting message for this person
-   --  Pure domain logic - no side effects
-   --  Contract: Result always starts with "Hello, " and ends with "!"
-   function Greeting_Message (Self : Person) return String
-   with
-     Inline,
-     Post =>
-       Greeting_Message'Result'Length > 9
-       and then Greeting_Message'Result
-                  (Greeting_Message'Result'First
-                   .. Greeting_Message'Result'First + 6)
-                = "Hello, "
-       and then Greeting_Message'Result (Greeting_Message'Result'Last) = '!';
 
 end Domain.Value_Object.Person;

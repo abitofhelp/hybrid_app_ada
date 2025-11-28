@@ -4,6 +4,10 @@ pragma Ada_2022;
 --  =========================================================================
 --  Copyright (c) 2025 Michael Gardner, A Bit of Help, Inc.
 --  SPDX-License-Identifier: BSD-3-Clause
+--
+--  Purpose:
+--    Implements Generic_Result constructors (Ok, Error), accessors
+--    (Get, Get_Error), and railway combinators (Map, Flat_Map, Map_Error).
 --  =========================================================================
 
 package body Domain.Error.Result is
@@ -214,5 +218,29 @@ package body Domain.Error.Result is
       end Tap;
 
    end Generic_Result;
+
+   -------------------
+   -- And_Then_Into --
+   -------------------
+
+   function And_Then_Into
+     (Self : Source_Result.Result) return Target_Result.Result
+   is
+      use Error_Strings;
+   begin
+      if Source_Result.Is_Ok (Self) then
+         --  Call the transformation function with the success value
+         return F (Source_Result.Value (Self));
+      else
+         --  Convert error to target Result type (same error info)
+         declare
+            Err_Info : constant Error_Type := Source_Result.Error_Info (Self);
+         begin
+            return Target_Result.Error
+              (Kind    => Err_Info.Kind,
+               Message => To_String (Err_Info.Message));
+         end;
+      end if;
+   end And_Then_Into;
 
 end Domain.Error.Result;

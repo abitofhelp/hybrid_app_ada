@@ -14,6 +14,7 @@ with Ada.Text_IO;
 with Application.Command.Greet;
 with Application.Port.Outbound.Writer;
 with Application.Usecase.Greet;
+with Domain.Value_Object.Person;
 with Infrastructure.Adapter.Console_Writer;
 with Test_Framework;
 
@@ -22,6 +23,7 @@ procedure Test_Greet_Full_Flow is
    use Ada.Text_IO;
    use Application.Command.Greet;
    use Application.Port.Outbound.Writer;
+   use Domain.Value_Object.Person;
 
    --  Test statistics
    Total_Tests  : Natural := 0;

@@ -84,13 +84,13 @@ begin
    --  ========================================================================
 
    declare
-      Max_Name : constant String (1 .. Max_Name_Length) := [others => 'A'];
+      Max_Name : constant String (1 .. Max_DTO_Name_Length) := [others => 'A'];
       Cmd      : constant Greet_Command := Create (Max_Name);
       Name     : constant String        := Get_Name (Cmd);
    begin
       Run_Test
         ("Create max length name - Get_Name correct length",
-         Name'Length = Max_Name_Length);
+         Name'Length = Max_DTO_Name_Length);
       Run_Test
         ("Create max length name - Get_Name correct content",
          Name = Max_Name);

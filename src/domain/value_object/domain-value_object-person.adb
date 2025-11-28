@@ -1,9 +1,13 @@
 pragma Ada_2022;
 --  =========================================================================
---  Domain.Value_Object.Person - Implementation of Person value
---  object with validation
+--  Domain.Value_Object.Person - Implementation of Person value object
+--  =========================================================================
 --  Copyright (c) 2025 Michael Gardner, A Bit of Help, Inc.
 --  SPDX-License-Identifier: BSD-3-Clause
+--
+--  Purpose:
+--    Implements Person value object factory function Create with validation
+--    and Is_Valid_Person predicate for type invariant checking.
 --  =========================================================================
 
 package body Domain.Value_Object.Person is
@@ -59,14 +63,5 @@ package body Domain.Value_Object.Person is
    begin
       return To_String (Self.Name_Value);
    end Get_Name;
-
-   -----------------------
-   -- Greeting_Message --
-   -----------------------
-
-   function Greeting_Message (Self : Person) return String is
-   begin
-      return "Hello, " & To_String (Self.Name_Value) & "!";
-   end Greeting_Message;
 
 end Domain.Value_Object.Person;

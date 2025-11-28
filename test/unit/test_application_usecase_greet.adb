@@ -16,9 +16,10 @@ with Ada.Strings.Fixed;
 with Ada.Strings.Unbounded;
 with Application.Command.Greet;
 with Application.Port.Outbound.Writer;
-with Application.Model.Unit;
 with Application.Usecase.Greet;
 with Domain.Error;
+with Domain.Unit;
+with Domain.Value_Object.Person;
 with Test_Framework;
 
 procedure Test_Application_Usecase_Greet is
@@ -27,7 +28,7 @@ procedure Test_Application_Usecase_Greet is
    use Ada.Strings.Unbounded;
    use Application.Command.Greet;
    use Application.Port.Outbound.Writer;
-   use Application.Model.Unit;
+   use Domain.Unit;
    use Domain.Error;
 
    --  Test statistics
@@ -199,6 +200,7 @@ begin
    --  ========================================================================
 
    declare
+      use Domain.Value_Object.Person;
       Max_Name : constant String (1 .. Max_Name_Length) := [others => 'X'];
       Cmd      : constant Greet_Command := Create (Max_Name);
       Result   : constant Unit_Result.Result :=

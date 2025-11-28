@@ -2,7 +2,7 @@
 
 **Project:** Hybrid_App_Ada - Ada 2022 Application Starter
 **Version:** 1.0.0
-**Date:** November 18, 2025
+**Date:** 2025-11-27
 **SPDX-License-Identifier:** BSD-3-Clause
 **License File:** See the LICENSE file in the project root.
 **Copyright:** © 2025 Michael Gardner, A Bit of Help, Inc.
@@ -68,8 +68,8 @@ Hybrid_App_Ada uses **Hexagonal Architecture** (Ports and Adapters / Clean Archi
 │  - Inbound ports (use case interfaces)                  │
 │  - Outbound ports (infrastructure interfaces)           │
 │  - Commands (input DTOs)                                │
-│  - Models (output DTOs)                                 │
 │  - Application.Error (re-exports Domain.Error)          │
+│  - Format_Greeting (output formatting)                  │
 │  - Depends on: Domain                                   │
 └─────────────────────────────────────────────────────────┘
                      ↓              ↑
@@ -92,18 +92,19 @@ Hybrid_App_Ada uses **Hexagonal Architecture** (Ports and Adapters / Clean Archi
   - Value Objects: `Domain.Value_Object.Person`
   - Error types: `Domain.Error.Error_Type`, `Error_Kind`
   - Result monad: `Domain.Error.Result.Generic_Result`
+  - Unit type: `Domain.Unit`
 - **Rules**:
   - Immutable value objects
   - Validation in constructors
   - Pure functions only (no side effects)
   - No infrastructure dependencies
+  - Provides data (Get_Name), not formatting
 
 #### Application Layer
-- **Purpose**: Orchestrate domain logic, define port interfaces
+- **Purpose**: Orchestrate domain logic, define port interfaces, format output
 - **Components**:
   - Use Cases: `Application.Usecase.Greet`
   - Commands: `Application.Command.Greet`
-  - Models: `Application.Model.Unit`
   - Inbound Ports: Use case interfaces
   - Outbound Ports: `Application.Port.Outbound.Writer`
   - Error Re-export: `Application.Error`
@@ -111,6 +112,7 @@ Hybrid_App_Ada uses **Hexagonal Architecture** (Ports and Adapters / Clean Archi
   - Stateless use cases
   - Depends on Domain only
   - Defines interfaces for infrastructure
+  - Formats output (Format_Greeting)
 
 #### Infrastructure Layer
 - **Purpose**: Implement technical concerns, adapt external systems
@@ -132,7 +134,7 @@ Hybrid_App_Ada uses **Hexagonal Architecture** (Ports and Adapters / Clean Archi
 - **Rules**:
   - **Cannot access Domain directly**
   - Uses Application.Error (not Domain.Error)
-  - Uses Application.Model (not Domain entities)
+  - Uses Application.Command (not Domain entities)
   - Depends on Application ONLY
 
 #### Bootstrap Layer
@@ -156,25 +158,32 @@ Hybrid_App_Ada uses **Hexagonal Architecture** (Ports and Adapters / Clean Archi
 
 **Domain.Value_Object.Person**:
 ```ada
-type Person is private;
+--  DESIGN DECISION: Public Record for Generic Instantiation
+--  Person is public (not private) to enable generic instantiation:
+--    package Person_Result is new Generic_Result (T => Person);
+--  Clients MUST use Create for validation.
+type Person is record
+   Name_Value : Name_Strings.Bounded_String;
+end record;
 
-function Create (Name : String) return Person_Result;
+function Create (Name : String) return Person_Result.Result;
 function Get_Name (Self : Person) return String;
-
--- Implementation: Bounded_String (no heap)
+function Is_Valid_Person (P : Person) return Boolean;
 ```
 
 **Design Decisions**:
-- Immutable (private type, no setters)
-- Validation in `Create` function
+- Public record (required for generic instantiation)
+- Validation in `Create` function only
+- `Is_Valid_Person` for external validation/debugging
 - Returns `Result[Person, Error]`
 - Bounded strings (no heap allocation)
+- Provides raw data (Get_Name), not formatted output
 
 #### Error Handling
 
 **Domain.Error**:
 ```ada
-type Error_Kind is (Validation_Error, Infrastructure_Error);
+type Error_Kind is (Validation_Error, IO_Error);
 
 type Error_Type is record
    Kind    : Error_Kind;
@@ -195,11 +204,58 @@ package Generic_Result is
 end Generic_Result;
 ```
 
+**And_Then_Into (Cross-Type Chaining)**:
+```ada
+--  DESIGN DECISION: Cross-type monadic bind
+--  Enables chaining operations that return different Result types
+generic
+   type T is private;
+   type U is private;
+   with package Source_Result is new Generic_Result (T => T);
+   with package Target_Result is new Generic_Result (T => U);
+   with function F (X : T) return Target_Result.Result;
+function And_Then_Into (Self : Source_Result.Result) return Target_Result.Result;
+```
+
 **Design Decisions**:
 - Discriminated record for Result (stack-based)
 - No exceptions thrown
 - Type-safe access (preconditions on Value/Error_Info)
 - Generic package for reuse across types
+- And_Then_Into for railway-oriented cross-type chaining
+
+#### Domain.Error.Result vs Functional.Result
+
+**IMPORTANT**: This project uses TWO different Result types:
+
+| Type | Location | Purpose |
+|------|----------|---------|
+| `Domain.Error.Result.Generic_Result` | `src/domain/error/` | Domain-owned Result with domain-specific `Error_Type` (Kind + Message) |
+| `Functional.Result.Generic_Result` | External `functional` crate | Generic Result for functional patterns, used by Try utilities |
+
+**Why Two Result Types?**
+
+1. **Domain Purity**: `Domain.Error.Result` keeps the domain layer pure with ZERO external dependencies. The domain defines its own error type (`Error_Kind`, `Error_Type`) with bounded strings.
+
+2. **Infrastructure Bridging**: `Functional.Result` (from the `functional` crate) provides utilities like `Try_To_Result_With_Param` for exception handling at infrastructure boundaries.
+
+**Bridging in Infrastructure**:
+```ada
+-- Infrastructure uses Functional.Try to catch exceptions
+function Write_With_Try is new
+  Functional.Try.Try_To_Result_With_Param (...);  -- Returns Functional.Result
+
+-- Convert to Domain.Result for rest of system
+function To_Domain_Result (FR : Functional_Result.Result) return Domain_Result.Result;
+
+function Write (Message : String) return Unit_Result.Result is
+   FR : constant Unit_Functional_Result.Result := Write_With_Try (Message);
+begin
+   return To_Domain_Result (FR);  -- Bridge at infrastructure boundary
+end Write;
+```
+
+**Design Principle**: Domain.Error.Result flows through Domain → Application → Presentation. Functional.Result is only used in Infrastructure for exception bridging, then immediately converted to Domain.Result.
 
 ### 3.2 Application Layer Design
 
@@ -216,17 +272,31 @@ end Application.Usecase.Greet;
 
 **Implementation**:
 ```ada
+--  DESIGN DECISION: Greeting format in Application layer
+--  Domain provides data (Get_Name), Application formats output
+function Format_Greeting (Name : String) return String is
+begin
+   return "Hello, " & Name & "!";
+end Format_Greeting;
+
 function Execute (Cmd : Greet_Command) return Unit_Result.Result is
    Person_Result : constant Person_Result.Result :=
-      Domain.Value_Object.Person.Create (Cmd.Name);
+      Domain.Value_Object.Person.Create (Get_Name (Cmd));
 begin
    if Person_Result.Is_Error then
-      return Unit_Result.Error (Person_Result.Error_Info);
+      declare
+         Err : constant Error_Type := Person_Result.Error_Info;
+      begin
+         return Unit_Result.Error
+           (Kind    => Err.Kind,
+            Message => Error_Strings.To_String (Err.Message));
+      end;
    end if;
 
    declare
-      Person  : constant Domain.Value_Object.Person := Person_Result.Value;
-      Message : constant String := "Hello, " & Get_Name (Person) & "!";
+      Person  : constant Domain.Value_Object.Person.Person :=
+        Person_Result.Value;
+      Message : constant String := Format_Greeting (Get_Name (Person));
    begin
       return Writer (Message);
    end;
@@ -237,7 +307,31 @@ end Execute;
 - Generic package (static dispatch)
 - Writer function passed as generic parameter
 - Railway-oriented error handling
-- Pure orchestration (no business logic)
+- Format_Greeting at Application layer (not Domain)
+- Domain provides raw data, Application formats
+
+#### Command DTO
+
+**Application.Command.Greet**:
+```ada
+--  DESIGN DECISION: Larger DTO boundary
+--  DTO accepts up to 256 chars; Domain validates and rejects > 100 chars.
+--  This boundary isolation allows Domain to shrink constraints independently.
+Max_DTO_Name_Length : constant := 256;
+
+package Name_Strings is new
+  Ada.Strings.Bounded.Generic_Bounded_Length (Max => Max_DTO_Name_Length);
+
+type Greet_Command is record
+   Name : Name_Strings.Bounded_String;
+end record;
+```
+
+**Design Decisions**:
+- DTO has larger bounds than Domain (256 vs 100)
+- Allows Domain to change validation independently
+- Defense in depth (two validation points)
+- No business logic in DTO
 
 #### Application.Error Re-Export Pattern
 
@@ -252,8 +346,8 @@ package Application.Error is
    subtype Error_Kind is Domain.Error.Error_Kind;
    package Error_Strings renames Domain.Error.Error_Strings;
 
-   Validation_Error     : constant Error_Kind := Domain.Error.Validation_Error;
-   Infrastructure_Error : constant Error_Kind := Domain.Error.Infrastructure_Error;
+   Validation_Error : constant Error_Kind := Domain.Error.Validation_Error;
+   IO_Error         : constant Error_Kind := Domain.Error.IO_Error;
 end Application.Error;
 ```
 
@@ -277,8 +371,8 @@ end Write_Action;
 function Map_Exception (Occ : Exception_Occurrence)
   return Domain.Error.Error_Type
 is (Domain.Error.New_Error
-     (Kind    => Domain.Error.Infrastructure_Error,
-      Message => "Console write failed: " & Exception_Message (Occ)));
+    (Kind    => Domain.Error.IO_Error,
+     Message => "Console write failed: " & Exception_Message (Occ)));
 
 --  Instantiate parameterized Try bridge
 function Write_With_Try is new
@@ -389,6 +483,12 @@ Error Track:    Error → Propagate → Error
 **Implementation**: `Domain.Value_Object.Person`
 **Benefits**: Type safety, validated at construction, immutable
 
+### 4.6 DTO Boundary Isolation
+
+**Pattern**: DTOs have larger bounds than Domain validation
+**Purpose**: Allow Domain to change independently
+**Implementation**: Command.Max_DTO_Name_Length (256) vs Domain.Max_Name_Length (100)
+
 ---
 
 ## 5. Data Flow
@@ -404,11 +504,11 @@ Bootstrap.CLI.Run: wires dependencies, calls Presentation
     ↓
 Presentation.Adapter.CLI.Command.Greet.Run: parses args, creates Greet_Command
     ↓
-Application.Usecase.Greet.Execute: validates, orchestrates
+Application.Usecase.Greet.Execute: validates via Domain, formats greeting
     ↓
 Domain.Value_Object.Person.Create: validates "Alice" → Ok(Person)
     ↓
-Application.Usecase.Greet: formats message
+Application.Usecase.Greet: Format_Greeting("Alice") → "Hello, Alice!"
     ↓
 Infrastructure.Adapter.Console_Writer.Write: outputs "Hello, Alice!"
     ↓
@@ -426,7 +526,7 @@ Returns: Error(Validation_Error, "Name cannot be empty")
     ↓
 Application.Usecase.Greet: checks Is_Error → propagates
     ↓
-Presentation: pattern matches Error_Kind
+Presentation: pattern matches Error_Kind via Application.Error
     ↓
 Displays: "Error: Name cannot be empty"
     ↓
@@ -465,7 +565,7 @@ For concurrent use cases (v2.0+):
 ### 7.2 Memory Management
 
 - **No Heap in Domain**: All bounded types
-- **Stack Allocation**: Result values, commands, models
+- **Stack Allocation**: Result values, commands
 - **No Garbage Collection**: Deterministic cleanup
 
 ---
@@ -477,6 +577,7 @@ For concurrent use cases (v2.0+):
 - All validation in Domain layer
 - Early rejection of invalid inputs
 - Type-safe boundaries (compiler-enforced)
+- DTO boundary provides defense in depth
 
 ### 8.2 Error Information
 
@@ -503,19 +604,97 @@ hybrid_app_ada/
 
 ---
 
-## 10. Testing Strategy
+## 10. SPARK Readiness Assessment
 
-### 10.1 Test Organization
+### 10.1 Overview
+
+This project is designed with SPARK verification as a future goal. While not currently using SPARK_Mode, the architecture follows SPARK-compatible patterns where possible.
+
+### 10.2 Layer-by-Layer Assessment
+
+| Layer | SPARK Readiness | Notes |
+|-------|-----------------|-------|
+| **Domain** | ✅ HIGH | Pure functions, no side effects, bounded types, value semantics |
+| **Application** | ⚠️ MEDIUM | Mostly pure, but uses generic formal functions (SPARK 2014+ compatible) |
+| **Infrastructure** | ❌ LOW | Uses Ada.Text_IO, exception handling, runtime tags |
+| **Presentation** | ❌ LOW | Uses Ada.Command_Line, Text_IO, dynamic strings |
+| **Bootstrap** | ⚠️ MEDIUM | Static wiring via generics, but instantiates non-SPARK layers |
+
+### 10.3 SPARK-Compatible Components
+
+**Domain Layer** (recommended for SPARK verification):
+- `Domain.Value_Object.Person` - Bounded strings, validation, pure functions
+- `Domain.Value_Object.Option.Generic_Option` - Pure functional monad
+- `Domain.Error.Result.Generic_Result` - Pure Result monad
+- `Domain.Error.Error_Type` - Simple bounded record
+- `Domain.Unit` - Unit type (trivially SPARK-compatible)
+
+**Application Layer** (mostly compatible):
+- `Application.Command.Greet` - Simple DTO with bounded string
+- `Application.Usecase.Greet` - Pure orchestration (via generic formal)
+
+### 10.4 Non-SPARK Components
+
+**Infrastructure** (SPARK-incompatible by design):
+- `Infrastructure.Adapter.Console_Writer` - Uses `Ada.Text_IO`, exception handlers
+- Uses `Functional.Try.Try_To_Result_With_Param` - Exception boundary wrapper
+
+**Presentation** (SPARK-incompatible by design):
+- `Presentation.Adapter.CLI.Command.Greet` - Uses `Ada.Command_Line`, `Ada.Text_IO`
+
+### 10.5 Future SPARK Integration
+
+To enable SPARK verification:
+
+1. **Add SPARK_Mode aspects** to Domain packages:
+   ```ada
+   package Domain.Value_Object.Person
+      with SPARK_Mode => On
+   is
+   ```
+
+2. **Add contracts** (Pre/Post) to all public functions:
+   ```ada
+   function Create (Name : String) return Person_Result.Result
+      with Pre => Name'Length > 0 and Name'Length <= Max_Name_Length;
+   ```
+
+3. **Explicitly mark Infrastructure as SPARK_Mode => Off**:
+   ```ada
+   package Infrastructure.Adapter.Console_Writer
+      with SPARK_Mode => Off
+   is
+   ```
+
+4. **Run GNATprove** on Domain layer to prove absence of runtime errors.
+
+### 10.6 Design Decisions for SPARK
+
+The following design decisions support future SPARK verification:
+
+- **Bounded Strings in Domain**: Avoids dynamic memory (heap), enabling static analysis
+- **Pure Functions**: No global state in Domain, easier to reason about
+- **Result Monad over Exceptions**: Explicit error handling, no exception propagation
+- **Discriminated Records**: Stack-allocated, deterministic memory
+- **Immutable Value Objects**: No aliasing concerns
+
+---
+
+## 11. Testing Strategy
+
+### 11.1 Test Organization
 
 ```
 test/
-├── unit/               # Domain + Application logic (48 tests)
-├── integration/        # Cross-layer tests (26 tests)
+├── unit/               # Domain + Application logic (74 tests)
+├── integration/        # Cross-layer tests (8 tests)
 ├── e2e/                # Full system tests (8 tests)
 └── common/             # Test framework
 ```
 
-### 10.2 Testing Approach
+**Total Tests**: 90
+
+### 11.2 Testing Approach
 
 - **Unit**: Test Domain in isolation (pure functions)
 - **Integration**: Test Application with real Infrastructure
@@ -525,7 +704,7 @@ test/
 
 **Document Control**:
 - Version: 1.0.0
-- Last Updated: November 18, 2025
+- Last Updated: 2025-11-27
 - Status: Released
 - Copyright © 2025 Michael Gardner, A Bit of Help, Inc.
 - License: BSD-3-Clause

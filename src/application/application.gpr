@@ -21,7 +21,7 @@ library project Application is
    for Library_Name use "application";
    for Library_Kind use "static";
 
-   for Source_Dirs use (".", "model", "command", "port", "port/inbound", "port/outbound", "usecase", "error");
+   for Source_Dirs use (".", "command", "port", "port/inbound", "port/outbound", "usecase", "error");
    for Object_Dir use "../../obj/application";
    for Library_Dir use "../../lib/application";
 
@@ -54,8 +54,6 @@ library project Application is
       "Application.Command",
       "Application.Command.Greet",
       "Application.Error",
-      "Application.Model",
-      "Application.Model.Unit",
       "Application.Port",
       "Application.Port.Inbound",
       "Application.Port.Outbound",

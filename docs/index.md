@@ -1,7 +1,7 @@
 # Hybrid_App_Ada Documentation Index
 
 **Version:** 1.0.0
-**Date:** November 18, 2025
+**Date:** 2025-11-27
 **SPDX-License-Identifier:** BSD-3-Clause
 **License File:** See the LICENSE file in the project root.
 **Copyright:** © 2025 Michael Gardner, A Bit of Help, Inc.
@@ -11,7 +11,13 @@
 
 ## Welcome
 
-Welcome to the **Hybrid_App_Ada** documentation. This Ada 2022 application starter demonstrates professional hexagonal architecture with functional programming principles, static dependency injection, and railway-oriented error handling.
+Welcome to **Hybrid_App_Ada**, a professional Ada 2022 application starter demonstrating hybrid DDD/Clean/Hexagonal architecture with functional programming principles.
+
+This project showcases:
+- **5-Layer Hexagonal Architecture** (Domain, Application, Infrastructure, Presentation, Bootstrap)
+- **Static Dispatch Dependency Injection** via Ada generics (zero runtime overhead)
+- **Railway-Oriented Programming** with Result monads (no exceptions across boundaries)
+- **Presentation Isolation** pattern (Domain is shareable; Presentation cannot access Domain directly)
 
 ---
 
@@ -19,52 +25,38 @@ Welcome to the **Hybrid_App_Ada** documentation. This Ada 2022 application start
 
 ### Getting Started
 
-- 🚀 **[Quick Start Guide](quick_start.md)** - Get up and running in minutes
+- **[Quick Start Guide](quick_start.md)** - Get up and running in minutes
   - Installation instructions
   - First build and run
-  - Understanding the architecture
   - Making your first change
-  - Running tests
 
 ### Formal Documentation
 
-- 📋 **[Software Requirements Specification (SRS)](formal/software_requirements_specification.md)** - Complete requirements
+- **[Software Requirements Specification (SRS)](formal/software_requirements_specification.md)** - Complete requirements
   - Functional requirements (FR-01 through FR-12)
   - Non-functional requirements (NFR-01 through NFR-06)
-  - System constraints
-  - Test coverage mapping
+  - System constraints and test coverage mapping
 
-- 🏗️ **[Software Design Specification (SDS)](formal/software_design_specification.md)** - Architecture and design
+- **[Software Design Specification (SDS)](formal/software_design_specification.md)** - Architecture and design
   - 5-layer hexagonal architecture
   - Static dependency injection via generics
   - Railway-oriented programming patterns
-  - Component relationships
-  - Data flow diagrams
-  - Design patterns used
+  - Component relationships and data flow
 
-- 🧪 **[Software Test Guide](formal/software_test_guide.md)** - Testing documentation
+- **[Software Test Guide](formal/software_test_guide.md)** - Testing documentation
   - Test organization (unit/integration/e2e)
-  - Running tests (make test-unit, test-integration, test-all)
-  - Test framework documentation
-  - Coverage procedures
+  - Running tests
   - Writing new tests
 
-### Development Planning
+### Planning
 
-- 🗺️ **[Roadmap](roadmap.md)** - Future development plans
-  - v1.0.0 achievements
-  - v1.1.0 planned features (Q1 2026)
-  - v1.2.0 advanced patterns (Q2 2026)
-  - v2.0.0 enterprise features (Q3 2026)
-  - Contributing to roadmap
+- **[Roadmap](roadmap.md)** - Future development plans
 
 ---
 
 ## Architecture Overview
 
-Hybrid_App_Ada implements a **5-layer hexagonal architecture** (also known as Ports and Adapters or Clean Architecture):
-
-### Layer Structure
+Hybrid_App_Ada implements a **5-layer hexagonal architecture**:
 
 ```
 ┌─────────────────────────────────────────────┐
@@ -83,10 +75,10 @@ Hybrid_App_Ada implements a **5-layer hexagonal architecture** (also known as Po
 ### Key Principles
 
 1. **Domain Isolation**: Domain layer has zero external dependencies
-2. **Presentation Boundary**: Presentation layer cannot access Domain directly (uses Application.Error, Application.Model re-exports)
+2. **Presentation Boundary**: Presentation cannot access Domain directly (uses Application.Error, Application.Command)
 3. **Static Dispatch**: Dependency injection via generics (compile-time, zero overhead)
 4. **Railway-Oriented**: Result monads for error handling (no exceptions across boundaries)
-5. **Single Project**: No aggregate projects, easy Alire deployment
+5. **Single Project**: Easy Alire deployment
 
 ---
 
@@ -96,12 +88,14 @@ Hybrid_App_Ada implements a **5-layer hexagonal architecture** (also known as Po
 
 Located in `diagrams/` directory:
 
-- **layer_dependencies.svg** - Shows 5-layer dependency flow
-- **application_error_pattern.svg** - Re-export pattern for Presentation isolation
-- **package_structure.svg** - Actual package hierarchy
-- **error_handling_flow.svg** - Error propagation through layers
-- **static_dispatch.svg** - Static DI with generics
-- **dynamic_static_dispatch.svg** - Static vs dynamic comparison
+| Diagram | Description |
+|---------|-------------|
+| [layer_dependencies.svg](diagrams/layer_dependencies.svg) | 5-layer architecture dependency flow |
+| [package_structure.svg](diagrams/package_structure.svg) | Actual package hierarchy |
+| [application_error_pattern.svg](diagrams/application_error_pattern.svg) | Re-export pattern for Presentation isolation |
+| [error_handling_flow.svg](diagrams/error_handling_flow.svg) | Error propagation through layers |
+| [static_dispatch.svg](diagrams/static_dispatch.svg) | Static DI with generics |
+| [dynamic_static_dispatch.svg](diagrams/dynamic_static_dispatch.svg) | Static vs dynamic comparison |
 
 All diagrams are generated from PlantUML sources (.puml files) via `make diagrams`.
 
@@ -111,21 +105,21 @@ All diagrams are generated from PlantUML sources (.puml files) via `make diagram
 
 ### Code Metrics (v1.0.0)
 
-- **Ada Specification Files**: 26 (.ads)
-- **Ada Implementation Files**: 11 (.adb)
-- **Test Files**: 11 (5 unit, 3 integration, 2 e2e, 1 runner)
-- **Architecture Layers**: 5 (Domain, Application, Infrastructure, Presentation, Bootstrap)
-- **Build Targets**: 30+ Makefile targets
-- **Dependencies**: functional ^1.0.0, aunit ^24.0.0, gnatcov ^22.0.1
+| Metric | Count |
+|--------|-------|
+| Ada Specification Files (.ads) | 26 |
+| Ada Implementation Files (.adb) | 10 |
+| Architecture Layers | 5 |
+| Build Targets | 30+ |
 
 ### Test Coverage
 
-- **Total Tests**: 82 (100% passing)
-  - Unit Tests: 48
-  - Integration Tests: 26
-  - E2E Tests: 8
-- **Test Framework**: Custom lightweight framework (test/common/test_framework.{ads,adb})
-- **Coverage Analysis**: GNATcoverage support
+| Test Type | Count | Status |
+|-----------|-------|--------|
+| Unit Tests | 74 | All Passing |
+| Integration Tests | 8 | All Passing |
+| E2E Tests | 8 | All Passing |
+| **Total** | **90** | **100% Passing** |
 
 ### Code Quality
 
@@ -134,6 +128,45 @@ All diagrams are generated from PlantUML sources (.puml files) via `make diagram
 - **Architecture Validation**: Enforced by arch_guard.py
 - **Aspect Syntax**: 100% (no obsolescent pragmas)
 - **Ada Version**: Ada 2022
+
+---
+
+## Directory Structure
+
+```
+hybrid_app_ada/
+├── src/
+│   ├── domain/                 # Pure business logic (ZERO dependencies)
+│   │   ├── error/              # Result monad, error types
+│   │   └── value_object/       # Immutable value objects (Person, Option)
+│   ├── application/            # Use cases + ports
+│   │   ├── command/            # Input DTOs (Greet_Command)
+│   │   ├── error/              # Re-exports Domain.Error for Presentation
+│   │   ├── port/               # Port interfaces (inbound/outbound)
+│   │   └── usecase/            # Use case orchestration
+│   ├── infrastructure/         # Driven adapters
+│   │   └── adapter/            # Console writer implementation
+│   ├── presentation/           # Driving adapters
+│   │   └── adapter/cli/        # CLI commands
+│   ├── bootstrap/              # Composition root
+│   │   └── cli/                # CLI wiring
+│   └── greeter.adb             # Main (3 lines)
+├── test/
+│   ├── unit/                   # Domain + Application tests
+│   ├── integration/            # Cross-layer tests
+│   ├── e2e/                    # Full system tests
+│   └── common/                 # Test framework
+├── docs/
+│   ├── formal/                 # SRS, SDS, Test Guide
+│   ├── diagrams/               # UML diagrams (.puml, .svg)
+│   └── *.md                    # Other documentation
+├── scripts/
+│   └── arch_guard.py           # Architecture validation
+├── hybrid_app_ada.gpr          # Main project file
+├── alire.toml                  # Alire manifest
+├── Makefile                    # Build automation
+└── README.md                   # Project overview
+```
 
 ---
 
@@ -162,32 +195,25 @@ package Greet_UseCase is new Application.Usecase.Greet
 - Stack allocation (no heap)
 - Compile-time type safety
 
-**Trade-off**: Fixed at compile time (perfect for most applications)
-
 ### Railway-Oriented Programming
 
 All errors propagate via **Result monad** (no exceptions):
 
 ```ada
--- Use case returns Result[Unit, Error]
-function Execute (Cmd : Greet_Command) return Unit_Result is
+function Execute (Cmd : Greet_Command) return Unit_Result.Result is
    Person_Result : constant Person_Result.Result :=
-      Domain.Value_Object.Person.Create(Cmd.Name);
+      Domain.Value_Object.Person.Create(Get_Name(Cmd));
 begin
    if Person_Result.Is_Error then
-      return Unit_Result.Error(Person_Result.Error_Info);
+      return Unit_Result.Error(
+         Kind => Person_Result.Error_Info.Kind,
+         Message => Error_Strings.To_String(Person_Result.Error_Info.Message));
    end if;
 
-   -- Continue on success track...
-   return Writer(Greeting_Message(Person_Result.Value));
+   -- Format greeting at application layer, then write
+   return Writer(Format_Greeting(Get_Name(Person_Result.Value)));
 end Execute;
 ```
-
-**Benefits**:
-- Explicit error handling (compiler-enforced)
-- No unexpected control flow
-- Composable error types
-- SPARK-verifiable
 
 ### Application.Error Re-Export Pattern
 
@@ -201,50 +227,6 @@ package Application.Error is
    subtype Error_Kind is Domain.Error.Error_Kind;
    package Error_Strings renames Domain.Error.Error_Strings;
 end Application.Error;
-```
-
-This maintains clean boundaries while allowing Presentation to handle errors.
-
----
-
-## Directory Structure
-
-```
-hybrid_app_ada/
-├── src/
-│   ├── domain/                 # Pure business logic
-│   │   ├── error/              # Result monad, error types
-│   │   └── value_object/       # Immutable value objects
-│   ├── application/            # Use cases + ports
-│   │   ├── command/            # Input DTOs
-│   │   ├── error/              # Re-exports for Presentation
-│   │   ├── model/              # Output DTOs
-│   │   ├── port/               # Port interfaces (inbound/outbound)
-│   │   └── usecase/            # Use case orchestration
-│   ├── infrastructure/         # Adapters (driven)
-│   │   └── adapter/            # Console writer, etc.
-│   ├── presentation/           # Adapters (driving)
-│   │   └── cli/                # CLI commands
-│   ├── bootstrap/              # Composition root
-│   │   └── cli/                # CLI wiring
-│   └── greeter.adb             # Main (3 lines)
-├── test/
-│   ├── unit/                   # Domain + Application tests
-│   ├── integration/            # Cross-layer tests
-│   ├── e2e/                    # Full system tests
-│   └── common/                 # Test framework
-├── docs/
-│   ├── formal/                 # SRS, SDS, Test Guide
-│   ├── diagrams/               # UML diagrams
-│   ├── quick_start.md          # Getting started
-│   ├── roadmap.md              # Future plans
-│   └── index.md                # This file
-├── scripts/
-│   └── arch_guard.py           # Architecture validation
-├── hybrid_app_ada.gpr           # Main project file
-├── alire.toml                  # Alire manifest
-├── Makefile                    # Build automation
-└── README.md                   # Project overview
 ```
 
 ---
@@ -266,44 +248,14 @@ make test-all           # Run all tests
 make test-unit          # Unit tests only
 make test-integration   # Integration tests
 make test-e2e           # E2E tests
-make test-coverage      # With coverage analysis
 ```
 
 **Quality**:
 ```bash
-make check              # Static analysis
 make check-arch         # Architecture validation
+make diagrams           # Regenerate UML diagrams
 make stats              # Project statistics
 ```
-
-**Utilities**:
-```bash
-make clean              # Clean artifacts
-make deps               # Show dependencies
-make help               # Show all targets
-```
-
-See [Quick Start Guide](quick_start.md#build-targets) for complete list.
-
----
-
-## Learning Path
-
-### For Beginners
-
-1. **Start Here**: [Quick Start Guide](quick_start.md)
-2. **Understand Architecture**: [Software Design Specification](formal/software_design_specification.md)
-3. **Run Tests**: `make test-all`
-4. **Explore Code**: Start with `src/bootstrap/cli/bootstrap-cli.adb`
-5. **Read Examples**: Study how layers are wired together
-
-### For Experienced Developers
-
-1. **Architecture Patterns**: See [SDS - Design Patterns](formal/software_design_specification.md#design-patterns)
-2. **Static DI Deep Dive**: See diagrams/static_dispatch.svg and diagrams/dynamic_static_dispatch.svg
-3. **Railway-Oriented Programming**: See diagrams/error_handling_flow.svg
-4. **Add Use Case**: Follow pattern in existing code
-5. **Contribute**: See roadmap for future enhancements
 
 ---
 
@@ -313,51 +265,20 @@ See [Quick Start Guide](quick_start.md#build-targets) for complete list.
 
 - **functional** (^1.0.0): Result/Option/Either monads for functional error handling
 
-### Development Dependencies
-
-- **aunit** (^24.0.0): Unit testing framework (not used - we have custom framework)
-- **gnatcov** (^22.0.1): Coverage analysis tool
-
 ### Build Requirements
 
 - **GNAT**: FSF 13+ or GNAT Pro (Ada 2022 support)
 - **Alire**: 2.0+ package manager
 - **Make**: GNU Make for build automation
-- **Python 3**: For tooling (arch_guard.py, etc.)
-- **Java 11+**: For PlantUML diagram generation (optional)
+- **Python 3**: For tooling (arch_guard.py)
+- **PlantUML**: For diagram generation (optional)
 
 ---
 
-## Documentation Updates
+## Support
 
-All documentation is maintained for v1.0.0 release:
-
-- **Copyright**: © 2025 Michael Gardner, A Bit of Help, Inc.
-- **License**: BSD-3-Clause
-- **Version**: 1.0.0
-- **Date**: November 18, 2025
-- **Status**: Released
-
-For documentation issues or suggestions, please file an issue on GitHub.
-
----
-
-## Support and Contributing
-
-### Getting Help
-
-- 📧 **Email**: support@abitofhelp.com
-- 🐛 **Issues**: [GitHub Issues](https://github.com/abitofhelp/hybrid_app_ada/issues)
-- 📖 **Documentation**: This directory
-- 💬 **Discussions**: [GitHub Discussions](https://github.com/abitofhelp/hybrid_app_ada/discussions)
-
-### Contributing
-
-We welcome contributions! See:
-
-- [CONTRIBUTING.md](../CONTRIBUTING.md) - Contribution guidelines
-- [Roadmap](roadmap.md) - Future development plans
-- Code style enforced by architecture validation
+- **GitHub Issues**: [https://github.com/abitofhelp/hybrid_app_ada/issues](https://github.com/abitofhelp/hybrid_app_ada/issues)
+- **Documentation**: This directory
 
 ---
 
@@ -371,13 +292,4 @@ See [LICENSE](../LICENSE) for full license text.
 
 ---
 
-## Project Links
-
-- **GitHub**: https://github.com/abitofhelp/hybrid_app_ada
-- **Alire**: https://alire.ada.dev (search for "hybrid_app_ada")
-- **Author**: Michael Gardner (https://github.com/abitofhelp)
-- **Company**: A Bit of Help, Inc. (https://abitofhelp.com)
-
----
-
-**Last Updated**: November 18, 2025
+**Last Updated**: 2025-11-27

@@ -4,6 +4,10 @@ pragma Ada_2022;
 --  =========================================================================
 --  Copyright (c) 2025 Michael Gardner, A Bit of Help, Inc.
 --  SPDX-License-Identifier: BSD-3-Clause
+--
+--  Purpose:
+--    Implements Execute function: validates Person, formats greeting message,
+--    and writes output via injected Writer port using railway-oriented flow.
 --  =========================================================================
 
 with Domain.Error;
@@ -12,6 +16,17 @@ with Domain.Value_Object.Person;
 package body Application.Usecase.Greet is
 
    use Application.Port.Outbound.Writer;
+
+   ---------------------
+   -- Format_Greeting --
+   ---------------------
+
+   --  Application-level greeting format (orchestration, not domain logic)
+   --  The format "Hello, <name>!" is an application decision
+   function Format_Greeting (Name : String) return String is
+   begin
+      return "Hello, " & Name & "!";
+   end Format_Greeting;
 
    -------------
    -- Execute --
@@ -24,12 +39,12 @@ package body Application.Usecase.Greet is
       --  Step 1: Extract name from DTO
       Name : constant String := Application.Command.Greet.Get_Name (Cmd);
 
-      --  Step 2: Validate and create Person from name
+      --  Step 2: Validate and create Person from name (domain validation)
       Person_Result :
         constant Domain.Value_Object.Person.Person_Result.Result :=
           Domain.Value_Object.Person.Create (Name);
    begin
-      --  Check if person creation failed
+      --  Check if person creation failed (railway-oriented programming)
       if Domain.Value_Object.Person.Person_Result.Is_Error (Person_Result) then
          --  Propagate validation error to caller
          declare
@@ -50,9 +65,9 @@ package body Application.Usecase.Greet is
          Person : constant Domain.Value_Object.Person.Person :=
            Domain.Value_Object.Person.Person_Result.Value (Person_Result);
 
-         --  Step 3: Generate greeting message from Person
+         --  Step 3: Generate greeting message (application-level formatting)
          Message : constant String :=
-           Domain.Value_Object.Person.Greeting_Message (Person);
+           Format_Greeting (Domain.Value_Object.Person.Get_Name (Person));
 
          --  Step 4: Write to console via output port (injected dependency)
          Write_Result : constant Unit_Result.Result := Writer (Message);

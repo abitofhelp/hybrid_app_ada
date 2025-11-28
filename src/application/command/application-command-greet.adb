@@ -4,6 +4,10 @@ pragma Ada_2022;
 --  =========================================================================
 --  Copyright (c) 2025 Michael Gardner, A Bit of Help, Inc.
 --  SPDX-License-Identifier: BSD-3-Clause
+--
+--  Purpose:
+--    Implements factory function Create and accessor Get_Name for the
+--    Greet_Command DTO used to pass data between presentation and use case.
 --  =========================================================================
 
 package body Application.Command.Greet is

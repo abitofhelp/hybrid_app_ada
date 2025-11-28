@@ -16,9 +16,8 @@ PROJECT_NAME := hybrid_app_ada
 
 .PHONY: all build build-dev build-opt build-release build-tests build-profiles check check-arch \
         clean clean-clutter clean-coverage clean-deep compress deps diagrams \
-		help prereqs rebuild refresh stats test test-all test-coverage \
-		test-integration test-unit test-e2e test-examples test-python \
-		build-examples examples run-examples install-tools build-coverage-runtime
+		help prereqs rebuild refresh run stats test test-all test-coverage test-framework \
+		test-integration test-unit test-e2e test-python install-tools build-coverage-runtime
 # FIX: ENABLE AFTER THE TARGETS CONVERT TO USING OUR ADAFMT TOOL, WHICH IS IN DEVELOPMENT.
 #       format format-all format-src format-tests
 
@@ -95,7 +94,7 @@ all: build
 
 help: ## Display this help message
 	@echo "$(CYAN)$(BOLD)╔══════════════════════════════════════════════════╗$(NC)"
-	@echo "$(CYAN)$(BOLD)║  Simple Hybrid - Ada 2022                         ║$(NC)"
+	@echo "$(CYAN)$(BOLD)║  Hybrid App - Ada 2022                           ║$(NC)"
 	@echo "$(CYAN)$(BOLD)╚══════════════════════════════════════════════════╝$(NC)"
 	@echo " "
 	@echo "$(YELLOW)Build Commands:$(NC)"
@@ -104,6 +103,7 @@ help: ## Display this help message
 	@echo "  build-opt          - Build with optimization (-O2)"
 	@echo "  build-release      - Build in release mode"
 	@echo "  build-tests        - Build all test executables"
+	@echo "  run                - Build and run the greeter"
 	@echo "  clean              - Clean build artifacts"
 	@echo "  clean-clutter      - Remove temporary files and backups"
 	@echo "  clean-coverage     - Clean coverage data"
@@ -117,14 +117,9 @@ help: ## Display this help message
 	@echo "  test-integration   - Run integration tests only"
 	@echo "  test-e2e           - Run E2E tests only"
 	@echo "  test-all           - Run all test executables"
+	@echo "  test-framework     - Run all test suites (unit + integration + e2e)"
 	@echo "  test-python        - Run Python script tests (arch_guard.py validation)"
-	@echo "  test-examples      - Run E2E tests for all examples"
 	@echo "  test-coverage      - Run tests with coverage analysis"
-	@echo ""
-	@echo "$(YELLOW)Examples Commands:$(NC)"
-	@echo "  build-examples     - Build all example programs"
-	@echo "  examples           - Alias for build-examples"
-	@echo "  run-examples       - Build and run all example programs"
 	@echo ""
 	@echo "$(YELLOW)Quality & Architecture Commands:$(NC)"
 	@echo "  check              - Run static analysis"
@@ -233,8 +228,7 @@ clean:
 	@$(ALR) exec -- gprclean -P $(PROJECT_NAME).gpr -q 2>/dev/null || true
 	@$(ALR) exec -- gprclean -P $(TEST_DIR)/unit/unit_tests.gpr -q 2>/dev/null || true
 	@$(ALR) exec -- gprclean -P $(TEST_DIR)/integration/integration_tests.gpr -q 2>/dev/null || true
-	@$(ALR) exec -- gprclean -P examples/examples.gpr -q 2>/dev/null || true
-	@rm -rf $(BUILD_DIR) $(BIN_DIR) lib $(TEST_DIR)/bin $(TEST_DIR)/obj obj/examples
+	@rm -rf $(BUILD_DIR) $(BIN_DIR) lib $(TEST_DIR)/bin $(TEST_DIR)/obj
 	@find . -name "*.backup" -delete 2>/dev/null || true
 	@if [ -d "assemblies" ]; then \
 		$(ALR) exec -- gprclean -P assemblies/standard/standard.gpr -q 2>/dev/null || true; \
@@ -266,7 +260,7 @@ clean-coverage:
 
 clean-clutter: ## Remove temporary files, backups, and clutter
 	@echo "$(CYAN)Cleaning temporary files and clutter...$(NC)"
-	@$(PYTHON3) scripts/cleanup_temp_files.py
+	@$(PYTHON3) scripts/makefile/cleanup_temp_files.py
 	@echo "$(GREEN)✓ Temporary files removed$(NC)"
 
 compress:
@@ -290,6 +284,10 @@ compress:
 	@echo "$(GREEN)✓ Archive created: $(PROJECT_NAME).tar.gz $(NC)"
 
 rebuild: clean build
+
+run: build ## Build and run the greeter
+	@echo "$(GREEN)Running greeter...$(NC)"
+	@./bin/greeter World
 
 # =============================================================================
 # Testing Commands
@@ -377,20 +375,8 @@ test-e2e: build build-tests
 		exit 1; \
 	fi
 
-test-examples: build-examples
-	@echo "$(GREEN)Running E2E tests for examples...$(NC)"
-	@if [ -f "test/e2e/test_examples.sh" ]; then \
-		bash test/e2e/test_examples.sh; \
-		if [ $$? -eq 0 ]; then \
-			echo "$(GREEN)✓ Example E2E tests passed$(NC)"; \
-		else \
-			echo "$(RED)✗ Example E2E tests failed$(NC)"; \
-			exit 1; \
-		fi; \
-	else \
-		echo "$(YELLOW)E2E test script not found at test/e2e/test_examples.sh$(NC)"; \
-		exit 1; \
-	fi
+test-framework: test-unit test-integration test-e2e ## Run all test suites
+	@echo "$(GREEN)$(BOLD)✓ All test suites completed$(NC)"
 
 test-coverage: clean build build-coverage-runtime
 	@echo "$(GREEN)Running tests with GNATcoverage analysis...$(NC)"
@@ -399,36 +385,6 @@ test-coverage: clean build build-coverage-runtime
 	else \
 		echo "$(YELLOW)Coverage script not found at scripts/makefile/coverage.sh$(NC)"; \
 		exit 1; \
-	fi
-
-# =============================================================================
-# Examples Commands
-# =============================================================================
-
-build-examples: check-arch prereqs
-	@echo "$(GREEN)Building example programs...$(NC)"
-	@if [ -f "examples/examples.gpr" ]; then \
-		$(ALR) exec -- $(GPRBUILD) -P examples/examples.gpr -p $(ALR_BUILD_FLAGS); \
-		echo "$(GREEN)✓ Examples built$(NC)"; \
-	else \
-		echo "$(YELLOW)Examples project not found$(NC)"; \
-	fi
-
-examples: build-examples
-
-run-examples: build-examples
-	@echo "$(GREEN)Running example programs...$(NC)"
-	@if [ -d "$(BIN_DIR)/examples" ]; then \
-		for example in $(BIN_DIR)/examples/*; do \
-			if [ -x "$$example" ] && [ -f "$$example" ]; then \
-				echo "$(CYAN)Running $$example...$(NC)"; \
-				$$example || true; \
-				echo ""; \
-			fi; \
-		done; \
-		echo "$(GREEN)✓ All examples completed$(NC)"; \
-	else \
-		echo "$(YELLOW)No examples found in $(BIN_DIR)/examples$(NC)"; \
 	fi
 
 # =============================================================================
@@ -442,8 +398,13 @@ check:
 
 check-arch: ## Validate hexagonal architecture boundaries
 	@echo "$(GREEN)Validating architecture boundaries...$(NC)"
-	-@PYTHONPATH=scripts $(PYTHON3) -m arch_guard
-	@echo "$(YELLOW)⚠ Architecture validation complete (violations are warnings, not errors)$(NC)"
+	@PYTHONPATH=scripts $(PYTHON3) -m arch_guard
+	@if [ $$? -eq 0 ]; then \
+		echo "$(GREEN)✓ Architecture validation passed$(NC)"; \
+	else \
+		echo "$(RED)✗ Architecture validation failed$(NC)"; \
+		exit 1; \
+	fi
 
 test-python: ## Run Python script tests (arch_guard.py validation)
 	@echo "$(GREEN)Running Python script tests...$(NC)"

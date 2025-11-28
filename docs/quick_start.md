@@ -1,7 +1,7 @@
 # Hybrid_App_Ada Quick Start Guide
 
 **Version:** 1.0.0
-**Date:** November 18, 2025
+**Date:** 2025-11-27
 **SPDX-License-Identifier:** BSD-3-Clause
 **License File:** See the LICENSE file in the project root.
 **Copyright:** © 2025 Michael Gardner, A Bit of Help, Inc.
@@ -132,6 +132,7 @@ The Hybrid_App_Ada starter includes a simple greeter application demonstrating a
 - All errors return via Result monad (no exceptions)
 - Exit code 0 = success, 1 = error
 - Validation happens in Domain layer
+- Greeting format happens in Application layer
 - Errors propagate through Application to Presentation
 
 ---
@@ -158,8 +159,8 @@ Hybrid_App_Ada demonstrates **5-layer hexagonal architecture**:
 
 ### Key Architectural Principles
 
-1. **Domain has zero dependencies** - Pure business logic
-2. **Presentation cannot access Domain** - Must use Application layer
+1. **Domain has zero dependencies** - Pure business logic (validation, value objects)
+2. **Presentation cannot access Domain** - Must use Application layer (Application.Error, Application.Command)
 3. **Static dependency injection** - Via generics (compile-time wiring)
 4. **Railway-oriented programming** - Result monads for error handling
 5. **Single-project structure** - Easy to deploy via Alire
@@ -171,9 +172,9 @@ User Input ("Alice")
     ↓
 Presentation.Adapter.CLI.Command.Greet (parses input)
     ↓
-Application.UseCase.Greet (validates via Domain)
+Application.UseCase.Greet (creates Person, formats greeting)
     ↓
-Domain.Value_Object.Person (business rules)
+Domain.Value_Object.Person (validates name)
     ↓
 Infrastructure.Adapter.Console_Writer (output)
     ↓
@@ -182,22 +183,47 @@ Result[Unit] (success or error)
 Exit Code (0 or 1)
 ```
 
+### Responsibility Separation
+
+- **Domain**: Provides data (Get_Name) and validates business rules
+- **Application**: Formats output (Format_Greeting), orchestrates use cases
+- **Infrastructure**: Implements technical concerns (console I/O)
+- **Presentation**: Handles user interaction, maps errors to messages
+
 ---
 
 ## Making Your First Change
 
-Let's modify the greeting message:
+Let's modify the greeting format:
 
-### Step 1: Locate the Domain Logic
+### Step 1: Locate the Application Logic
+
+The greeting format is in the Application layer:
 
 ```bash
-# Open the Person value object
-# File: src/domain/value_object/domain-value_object-person.adb
+# Open the Use Case
+# File: src/application/usecase/application-usecase-greet.adb
+```
+
+Find the `Format_Greeting` function:
+
+```ada
+function Format_Greeting (Name : String) return String is
+begin
+   return "Hello, " & Name & "!";
+end Format_Greeting;
 ```
 
 ### Step 2: Modify Greeting Format
 
-Find the greeting logic and modify it. The business logic is pure and has no dependencies.
+Change the format, for example:
+
+```ada
+function Format_Greeting (Name : String) return String is
+begin
+   return "Greetings, " & Name & "!";
+end Format_Greeting;
+```
 
 ### Step 3: Rebuild and Test
 
@@ -210,9 +236,10 @@ make test-all
 
 # Test manually
 ./bin/greeter Alice
+# Output: Greetings, Alice!
 ```
 
-**Best Practice**: Always run tests after making changes. This project has 82 tests ensuring correctness.
+**Best Practice**: Always run tests after making changes. This project has 90 tests ensuring correctness.
 
 ---
 
@@ -222,9 +249,12 @@ Hybrid_App_Ada includes comprehensive testing:
 
 ### Test Organization
 
-- **Unit Tests** (48 tests): Domain and Application logic
-- **Integration Tests** (26 tests): Cross-layer interactions
-- **E2E Tests** (8 tests): Full system via CLI
+| Test Type | Count | Location |
+|-----------|-------|----------|
+| Unit Tests | 74 | `test/unit/` |
+| Integration Tests | 8 | `test/integration/` |
+| E2E Tests | 8 | `test/e2e/` |
+| **Total** | **90** | |
 
 ### Run All Tests
 
@@ -233,8 +263,6 @@ Hybrid_App_Ada includes comprehensive testing:
 make test-all
 
 # Expected output:
-# Running all test executables...
-#
 # ########################################
 # ###                                  ###
 # ###   ALL TEST SUITES: SUCCESS      ###
@@ -274,8 +302,6 @@ make build-coverage-runtime
 # - Install it to external/gnatcov_rts/
 ```
 
-**Note**: This step is automatically performed the first time you run `make test-coverage`, but you can run it explicitly if needed.
-
 #### Running Coverage Analysis
 
 ```bash
@@ -287,15 +313,6 @@ make test-coverage
 # - coverage/index.html - HTML coverage report
 # - coverage/*.xcov - Detailed coverage files
 ```
-
-#### Cleaning Coverage Data
-
-```bash
-# Remove coverage artifacts
-make clean-coverage
-```
-
-**Coverage Runtime**: The runtime is built from your GNATcoverage installation sources and cached in `external/gnatcov_rts/`. This ensures reproducible builds across different environments.
 
 **Test Framework**: Custom lightweight framework (no AUnit dependency) located in `test/common/test_framework.{ads,adb}`
 
@@ -331,6 +348,7 @@ make build-coverage-runtime  # Build GNATcoverage runtime (one-time setup)
 make check              # Run static analysis
 make check-arch         # Validate architecture boundaries
 make stats              # Show project statistics
+make diagrams           # Regenerate UML diagrams
 ```
 
 ### Cleaning
@@ -349,6 +367,7 @@ make deps               # Show dependency information
 make prereqs            # Verify prerequisites
 make refresh            # Refresh Alire dependencies
 make compress           # Create source archive (tar.gz)
+make help               # Show all available targets
 ```
 
 ---
@@ -391,8 +410,13 @@ These are warnings (not errors) - the build will still succeed.
 ls -lh test/bin/
 # Output:
 # unit_runner
-# integration_runner
-# e2e_runner
+# test_domain_error_result
+# test_domain_person
+# test_application_command_greet
+# test_application_usecase_greet
+# test_greet_full_flow
+# test_infrastructure_console_writer
+# test_greeter_cli
 ```
 
 ### Q: How do I run a single test?
@@ -400,10 +424,11 @@ ls -lh test/bin/
 **A:** Execute the test runner directly:
 
 ```bash
-# Run specific test runner
+# Run unit test runner (all unit tests)
 ./test/bin/unit_runner
-./test/bin/integration_runner
-./test/bin/e2e_runner
+
+# Run individual test
+./test/bin/test_domain_person
 ```
 
 ---
@@ -456,9 +481,9 @@ cat test/common/test_framework.ads
 
 ### Understand Error Handling
 
-- **[Error Handling Strategy](guides/error_handling_strategy.md)** - Railway-oriented programming guide
 - See how Result monads replace exceptions
 - Study error propagation patterns
+- Learn the Application.Error re-export pattern
 
 ### Learn Dependency Injection
 
@@ -478,23 +503,15 @@ Follow the pattern:
 5. **Bootstrap**: Wire everything together (`src/bootstrap/`)
 6. **Tests**: Add unit/integration/e2e tests (`test/`)
 
-### Contributing
-
-See [CONTRIBUTING.md](../CONTRIBUTING.md) for:
-- Code style guidelines
-- Testing requirements
-- Pull request process
-- Architecture rules
-
 ---
 
 ## Documentation Index
 
-- 📖 **[Main Documentation Hub](index.md)** - All documentation links
-- 📋 **[Software Requirements Specification](formal/software_requirements_specification.md)** - Requirements
-- 🏗️ **[Software Design Specification](formal/software_design_specification.md)** - Architecture
-- 🧪 **[Software Test Guide](formal/software_test_guide.md)** - Testing guide
-- 🗺️ **[Roadmap](roadmap.md)** - Future development plans
+- **[Main Documentation Hub](index.md)** - All documentation links
+- **[Software Requirements Specification](formal/software_requirements_specification.md)** - Requirements
+- **[Software Design Specification](formal/software_design_specification.md)** - Architecture
+- **[Software Test Guide](formal/software_test_guide.md)** - Testing guide
+- **[Roadmap](roadmap.md)** - Future development plans
 
 ---
 
@@ -502,10 +519,8 @@ See [CONTRIBUTING.md](../CONTRIBUTING.md) for:
 
 For questions, issues, or contributions:
 
-- 📧 **Email**: support@abitofhelp.com
-- 🐛 **Issues**: GitHub Issues
-- 📖 **Documentation**: See `docs/` directory
-- 💬 **Discussions**: GitHub Discussions
+- **Issues**: [GitHub Issues](https://github.com/abitofhelp/hybrid_app_ada/issues)
+- **Documentation**: See `docs/` directory
 
 ---
 

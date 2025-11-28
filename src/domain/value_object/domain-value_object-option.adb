@@ -4,6 +4,10 @@ pragma Ada_2022;
 --  =========================================================================
 --  Copyright (c) 2025 Michael Gardner, A Bit of Help, Inc.
 --  SPDX-License-Identifier: BSD-3-Clause
+--
+--  Purpose:
+--    Implements Generic_Option constructors (Of_Value, None), accessors
+--    (Get, Get_Or_Else), and railway combinators (Map, Flat_Map, Filter).
 --  =========================================================================
 
 package body Domain.Value_Object.Option is

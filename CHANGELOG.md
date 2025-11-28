@@ -14,6 +14,68 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **And_Then_Into**: Cross-type Result monad chaining for transforming Result[T] to Result[U]
+  - Enables clean functional composition across type boundaries
+  - Follows railway-oriented programming principles
+  - Located in `Domain.Error.Result` package
+- **Map_Error combinator**: Error transformation in `Domain.Error.Result`
+  - Allows transforming error types while preserving success values
+  - Completes the railway-oriented programming API
+- **SPARK readiness assessment**: New Section 10 in Software Design Specification
+  - Layer-by-layer SPARK compatibility analysis
+  - Documents SPARK-compatible vs non-SPARK components
+  - Future SPARK integration guide
+- **Domain vs Functional Result documentation**: Clarified two Result types in SDS
+  - `Domain.Error.Result` for domain purity (zero external dependencies)
+  - `Functional.Result` for infrastructure exception bridging
+  - Documents bridging pattern in Infrastructure layer
+- **Purpose comments**: Added to 8 Ada package bodies
+  - bootstrap-cli.adb, application-command-greet.adb, application-usecase-greet.adb
+  - infrastructure-adapter-console_writer.adb, domain-value_object-option.adb
+  - domain-value_object-person.adb, domain-error-result.adb
+  - presentation-adapter-cli-command-greet.adb
+- **Test fixture headers**: Documented expected violations in test fixtures
+  - error_with_unbounded_string.ads (UNBOUNDED_STRING_IN_ERROR)
+  - app_imports_test.ads (TEST_CODE_IN_PRODUCTION)
+  - domain_with_pragma.ads (PRAGMA_VS_ASPECT)
+
+### Changed
+- **Format_Greeting moved to Application layer**: Greeting format logic relocated from Domain to Application
+  - Domain now only validates and stores person name (pure business logic)
+  - Application layer handles presentation formatting via `Format_Greeting` function
+  - Better separation of concerns per DDD principles
+- **Command DTO boundary isolation**: `Max_DTO_Name_Length := 256` separate from Domain's 100-character limit
+  - DTOs can accept larger inputs; Domain enforces business validation
+  - Clear architectural boundary between external input and domain constraints
+- **Documentation regenerated**: Complete documentation refresh per agent standards
+  - All formal documents (SRS, SDS, Test Guide) updated
+  - PlantUML diagrams and SVGs regenerated
+  - README.md and docs/index.md refreshed
+- **Release scripts refactored**: Modular adapter pattern for multi-language support
+  - New `scripts/release/adapters/` with base.py, ada.py, go.py
+  - Unified release.py supporting Go and Ada projects
+  - Replaced monolithic helper scripts
+- **cleanup_temp_files.py enhanced**: Now supports both Ada and Go projects
+  - Added Go patterns (.test, coverage.out, .coverprofile, vendor/)
+  - Added Ada patterns (.ali, .gcda, .gcno, .gcov)
+  - Moved to scripts/makefile/ directory
+- **Makefile cleanup**: Removed non-existent examples targets
+  - Removed build-examples, examples, run-examples, test-examples
+  - No examples directory exists in this project
+
+### Removed
+- **Application.Model.Unit**: Eliminated unused model package
+  - Unit type now comes directly from Functional library
+  - Simplified application layer structure
+- **Obsolete documentation guides**:
+  - `docs/guides/architecture_mapping.md`
+  - `docs/guides/ports_mapping.md`
+- **Deprecated release helper scripts** (replaced by adapter pattern):
+  - `scripts/release/generate_version.py`
+  - `scripts/release/sync_versions.py`
+  - `scripts/release/validate_release.py`
+
 ### Fixed
 - **Code Quality**: Resolved all compiler warnings and style violations (357 automated fixes)
   - Fixed array aggregate syntax to Ada 2022 standard (`[]` for aggregates)
@@ -27,7 +89,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Migrated to safe parameterized Functional.Try pattern
   - Enhanced Functional library with `Try_To_Result_With_Param` and `Try_To_Option_With_Param`
   - Added backwards-compatible child packages for existing tests
-  - All 83 Functional library tests passing, all 105 hybrid_app_ada tests passing
+  - All 83 Functional library tests passing, all 90 hybrid_app_ada tests passing
 - **Architecture Validation**: Fixed path detection in `arch_guard.py` after script reorganization
 - **Build System**: Corrected Makefile FORMAT_DIRS syntax (missing backslash continuation)
 
@@ -58,9 +120,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Single-project structure (simplified from aggregate project)
 - Comprehensive UML diagrams (5 PlantUML diagrams with SVG generation)
 - Architecture validation script (arch_guard.py enforces layer boundaries)
-- **Comprehensive test suite with 105 tests achieving 90%+ code coverage**:
-  - 81 unit tests (Domain + Application layers, 100% coverage)
-  - 16 integration tests (cross-layer flows with real components)
+- **Comprehensive test suite with 90 tests achieving 90%+ code coverage**:
+  - 74 unit tests (Domain + Application layers, 100% coverage)
+  - 8 integration tests (cross-layer flows with real components)
   - 8 E2E tests (black-box CLI binary testing)
 - **Professional test framework** (test/common/test_framework):
   - Color-coded test output (bright green success, bright red failure)

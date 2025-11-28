@@ -62,13 +62,12 @@ package Application.Usecase.Greet with Preelaborate is
 
    --  Orchestration workflow:
    --  1. Extract name from GreetCommand DTO
-   --  2. Validate and create Person from name
-   --  3. Generate greeting message from Person
+   --  2. Validate and create Person from name (domain validation)
+   --  3. Generate greeting message (application-level formatting)
    --  4. Write greeting to console via output port
-   --  5. Propagate any errors up to caller
+   --  5. Propagate any errors via railway-oriented programming
    --
---  Input: GreetCommand DTO crossing presentation ->
---  application boundary
+   --  Input: GreetCommand DTO crossing presentation -> application boundary
    --
    --  Error scenarios:
    --  - Validation_Error: Invalid person name (empty, too long)

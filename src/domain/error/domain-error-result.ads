@@ -208,4 +208,44 @@ is
 
    end Generic_Result;
 
+   --  ========================================================================
+   --  Cross-Type Chaining: And_Then_Into
+   --  ========================================================================
+   --
+   --  This generic function enables chaining fallible operations that return
+   --  DIFFERENT Result types. This is essential for railway-oriented
+   --  programming when transforming between types.
+   --
+   --  Example Usage:
+   --    -- Given:
+   --    --   Person_Result : package is new Generic_Result (T => Person);
+   --    --   Unit_Result   : package is new Generic_Result (T => Unit);
+   --    --   function Write_Greeting (P : Person) return Unit_Result.Result;
+   --    --
+   --    -- Chain Person creation to greeting output:
+   --    function Chain_To_Unit is new And_Then_Into
+   --      (T             => Person,
+   --       U             => Unit,
+   --       Source_Result => Person_Result,
+   --       Target_Result => Unit_Result,
+   --       F             => Write_Greeting);
+   --    --
+   --    -- Usage:
+   --    Final_Result : Unit_Result.Result := Chain_To_Unit (Person.Create (Name));
+   --
+   --  Design Pattern:
+   --    This is the monadic bind (>>=) operation that allows crossing type
+   --    boundaries while maintaining error propagation semantics.
+
+   generic
+      type T is private;
+      type U is private;
+      with package Source_Result is new Generic_Result (T => T);
+      with package Target_Result is new Generic_Result (T => U);
+      with function F (X : T) return Target_Result.Result;
+   function And_Then_Into (Self : Source_Result.Result) return Target_Result.Result;
+   --  Chain fallible operations that return different Result types
+   --  If Self is Error, converts error to Target_Result.Error (same error info)
+   --  If Self is Ok, calls F with value (F might return Error)
+
 end Domain.Error.Result;

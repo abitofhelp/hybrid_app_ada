@@ -4,6 +4,10 @@ pragma Ada_2022;
 --  =========================================================================
 --  Copyright (c) 2025 Michael Gardner, A Bit of Help, Inc.
 --  SPDX-License-Identifier: BSD-3-Clause
+--
+--  Purpose:
+--    Implements the composition root Run function that wires all layers
+--    via generic instantiation (static DI) and executes the CLI command.
 --  =========================================================================
 
 --  Import all layers

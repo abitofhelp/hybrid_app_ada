@@ -4,6 +4,10 @@ pragma Ada_2022;
 --  =========================================================================
 --  Copyright (c) 2025 Michael Gardner, A Bit of Help, Inc.
 --  SPDX-License-Identifier: BSD-3-Clause
+--
+--  Purpose:
+--    Implements Run function: parses CLI arguments, creates command DTO,
+--    invokes use case via injected Execute function, and returns exit code.
 --  =========================================================================
 
 with Ada.Command_Line;

@@ -5,6 +5,10 @@ pragma Ada_2022;
 --  Copyright (c) 2025 Michael Gardner, A Bit of Help, Inc.
 --  SPDX-License-Identifier: BSD-3-Clause
 --
+--  Purpose:
+--    Implements Write function that outputs text to console via Ada.Text_IO,
+--    wrapping exceptions into Result type for railway-oriented error handling.
+--
 --  Implementation Notes:
 --    Uses Functional.Try.Try_To_Result_With_Param to wrap exception-prone
 --    Ada.Text_IO operations, converting them to Result type for
