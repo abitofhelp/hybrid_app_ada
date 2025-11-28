@@ -63,9 +63,10 @@ project Hybrid_App_Ada is
    --
    -- Supported platforms: macOS, Linux, Windows
    -- Uses Alire_Host_OS from config (set by Alire based on build host)
+   -- Note: Do NOT use external("OS",...) as Windows sets OS=Windows_NT
    -- ==========================================================================
    type OS_Type is ("macos", "linux", "windows");
-   OS : OS_Type := external ("OS", Hybrid_App_Ada_Config.Alire_Host_OS);
+   OS : OS_Type := Hybrid_App_Ada_Config.Alire_Host_OS;
 
    -- ==========================================================================
    -- Compiler Package: Ada 2022 Standards and Best Practices
