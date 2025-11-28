@@ -1,5 +1,13 @@
 # Changelog
 
+**Version:** 1.0.0  
+**Date:** November 27, 2025  
+**SPDX-License-Identifier:** BSD-3-Clause  
+**License File:** See the LICENSE file in the project root.  
+**Copyright:** (c) 2025 Michael Gardner, A Bit of Help, Inc.  
+**Status:** Released  
+
+
 **Project:** Hybrid_App_Ada - Ada 2022 Application Starter
 **SPDX-License-Identifier:** BSD-3-Clause
 **License File:** See the LICENSE file in the project root.
@@ -77,6 +85,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `scripts/release/validate_release.py`
 
 ### Fixed
+- **Release validator improvements**: Fixed false positives in documentation consistency checker
+  - Skip pattern templates like `test_<layer>_<component>.adb` in file reference checks
+  - Check test files in `test/unit/`, `test/integration/`, `test/e2e/` subdirectories
+  - Skip file references inside tree blocks (contextual references)
+  - Recognize tree roots (e.g., `test/`) and skip subdirectory validation for rooted trees
 - **Code Quality**: Resolved all compiler warnings and style violations (357 automated fixes)
   - Fixed array aggregate syntax to Ada 2022 standard (`[]` for aggregates)
   - Fixed array constraint syntax (kept `()` for type constraints)
