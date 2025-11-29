@@ -12,6 +12,7 @@
 
 with "../../shared_config.gpr";
 with "../application/application.gpr";
+with "../version/version.gpr";
 
 library project Presentation is
 
