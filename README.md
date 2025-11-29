@@ -2,15 +2,24 @@
 
 [![License](https://img.shields.io/badge/license-BSD--3--Clause-blue.svg)](LICENSE) [![Ada](https://img.shields.io/badge/Ada-2022-blue.svg)](https://ada-lang.io) [![Alire](https://img.shields.io/badge/Alire-2.0+-blue.svg)](https://alire.ada.dev)
 
+**Version:** 1.0.0
+**Date:** 2025-11-29
+**SPDX-License-Identifier:** BSD-3-Clause
+**License File:** See the LICENSE file in the project root
+**Copyright:** © 2025 Michael Gardner, A Bit of Help, Inc.
+**Status:** Released
+
+> A canonical Ada 2022 application demonstrating a **hybrid DDD/Clean/Hexagonal architecture** with functional error handling.
+
 ## Overview
 
-A **professional Ada 2022 application starter** demonstrating **hybrid DDD/Clean/Hexagonal architecture** with **functional programming** principles using the `functional` crate for Result monads.
+A **professional Ada 2022 application starter** demonstrating a **hybrid DDD/Clean/Hexagonal architecture** with **functional programming** principles using the `functional` crate for Result monads.
 
 This is a **desktop/enterprise application template** showcasing:
 - **5-Layer Hexagonal Architecture** (Domain, Application, Infrastructure, Presentation, Bootstrap)
 - **Static Dispatch Dependency Injection** via generics (zero runtime overhead)
 - **Railway-Oriented Programming** with Result monads (no exceptions across boundaries)
-- **Presentation Isolation** pattern (only Domain is shareable across apps)
+- **Presentation Isolation** pattern (only the Domain is shareable across apps)
 - **Single-Project Structure** (easy Alire deployment)
 
 ## Features
