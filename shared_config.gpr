@@ -80,7 +80,8 @@ abstract project Shared_Config is
                "-gnateE",       -- Extra info in exceptions
                "-gnata",        -- Enable assertions and contracts
                "-gnatU",        -- Tag uninitialized scalars
-               "-gnatd.n"       -- Activate front-end inlining
+               "-gnatd.n",      -- Activate front-end inlining
+               "-gnatwe"        -- Warnings as errors
             );
 
          when "release" =>
@@ -106,7 +107,8 @@ abstract project Shared_Config is
                "-gnatVa",       -- All validity checks
                "-gnateE",       -- Extra info in exceptions
                "-gnata",        -- Enable assertions and contracts
-               "-gnatU"         -- Tag uninitialized scalars
+               "-gnatU",        -- Tag uninitialized scalars
+               "-gnatwe"        -- Warnings as errors
             );
       end case;
    end Compiler;

@@ -48,7 +48,10 @@ package Hybrid_App_Ada.Version is
    function Is_Prerelease return Boolean is (Prerelease'Length > 0);
 
    --  Check if this is a development version
+   --  Note: Condition may be always False for stable releases (expected)
+   pragma Warnings (Off, "condition is always*");
    function Is_Development return Boolean is (Prerelease = "dev");
+   pragma Warnings (On, "condition is always*");
 
    --  Check if this is a stable release
    function Is_Stable return Boolean is (not Is_Prerelease);

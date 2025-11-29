@@ -406,6 +406,14 @@ class BaseReleaseAdapter(ABC):
             if title_idx is None:
                 return False
 
+            # Check if header already exists (any bold metadata after title)
+            # Look at lines immediately after title for existing header content
+            if title_idx + 1 < len(lines):
+                next_lines = ''.join(lines[title_idx + 1:title_idx + 10])
+                if re.search(r'\*\*(?:Version|Project|Date|Copyright|SPDX)', next_lines):
+                    # Header already exists, don't add another
+                    return False
+
             # Create header
             status = "Unreleased" if config.is_prerelease else "Released"
             header = (
