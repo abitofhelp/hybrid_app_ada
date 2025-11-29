@@ -20,12 +20,6 @@ functional = "^2.1.0"
 [[pins]]
 functional = { path = "../functional" }
 
-[gpr-externals]
-HYBRID_APP_ADA_BUILD_MODE = ["dev", "release"]
-
-[gpr-set-externals]
-HYBRID_APP_ADA_BUILD_MODE = "dev"
-
 [environment]
 
 [[depends-on]]

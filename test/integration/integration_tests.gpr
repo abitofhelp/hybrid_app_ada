@@ -3,9 +3,9 @@
 -- ===========================================================================
 -- Purpose:
 --   Integration test project for testing cross-layer interactions.
---   Inherits 'test' mode settings from hybrid_app_ada.gpr for consistency.
+--   Inherits validation profile settings from hybrid_app_ada.gpr for consistency.
 --
--- Build: alr build -Xmode=test
+-- Build: alr build --validation
 --        make build-tests
 -- ===========================================================================
 
@@ -24,7 +24,7 @@ project Integration_Tests is
       "test_infrastructure_console_writer.adb");
 
    package Compiler is
-      --  Inherit compiler settings from main project (uses 'test' mode)
+      --  Inherit compiler settings from main project (uses validation profile)
       for Default_Switches ("Ada") use
          Hybrid_App_Ada.Compiler'Default_Switches("Ada");
    end Compiler;

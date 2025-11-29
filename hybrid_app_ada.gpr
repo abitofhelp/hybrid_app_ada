@@ -42,20 +42,20 @@ project Hybrid_App_Ada is
    for Create_Missing_Dirs use "True";
 
    -- ==========================================================================
-   -- Build Mode Configuration
+   -- Build Profile Configuration (Alire Standard Profiles)
    -- ==========================================================================
    --
-   -- Available build modes:
+   -- Uses Alire's standard build profiles from Hybrid_App_Ada_Config:
    --   development : Daily development (no optimization, all checks, full debug)
-   --   test        : Test suite builds (optimized for debugging, all checks)
+   --   validation  : Test/validation builds (optimized for debugging, all checks)
    --   release     : Production builds (optimized, all runtime checks enabled)
-   --   benchmark   : Performance testing (maximum optimization, use with caution)
    --
-   -- Usage: alr build -Xmode=<mode>
-   --        make build MODE=<mode>
+   -- Usage: alr build                 (development - default)
+   --        alr build --validation    (test/validation builds)
+   --        alr build --release       (production builds)
+   --        make build                (development)
+   --        make build-release        (release)
    -- ==========================================================================
-   type Mode_Type is ("development", "test", "release", "benchmark");
-   Mode : Mode_Type := external ("mode", "development");
 
    -- ==========================================================================
    -- Platform Detection for Cross-Platform Support
@@ -120,7 +120,7 @@ project Hybrid_App_Ada is
          "-gnatyy"          -- Enable default style checks
       );
 
-      case Mode is
+      case Hybrid_App_Ada_Config.Build_Profile is
          when "development" =>
             --  Daily development: No optimization, all checks, full debug
             --  Best for: Interactive debugging, development work
@@ -134,8 +134,8 @@ project Hybrid_App_Ada is
                "-gnatwe"        -- Stop on warning
             );
 
-         when "test" =>
-            --  Test suite builds: Optimized for debugging, all checks enabled
+         when "validation" =>
+            --  Test/validation builds: Optimized for debugging, all checks enabled
             --  Best for: Running test suites with good performance and debuggability
             --  Uses -Og: Optimizes for debugging (faster than -O0, still debuggable)
             for Default_Switches ("Ada") use Common_Switches & (
@@ -157,19 +157,6 @@ project Hybrid_App_Ada is
                "-O2",           -- Optimization level 2
                "-gnatn"         -- Enable inlining
             );
-
-         when "benchmark" =>
-            --  Performance testing: Maximum safe optimization
-            --  Best for: Performance benchmarking after thorough testing
-            --  WARNING: Use only after profiling shows benefit
-            --  Note: -O2 used instead of -O3 (usually faster in practice)
-            for Default_Switches ("Ada") use Common_Switches & (
-               "-O2",           -- Optimization level 2 (not -O3)
-               "-gnatn"         -- Enable inlining
-               --  Note: Add -gnatp (suppress checks) ONLY if:
-               --    1. Profiling proves it necessary, AND
-               --    2. Code has been formally verified/thoroughly tested
-            );
       end case;
    end Compiler;
 
@@ -177,13 +164,13 @@ project Hybrid_App_Ada is
    -- Binder Package: Runtime Configuration
    -- ==========================================================================
    package Binder is
-      case Mode is
-         when "development" | "test" =>
+      case Hybrid_App_Ada_Config.Build_Profile is
+         when "development" | "validation" =>
             for Default_Switches ("Ada") use (
                "-Es",        -- Symbolic traceback
                "-E"          -- Store tracebacks in exceptions
             );
-         when "release" | "benchmark" =>
+         when "release" =>
             for Default_Switches ("Ada") use ("-E");
       end case;
    end Binder;

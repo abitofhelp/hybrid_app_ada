@@ -5,9 +5,9 @@
 --   End-to-End test project for testing complete system through CLI.
 --   Tests execute the greeter binary and verify output (black-box testing).
 --   Does NOT import application code - tests from user's perspective.
---   Inherits 'test' mode settings from hybrid_app_ada.gpr for consistency.
+--   Inherits validation profile settings from hybrid_app_ada.gpr for consistency.
 --
--- Build: alr build -Xmode=test
+-- Build: alr build --validation
 --        make build-tests
 -- ===========================================================================
 
@@ -26,7 +26,7 @@ project E2E_Tests is
       "test_greeter_cli.adb");
 
    package Compiler is
-      --  Inherit compiler settings from main project (uses 'test' mode)
+      --  Inherit compiler settings from main project (uses validation profile)
       for Default_Switches ("Ada") use
          Hybrid_App_Ada.Compiler'Default_Switches("Ada");
    end Compiler;

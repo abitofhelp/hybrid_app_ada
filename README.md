@@ -1,9 +1,6 @@
-# Ada 2022 Enterprise Starter with Hybrid DDD/Clean/Hexagonal Architecture
+# Enterprise Starter with Hybrid DDD/Clean/Hexagonal Architecture
 
-**Version:** 1.0.0  
-**Date:** November 28, 2025  
-**Copyright:** © 2025 Michael Gardner, A Bit of Help, Inc.  
-**License:** BSD-3-Clause  
+[![License](https://img.shields.io/badge/license-BSD--3--Clause-blue.svg)](LICENSE) [![Ada](https://img.shields.io/badge/Ada-2022-blue.svg)](https://ada-lang.io) [![Alire](https://img.shields.io/badge/Alire-2.0+-blue.svg)](https://alire.ada.dev)
 
 ## Overview
 
@@ -15,6 +12,18 @@ This is a **desktop/enterprise application template** showcasing:
 - **Railway-Oriented Programming** with Result monads (no exceptions across boundaries)
 - **Presentation Isolation** pattern (only Domain is shareable across apps)
 - **Single-Project Structure** (easy Alire deployment)
+
+## Features
+
+- ✅ Single-project structure (easy Alire deployment)
+- ✅ Result monad error handling (Domain.Error.Result)
+- ✅ Static dependency injection via generics
+- ✅ Application.Error re-export pattern
+- ✅ Architecture boundary validation (arch_guard.py)
+- ✅ Comprehensive documentation with UML diagrams
+- ✅ Test framework (unit/integration/e2e - 90 tests)
+- ✅ Aspect syntax (not pragmas)
+- ✅ Makefile automation
 
 ## Architecture
 
@@ -101,11 +110,9 @@ package Application.Error is
 end Application.Error;
 ```
 
-## Static Dispatch Dependency Injection
+### Static Dispatch Dependency Injection
 
 ![Static vs Dynamic Dispatch](docs/diagrams/dynamic_static_dispatch.svg)
-
-### This Project Uses: Static Dispatch (Generics)
 
 ```ada
 -- Compile-time polymorphism (USED in this project)
@@ -122,57 +129,13 @@ begin
 end Execute;
 ```
 
-**Wiring in Bootstrap:**
-```ada
--- Step 1: Wire Infrastructure → Port
-package Writer_Port_Instance is new
-  Application.Port.Outbound.Writer.Generic_Writer
-    (Write => Infrastructure.Adapter.Console_Writer.Write);
-
--- Step 2: Wire Use Case → Port
-package Greet_UseCase_Instance is new
-  Application.Usecase.Greet
-    (Writer => Writer_Port_Instance.Write_Message);
-
--- Step 3: Wire Command → Use Case
-package Greet_Command_Instance is new
-  Presentation.Adapter.CLI.Command.Greet
-    (Execute_Greet_UseCase => Greet_UseCase_Instance.Execute);
-
--- Step 4: Run
-return Greet_Command_Instance.Run;
-```
-
 **Benefits:**
 - ✅ **Zero runtime overhead** (compile-time resolution)
 - ✅ **Full inlining** (compiler can optimize across boundaries)
 - ✅ **Stack allocation** (no heap required)
 - ✅ **Type-safe** (verified at compile time)
 
-## Error Handling: Railway-Oriented Programming
-
-![Error Handling Flow](docs/diagrams/error_handling_flow.svg)
-
-**NO EXCEPTIONS across layer boundaries.** All errors propagate via Result monad:
-
-```ada
--- Use case returns Result
-function Execute (Cmd : Greet_Command) return Unit_Result.Result is
-   Person_Result : constant Person_Result.Result :=
-      Domain.Value_Object.Person.Create(Get_Name(Cmd));
-begin
-   if Person_Result.Is_Error then
-      return Unit_Result.Error(
-         Kind => Person_Result.Error_Info.Kind,
-         Message => Error_Strings.To_String(Person_Result.Error_Info.Message));
-   end if;
-
-   -- Format greeting at application layer, then write
-   return Writer(Format_Greeting(Get_Name(Person_Result.Value)));
-end Execute;
-```
-
-## Building
+## Quick Start
 
 ### Prerequisites
 
@@ -180,7 +143,7 @@ end Execute;
 - **Alire 2.0+** package manager
 - **Java 11+** (for PlantUML diagram generation, optional)
 
-### Build Commands
+### Building
 
 ```bash
 # Build the project
@@ -188,25 +151,18 @@ make build
 # or
 alr build
 
-# Run the application
-./bin/greeter Alice
-
 # Clean artifacts
 make clean
 
 # Rebuild from scratch
 make rebuild
+```
 
-# Run tests
-make test-unit           # Unit tests (74)
-make test-integration    # Integration tests (8)
-make test-e2e            # E2E tests (8)
-make test-all            # All tests (90)
+### Running
 
-# Code quality
-make check-arch          # Validate architecture boundaries
-make diagrams            # Regenerate UML diagrams
-make stats               # Code statistics
+```bash
+# Run the application
+./bin/greeter Alice
 ```
 
 ## Usage
@@ -231,7 +187,7 @@ make stats               # Code statistics
 # Exit code: 1
 ```
 
-## Exit Codes
+### Exit Codes
 
 - **0**: Success
 - **1**: Failure (validation error, infrastructure error, or missing arguments)
@@ -255,41 +211,22 @@ make test-all
 make test-unit
 make test-integration
 make test-e2e
+
+# Code quality
+make check-arch          # Validate architecture boundaries
+make diagrams            # Regenerate UML diagrams
+make stats               # Code statistics
 ```
-
-## Dependencies
-
-Managed by Alire (`alire.toml`):
-
-```toml
-[dependencies]
-functional = "^1.0.0"  # Result/Option/Either monads
-```
-
-## Architecture Validation
-
-**Automated boundary enforcement:**
-
-```bash
-make check-arch
-```
-
-The `scripts/arch_guard.py` script validates:
-- ✅ Presentation → Application only (no Domain access)
-- ✅ Infrastructure → Application + Domain
-- ✅ Application → Domain only
-- ✅ Domain has zero dependencies
-- ✅ All pragmas converted to aspects
 
 ## Documentation
 
-- **[Documentation Index](docs/index.md)** - Complete documentation overview
-- **[Quick Start Guide](docs/quick_start.md)** - Get started in minutes
-- **[Software Requirements Specification](docs/formal/software_requirements_specification.md)**
-- **[Software Design Specification](docs/formal/software_design_specification.md)**
-- **[Software Test Guide](docs/formal/software_test_guide.md)**
-- **[Roadmap](docs/roadmap.md)** - Future plans
-- **[CHANGELOG](CHANGELOG.md)** - Release history
+- 📚 **[Documentation Index](docs/index.md)** - Complete documentation overview
+- 🚀 **[Quick Start Guide](docs/quick_start.md)** - Get started in minutes
+- 📖 **[Software Requirements Specification](docs/formal/software_requirements_specification.md)**
+- 🏗️ **[Software Design Specification](docs/formal/software_design_specification.md)**
+- 🧪 **[Software Test Guide](docs/formal/software_test_guide.md)**
+- 🗺️ **[Roadmap](docs/roadmap.md)** - Future plans
+- 📝 **[CHANGELOG](CHANGELOG.md)** - Release history
 
 ### Diagrams
 
@@ -318,25 +255,45 @@ This project follows:
 6. **Result Monads:** No exceptions across boundaries
 7. **Static Dispatch:** Generics for dependency injection
 
-## Project Status
+## Contributing
 
-✅ **Completed:**
-- Single-project structure (easy Alire deployment)
-- Result monad error handling (Domain.Error.Result)
-- Static dependency injection via generics
-- Application.Error re-export pattern
-- Architecture boundary validation (arch_guard.py)
-- Comprehensive documentation with UML diagrams
-- Test framework (unit/integration/e2e - 90 tests)
-- Aspect syntax (not pragmas)
-- Makefile automation
+This project is not open to external contributions at this time.
+
+## AI Assistance & Authorship
+
+This project — including its source code, tests, documentation, and other deliverables — is designed, implemented, and maintained by human developers, with Michael Gardner as the Principal Software Engineer and project lead.
+
+We use AI coding assistants (such as OpenAI GPT models and Anthropic Claude Code) as part of the development workflow to help with:
+
+- drafting and refactoring code and tests,
+- exploring design and implementation alternatives,
+- generating or refining documentation and examples,
+- and performing tedious and error-prone chores.
+
+AI systems are treated as tools, not authors. All changes are reviewed, adapted, and integrated by the human maintainers, who remain fully responsible for the architecture, correctness, and licensing of this project.
 
 ## License
 
-BSD-3-Clause - See LICENSE file in project root.
+Copyright © 2025 Michael Gardner, A Bit of Help, Inc.
+
+Licensed under the BSD-3-Clause License. See [LICENSE](LICENSE) for details.
 
 ## Author
 
 Michael Gardner
 A Bit of Help, Inc.
 https://github.com/abitofhelp
+
+## Project Status
+
+**Status**: Production Ready (v1.0.0)
+
+- ✅ Single-project structure (easy Alire deployment)
+- ✅ Result monad error handling (Domain.Error.Result)
+- ✅ Static dependency injection via generics
+- ✅ Application.Error re-export pattern
+- ✅ Architecture boundary validation (arch_guard.py)
+- ✅ Comprehensive documentation with UML diagrams
+- ✅ Test framework (unit/integration/e2e - 90 tests)
+- ✅ Aspect syntax (not pragmas)
+- ✅ Makefile automation

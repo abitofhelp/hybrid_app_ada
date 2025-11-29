@@ -169,21 +169,21 @@ build-release: check-arch prereqs
 	@echo "$(GREEN)✓ Release build complete$(NC)"
 
 build-tests: check-arch prereqs
-	@echo "$(GREEN)Building test suites (test mode)...$(NC)"
+	@echo "$(GREEN)Building test suites...$(NC)"
 	@if [ -f "$(TEST_DIR)/unit/unit_tests.gpr" ]; then \
-		$(ALR) exec -- $(GPRBUILD) -P $(TEST_DIR)/unit/unit_tests.gpr -Xmode=test -p $(ALR_TEST_FLAGS); \
+		$(ALR) exec -- $(GPRBUILD) -P $(TEST_DIR)/unit/unit_tests.gpr -p $(ALR_TEST_FLAGS); \
 		echo "$(GREEN)✓ Unit tests built$(NC)"; \
 	else \
 		echo "$(YELLOW)Unit test project not found$(NC)"; \
 	fi
 	@if [ -f "$(TEST_DIR)/integration/integration_tests.gpr" ]; then \
-		$(ALR) exec -- $(GPRBUILD) -P $(TEST_DIR)/integration/integration_tests.gpr -Xmode=test -p $(ALR_TEST_FLAGS); \
+		$(ALR) exec -- $(GPRBUILD) -P $(TEST_DIR)/integration/integration_tests.gpr -p $(ALR_TEST_FLAGS); \
 		echo "$(GREEN)✓ Integration tests built$(NC)"; \
 	else \
 		echo "$(YELLOW)Integration test project not found$(NC)"; \
 	fi
 	@if [ -f "$(TEST_DIR)/e2e/e2e_tests.gpr" ]; then \
-		$(ALR) exec -- $(GPRBUILD) -P $(TEST_DIR)/e2e/e2e_tests.gpr -Xmode=test -p $(ALR_TEST_FLAGS); \
+		$(ALR) exec -- $(GPRBUILD) -P $(TEST_DIR)/e2e/e2e_tests.gpr -p $(ALR_TEST_FLAGS); \
 		echo "$(GREEN)✓ E2E tests built$(NC)"; \
 	else \
 		echo "$(YELLOW)E2E test project not found$(NC)"; \
@@ -393,7 +393,7 @@ test-coverage: clean build build-coverage-runtime
 
 check:
 	@echo "$(GREEN)Running code checks...$(NC)"
-	@$(ALR) build --validation -- $(ALR_BUILD_FLAGS)
+	@$(ALR) build --development -- $(ALR_BUILD_FLAGS)
 	@echo "$(GREEN)✓ Code checks complete$(NC)"
 
 check-arch: ## Validate hexagonal architecture boundaries

@@ -22,7 +22,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-_No unreleased changes._
+### Changed
+- README.md standardized to new documentation format with proper section order
+- Added AI Assistance & Authorship section (legally required disclosure)
+- Makefile: Fixed invalid `--validation` Alire flag, now uses `--development`
+
+### Added
+- Release script: AI Assistance section validation (Step 0d - blocking)
+- Release script: Git history AI marker scan (Step 0e - warning)
 
 ---
 
