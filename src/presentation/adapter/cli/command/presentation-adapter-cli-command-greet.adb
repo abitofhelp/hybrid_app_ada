@@ -13,6 +13,7 @@ pragma Ada_2022;
 with Ada.Command_Line;
 with Ada.Text_IO;
 with Application.Error;
+with Hybrid_App_Ada.Version;
 
 package body Presentation.Adapter.CLI.Command.Greet is
 
@@ -28,6 +29,7 @@ package body Presentation.Adapter.CLI.Command.Greet is
    begin
       --  Check if user provided exactly one argument (the name)
       if Arg_Count /= 1 then
+         Put_Line (Command_Name & " v" & Hybrid_App_Ada.Version.Version);
          Put_Line ("Usage: " & Command_Name & " <name>");
          Put_Line ("Example: " & Command_Name & " Alice");
          return 1;  --  Exit code 1 indicates error
