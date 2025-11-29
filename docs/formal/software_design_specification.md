@@ -150,7 +150,11 @@ Hybrid_App_Ada uses **Hexagonal Architecture** (Ports and Adapters / Clean Archi
 
 #### Version Package (Cross-Cutting)
 - **Purpose**: Application version metadata (outside hexagonal layers)
-- **Location**: `src/hybrid_app_ada-version.ads`
+- **Location**: `src/version/` (own GPR project)
+- **Files**:
+  - `hybrid_app_ada.ads` - parent package spec
+  - `hybrid_app_ada-version.ads` - version constants
+  - `version.gpr` - standalone library project
 - **Components**:
   - `Version` - full semantic version string (e.g., "1.0.0")
   - `Major`, `Minor`, `Patch` - numeric components
