@@ -951,9 +951,8 @@ class BaseReleaseAdapter(ABC):
 
         This is a LEGALLY CRITICAL validation. The section MUST:
         1. Exist in README.md
-        2. Appear AFTER the project description/introduction
-        3. Appear BEFORE installation/quick start sections
-        4. Contain the required content about AI tools being tools, not authors
+        2. Appear BETWEEN Contributing and License sections (standard position 12)
+        3. Contain the required content about AI tools being tools, not authors
 
         Args:
             config: ReleaseConfig instance
@@ -981,7 +980,7 @@ class BaseReleaseAdapter(ABC):
 
             if not ai_section_match:
                 errors.append("  ✗ Missing 'AI Assistance & Authorship' section")
-                errors.append("    Required section heading: '### AI Assistance & Authorship'")
+                errors.append("    Required section heading: '## AI Assistance & Authorship'")
                 errors.append("    See documentation agent for required content")
                 return False, errors
 
@@ -990,26 +989,33 @@ class BaseReleaseAdapter(ABC):
             print(f"  ✓ Found AI Assistance section at line {ai_section_line}")
 
             # Find key sections to validate placement
-            # The AI section should be AFTER intro and BEFORE installation
-            title_match = re.search(r'^#\s+\S', content, re.MULTILINE)
-            install_match = re.search(
-                r'^#{1,3}\s+(Install|Quick\s*Start|Getting\s*Started|Setup|Usage)',
+            # Standard order: Contributing (11) -> AI Assistance (12) -> License (13)
+            contributing_match = re.search(
+                r'^#{1,3}\s+Contribut',
+                content, re.MULTILINE | re.IGNORECASE
+            )
+            license_match = re.search(
+                r'^#{1,3}\s+License\b',
                 content, re.MULTILINE | re.IGNORECASE
             )
 
-            # Validate: AI section should not be in the first 5 lines (after title)
-            if ai_section_line < 5:
-                errors.append(f"  ⚠ AI Assistance section appears too early (line {ai_section_line})")
-                errors.append("    It should appear after the project description, not immediately after title")
-
-            # Validate: AI section should appear before installation
-            if install_match:
-                install_line = content[:install_match.start()].count('\n') + 1
-                if ai_section_line > install_line:
-                    errors.append(f"  ✗ AI Assistance section (line {ai_section_line}) appears AFTER installation section (line {install_line})")
-                    errors.append("    It MUST appear BEFORE installation instructions")
+            # Validate: AI section should appear AFTER Contributing (if present)
+            if contributing_match:
+                contributing_line = content[:contributing_match.start()].count('\n') + 1
+                if ai_section_line < contributing_line:
+                    errors.append(f"  ✗ AI Assistance section (line {ai_section_line}) appears BEFORE Contributing section (line {contributing_line})")
+                    errors.append("    It should appear AFTER Contributing section")
                 else:
-                    print(f"  ✓ AI Assistance section correctly placed before installation (line {install_line})")
+                    print(f"  ✓ AI Assistance section correctly placed after Contributing (line {contributing_line})")
+
+            # Validate: AI section should appear BEFORE License
+            if license_match:
+                license_line = content[:license_match.start()].count('\n') + 1
+                if ai_section_line > license_line:
+                    errors.append(f"  ✗ AI Assistance section (line {ai_section_line}) appears AFTER License section (line {license_line})")
+                    errors.append("    It MUST appear BEFORE License section")
+                else:
+                    print(f"  ✓ AI Assistance section correctly placed before License (line {license_line})")
 
             # Validate required content keywords
             # Extract the AI section content (until next heading or end)
