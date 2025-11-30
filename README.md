@@ -34,6 +34,15 @@ This is a **desktop/enterprise application template** showcasing:
 - ✅ Aspect syntax (not pragmas)
 - ✅ Makefile automation
 
+## Platform Support
+
+| Platform | Status | Notes |
+|----------|--------|-------|
+| **Desktop** | ✅ Full | Console I/O via Presentation layer |
+| **Embedded** | 🔧 Untested | Architecture supports it, not yet validated |
+
+> **Note**: This application is not yet SPARK-friendly. SPARK compatibility is planned for future releases when embedded deployment is required.
+
 ## Architecture
 
 ### Layer Structure

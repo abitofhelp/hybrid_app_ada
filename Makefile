@@ -260,7 +260,7 @@ clean-coverage:
 
 clean-clutter: ## Remove temporary files, backups, and clutter
 	@echo "$(CYAN)Cleaning temporary files and clutter...$(NC)"
-	@$(PYTHON3) scripts/makefile/cleanup_temp_files.py
+	@$(PYTHON3) scripts/python/makefile/cleanup_temp_files.py
 	@echo "$(GREEN)✓ Temporary files removed$(NC)"
 
 compress:
@@ -380,10 +380,10 @@ test-framework: test-unit test-integration test-e2e ## Run all test suites
 
 test-coverage: clean build build-coverage-runtime
 	@echo "$(GREEN)Running tests with GNATcoverage analysis...$(NC)"
-	@if [ -f "scripts/makefile/coverage.sh" ]; then \
-		bash scripts/makefile/coverage.sh; \
+	@if [ -f "scripts/python/makefile/coverage.sh" ]; then \
+		bash scripts/python/makefile/coverage.sh; \
 	else \
-		echo "$(YELLOW)Coverage script not found at scripts/makefile/coverage.sh$(NC)"; \
+		echo "$(YELLOW)Coverage script not found at scripts/python/makefile/coverage.sh$(NC)"; \
 		exit 1; \
 	fi
 
@@ -398,7 +398,7 @@ check:
 
 check-arch: ## Validate hexagonal architecture boundaries
 	@echo "$(GREEN)Validating architecture boundaries...$(NC)"
-	@PYTHONPATH=scripts $(PYTHON3) -m arch_guard
+	@PYTHONPATH=scripts/python $(PYTHON3) -m arch_guard
 	@if [ $$? -eq 0 ]; then \
 		echo "$(GREEN)✓ Architecture validation passed$(NC)"; \
 	else \
@@ -416,8 +416,8 @@ test-python: ## Run Python script tests (arch_guard.py validation)
 # THE CURRENT SCRIPT IS COMMENTING COMMENTS AND MESSING UP WITH INDEXED COMMENTS.
 # format-src:
 # 	@echo "$(GREEN)Formatting source code...$(NC)"
-# 	@if [ ! -f "scripts/makefile/ada_formatter_pipeline.donotuse.py" ]; then \
-# 		echo "$(RED)Error: scripts/makefile/ada_formatter_pipeline.donotuse.py not found$(NC)"; \
+# 	@if [ ! -f "scripts/python/makefile/ada_formatter_pipeline.donotuse.py" ]; then \
+# 		echo "$(RED)Error: scripts/python/makefile/ada_formatter_pipeline.donotuse.py not found$(NC)"; \
 # 		exit 1; \
 # 	fi
 # 	@for layer in application domain infrastructure; do \
@@ -425,7 +425,7 @@ test-python: ## Run Python script tests (arch_guard.py validation)
 # 			find "$$layer/src" -name "*.ads" -o -name "*.adb" | \
 # 			while read file; do \
 # 				echo "  Formatting $$file..."; \
-# 				$(PYTHON3) scripts/makefile/ada_formatter_pipeline.donotuse.py "$(PWD)/$$layer/$$layer.gpr" --include-path "$(PWD)/$$file" || true; \
+# 				$(PYTHON3) scripts/python/makefile/ada_formatter_pipeline.donotuse.py "$(PWD)/$$layer/$$layer.gpr" --include-path "$(PWD)/$$file" || true; \
 # 			done; \
 # 		fi; \
 # 	done
@@ -433,15 +433,15 @@ test-python: ## Run Python script tests (arch_guard.py validation)
 
 # format-tests:
 # 	@echo "$(GREEN)Formatting test code...$(NC)"
-# 	@if [ ! -f "scripts/makefile/ada_formatter_pipeline.donotuse.py" ]; then \
-# 		echo "$(RED)Error: scripts/makefile/ada_formatter_pipeline.donotuse.py not found$(NC)"; \
+# 	@if [ ! -f "scripts/python/makefile/ada_formatter_pipeline.donotuse.py" ]; then \
+# 		echo "$(RED)Error: scripts/python/makefile/ada_formatter_pipeline.donotuse.py not found$(NC)"; \
 # 		exit 1; \
 # 	fi
 # 	@if [ -d "$(TEST_DIR)/unit" ] && [ -f "$(TEST_DIR)/unit/unit_tests.gpr" ]; then \
 # 		find $(TEST_DIR)/unit -name "*.ads" -o -name "*.adb" | \
 # 		while read file; do \
 # 			echo "  Formatting $$file..."; \
-# 			$(PYTHON3) scripts/makefile/ada_formatter_pipeline.donotuse.py "$(PWD)/$(TEST_DIR)/unit/unit_tests.gpr" --include-path "$(PWD)/$$file" || true; \
+# 			$(PYTHON3) scripts/python/makefile/ada_formatter_pipeline.donotuse.py "$(PWD)/$(TEST_DIR)/unit/unit_tests.gpr" --include-path "$(PWD)/$$file" || true; \
 # 		done; \
 # 		echo "$(GREEN)✓ Unit test formatting complete$(NC)"; \
 # 	fi
@@ -449,7 +449,7 @@ test-python: ## Run Python script tests (arch_guard.py validation)
 # 		find $(TEST_DIR)/integration -name "*.ads" -o -name "*.adb" | \
 # 		while read file; do \
 # 			echo "  Formatting $$file..."; \
-# 			$(PYTHON3) scripts/makefile/ada_formatter_pipeline.donotuse.py "$(PWD)/$(TEST_DIR)/integration/integration_tests.gpr" --include-path "$(PWD)/$$file" || true; \
+# 			$(PYTHON3) scripts/python/makefile/ada_formatter_pipeline.donotuse.py "$(PWD)/$(TEST_DIR)/integration/integration_tests.gpr" --include-path "$(PWD)/$$file" || true; \
 # 		done; \
 # 		echo "$(GREEN)✓ Integration test formatting complete$(NC)"; \
 # 	fi
@@ -457,7 +457,7 @@ test-python: ## Run Python script tests (arch_guard.py validation)
 # 		find $(TEST_DIR)/domain -name "*.ads" -o -name "*.adb" | \
 # 		while read file; do \
 # 			echo "  Formatting $$file..."; \
-# 			$(PYTHON3) scripts/makefile/ada_formatter_pipeline.donotuse.py "$(PWD)/$(TEST_DIR)/unit/unit_tests.gpr" --include-path "$(PWD)/$$file" || true; \
+# 			$(PYTHON3) scripts/python/makefile/ada_formatter_pipeline.donotuse.py "$(PWD)/$(TEST_DIR)/unit/unit_tests.gpr" --include-path "$(PWD)/$$file" || true; \
 # 		done; \
 # 		echo "$(GREEN)✓ Domain test formatting complete$(NC)"; \
 # 	fi
@@ -513,12 +513,12 @@ refresh: ## Refresh Alire dependencies
 
 install-tools: ## Install development tools (GMP, gcovr, gnatformat)
 	@echo "$(CYAN)Installing development tools...$(NC)"
-	@$(PYTHON3) scripts/makefile/install_tools.py
+	@$(PYTHON3) scripts/python/makefile/install_tools.py
 	@echo "$(GREEN)✓ Tool installation complete$(NC)"
 
 build-coverage-runtime: ## Build GNATcoverage runtime library
 	@echo "$(CYAN)Building GNATcoverage runtime...$(NC)"
-	@$(PYTHON3) scripts/makefile/build_gnatcov_runtime.py
+	@$(PYTHON3) scripts/python/makefile/build_gnatcov_runtime.py
 
 diagrams: ## Generate SVG diagrams from PlantUML sources
 	@echo "$(CYAN)Generating SVG diagrams from PlantUML...$(NC)"

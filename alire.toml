@@ -15,9 +15,12 @@ executables = ["greeter"]
 "*".Style_Checks = "yes"
 
 [[depends-on]]
-functional = "^2.1.0"
+functional = "^2.2.0"
 
 [environment]
 
 [[depends-on]]
 gnatcov = "^22.0.1"
+
+[[pins]]
+functional = { path = '../functional' }
