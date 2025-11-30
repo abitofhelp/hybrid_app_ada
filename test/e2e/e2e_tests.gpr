@@ -19,11 +19,9 @@ project E2E_Tests is
    for Object_Dir use "../../obj/test/e2e";
    for Exec_Dir use "../bin";
 
-   --  Main test programs (add your tests here)
+   --  Only the runner is Main; individual tests are procedures it calls
    --  E2E tests should execute bin/greeter and verify output
-   for Main use
-     ("e2e_runner.adb",
-      "test_greeter_cli.adb");
+   for Main use ("e2e_runner.adb");
 
    package Compiler is
       --  Inherit compiler settings from main project (uses validation profile)
