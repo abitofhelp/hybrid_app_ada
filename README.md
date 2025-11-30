@@ -3,11 +3,11 @@
 [![License](https://img.shields.io/badge/license-BSD--3--Clause-blue.svg)](LICENSE) [![Ada](https://img.shields.io/badge/Ada-2022-blue.svg)](https://ada-lang.io) [![Alire](https://img.shields.io/badge/Alire-2.0+-blue.svg)](https://alire.ada.dev)
 
 **Version:** 1.0.0<br>
-**Date:** November 29, 2025<br>
+**Date:** 2025-11-29<br>
 **SPDX-License-Identifier:** BSD-3-Clause<br>
 **License File:** See the LICENSE file in the project root<br>
-**Copyright:** © 2025 Michael Gardner, A Bit of Help, Inc.<br>  
-**Status:** Released  
+**Copyright:** © 2025 Michael Gardner, A Bit of Help, Inc.<br>
+**Status:** Released
 
 > A canonical Ada 2022 application demonstrating a **hybrid DDD/Clean/Hexagonal architecture** with functional error handling.
 
@@ -306,3 +306,4 @@ https://github.com/abitofhelp
 - ✅ Test framework (unit/integration/e2e - 90 tests)
 - ✅ Aspect syntax (not pragmas)
 - ✅ Makefile automation
+- ✅ Alire publication
