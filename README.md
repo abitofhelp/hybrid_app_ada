@@ -22,6 +22,23 @@ This is a **desktop/enterprise application template** showcasing:
 - **Presentation Isolation** pattern (only the Domain is shareable across apps)
 - **Single-Project Structure** (easy Alire deployment)
 
+## Getting Started
+
+### Clone with Submodules
+
+This repository uses git submodules for shared tooling. Clone with:
+
+```bash
+git clone --recurse-submodules https://github.com/abitofhelp/hybrid_app_ada.git
+```
+
+Or if already cloned without submodules:
+
+```bash
+git submodule update --init --recursive
+# Or: make submodule-init
+```
+
 ## Features
 
 - ✅ Single-project structure (easy Alire deployment)
