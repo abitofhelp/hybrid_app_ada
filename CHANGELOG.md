@@ -1,11 +1,11 @@
 # Changelog
 
 **Project:** Hybrid_App_Ada
-**Version:** 1.0.0  
-**Date:** November 28, 2025  
+**Version:** 1.0.0
+**Date:** December 02, 2025
 **SPDX-License-Identifier:** BSD-3-Clause
 **License File:** See the LICENSE file in the project root.
-**Copyright:** (c) 2025 Michael Gardner, A Bit of Help, Inc.  
+**Copyright:** (c) 2025 Michael Gardner, A Bit of Help, Inc.
 **Status:** Released  
 
 All notable changes to Hybrid_App_Ada will be documented in this file.
@@ -21,7 +21,7 @@ _No unreleased changes._
 
 ---
 
-## [1.0.0] - 2025-11-28
+## [1.0.0] - 2025-12-02
 
 _First stable release - Professional Ada 2022 application starter template demonstrating hybrid DDD/Clean/Hexagonal architecture with functional programming principles._
 
@@ -35,6 +35,7 @@ _First stable release - Professional Ada 2022 application starter template demon
 - **Single-Project Structure**: Simplified from aggregate project
 - **Comprehensive UML Diagrams**: 5 PlantUML diagrams with SVG generation
 - **Architecture Validation**: arch_guard.py enforces layer boundaries
+- **Submodule `export-ignore`**: Clean Alire deployment without path collisions
 
 #### Cross-Cutting
 - **Version Package** (`src/version/`): Outside hexagonal layers with own GPR
@@ -134,6 +135,9 @@ _First stable release - Professional Ada 2022 application starter template demon
 - Software Requirements Specification
 - Software Test Guide
 - Quick Start Guide
+
+### Dependencies
+- `functional` ^2.2.1 (Result/Option/Try monads)
 
 ---
 
