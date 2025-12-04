@@ -15,7 +15,7 @@
 --   - Auto-generated content from release scripts
 -- ==========================================================================
 
-with "../../shared_config.gpr";
+with "../../hybrid_app_ada_shared_config.gpr";
 
 library project Version is
 
@@ -29,7 +29,7 @@ library project Version is
      ("Hybrid_App_Ada",
       "Hybrid_App_Ada.Version");
 
-   package Compiler renames Shared_Config.Compiler;
-   package Binder renames Shared_Config.Binder;
+   package Compiler renames Hybrid_App_Ada_Shared_Config.Compiler;
+   package Binder renames Hybrid_App_Ada_Shared_Config.Binder;
 
 end Version;

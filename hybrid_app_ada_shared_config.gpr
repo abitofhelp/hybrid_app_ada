@@ -1,5 +1,5 @@
 -- ==========================================================================
--- Shared Configuration for Simple Hybrid Project
+-- Shared Configuration for Hybrid_App_Ada Project
 -- ==========================================================================
 -- Copyright (c) 2025 Michael Gardner, A Bit of Help, Inc.
 -- SPDX-License-Identifier: BSD-3-Clause
@@ -10,13 +10,13 @@
 --   for all sub-projects (domain, application, infrastructure, presentation, bootstrap)
 --
 -- Usage:
---   with "../../shared_config.gpr";
+--   with "../../hybrid_app_ada_shared_config.gpr";
 --   library project My_Project is
---      package Compiler renames Shared_Config.Compiler;
+--      package Compiler renames Hybrid_App_Ada_Shared_Config.Compiler;
 --   end My_Project;
 -- ==========================================================================
 
-abstract project Shared_Config is
+abstract project Hybrid_App_Ada_Shared_Config is
 
    -- ==========================================================================
    -- Build Mode Configuration
@@ -152,4 +152,4 @@ abstract project Shared_Config is
       for Documentation_Dir use "docs/api";
    end Documentation;
 
-end Shared_Config;
+end Hybrid_App_Ada_Shared_Config;
