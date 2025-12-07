@@ -53,7 +53,7 @@ jobs:
         shell: bash
         run: |
           echo "Building hybrid_app_ada for Windows..."
-          alr build -j4
+          alr build -- -j4
           echo "Build complete"
 
       # -----------------------------------------------------------------------
