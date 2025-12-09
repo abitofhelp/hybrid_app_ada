@@ -2,7 +2,7 @@
 
 **Project:** Hybrid_App_Ada
 **Version:** 2.0.0  
-**Date:** December 08, 2025  
+**Date:** December 09, 2025  
 **SPDX-License-Identifier:** BSD-3-Clause
 **License File:** See the LICENSE file in the project root.
 **Copyright:** (c) 2025 Michael Gardner, A Bit of Help, Inc.  
@@ -29,7 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [2.0.0] - 2025-12-08
 
-**Test Coverage:** 85 unit + 16 integration + 8 e2e = 109 total
+**Test Coverage:** 85 unit + 16 integration + 0 examples = 101 total
 
 ### Changed (BREAKING)
 
