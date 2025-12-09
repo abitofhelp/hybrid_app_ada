@@ -76,14 +76,17 @@ package body Presentation.Adapter.CLI.Command.Greet is
                   when Application.Error.Validation_Error =>
                      Put_Line ("Please provide a valid name.");
 
+                  when Application.Error.Parse_Error =>
+                     Put_Line ("Input could not be parsed.");
+
+                  when Application.Error.Not_Found_Error =>
+                     Put_Line ("The requested resource was not found.");
+
                   when Application.Error.IO_Error =>
                      Put_Line ("An I/O error occurred.");
 
-                  when Application.Error.System_Error =>
-                     Put_Line ("A system error occurred.");
-
-                  when Application.Error.Unknown_Error =>
-                     Put_Line ("An unexpected error occurred.");
+                  when Application.Error.Internal_Error =>
+                     Put_Line ("An internal error occurred.");
                end case;
 
                return 1;  --  Exit code 1 indicates error

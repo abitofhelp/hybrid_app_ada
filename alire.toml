@@ -15,7 +15,7 @@ executables = ["greeter"]
 "*".Style_Checks = "yes"
 
 [[depends-on]]
-functional = "^2.2.1"
+functional = "^3.0.0"
 
 [environment]
 
