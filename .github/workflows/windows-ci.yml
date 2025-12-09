@@ -62,13 +62,14 @@ jobs:
           sed -i '/^\[\[pins\]\]/,/^$/d' alire.toml
           echo "Removed local pin - will use Alire index"
           cat alire.toml
-          # Check functional version before index update
-          echo "=== functional in index BEFORE update ==="
+          # Check functional version before index reset
+          echo "=== functional in index BEFORE reset ==="
           alr search functional --crates || true
-          # Force refresh Alire index and update dependencies
-          alr index --update-all
-          echo "=== functional in index AFTER update ==="
+          # Force reset community index to get latest crates
+          alr index --reset-community
+          echo "=== functional in index AFTER reset ==="
           alr search functional --crates || true
+          alr show functional || true
           alr update --online
 
       # -----------------------------------------------------------------------
