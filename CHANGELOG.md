@@ -29,7 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [2.0.0] - 2025-12-08
 
-**Test Coverage:** 85 unit + 16 integration + 0 examples = 101 total
+**Test Coverage:** 85 unit + 16 integration + 8 e2e = 109 total
 
 ### Changed (BREAKING)
 
@@ -174,7 +174,7 @@ _First stable release - Professional Ada 2022 application starter template demon
 - Quick Start Guide
 
 ### Dependencies
-- `functional` ^2.2.1 (Result/Option/Try monads)
+- `functional` ^3.0.0 (Result/Option/Try monads)
 
 ---
 
