@@ -2,8 +2,8 @@
 
 [![License](https://img.shields.io/badge/license-BSD--3--Clause-blue.svg)](LICENSE) [![Ada](https://img.shields.io/badge/Ada-2022-blue.svg)](https://ada-lang.io) [![Alire](https://img.shields.io/badge/Alire-2.0+-blue.svg)](https://alire.ada.dev)
 
-**Version:** 1.0.0  
-**Date:** December 02, 2025  
+**Version:** 2.0.0  
+**Date:** December 08, 2025  
 **SPDX-License-Identifier:** BSD-3-Clause<br>
 **License File:** See the LICENSE file in the project root<br>
 **Copyright:** © 2025 Michael Gardner, A Bit of Help, Inc.<br>  
@@ -47,7 +47,8 @@ git submodule update --init --recursive
 - ✅ Application.Error re-export pattern
 - ✅ Architecture boundary validation (arch_guard.py)
 - ✅ Comprehensive documentation with UML diagrams
-- ✅ Test framework (unit/integration/e2e - 90 tests)
+- ✅ Test framework (unit/integration/e2e - 101 tests)
+- ✅ Windows CI with GitHub Actions
 - ✅ Aspect syntax (not pragmas)
 - ✅ Makefile automation
 
@@ -55,7 +56,9 @@ git submodule update --init --recursive
 
 | Platform | Status | Notes |
 |----------|--------|-------|
-| **Desktop** | ✅ Full | Console I/O via Presentation layer |
+| **Linux** | ✅ Full | CI tested, console I/O |
+| **macOS** | ✅ Full | CI tested, console I/O |
+| **Windows** | ✅ Full | CI tested (v2.0.0+), console I/O |
 | **Embedded** | 🔧 Untested | Architecture supports it, not yet validated |
 
 > **Note**: This application is not yet SPARK-friendly. SPARK compatibility is planned for future releases when embedded deployment is required.
@@ -233,10 +236,10 @@ Tests use a custom lightweight test framework (no AUnit dependency):
 
 | Test Type     | Count | Location              | Purpose                              |
 |---------------|-------|-----------------------|--------------------------------------|
-| Unit          | 74    | `test/unit/`          | Domain & Application logic           |
-| Integration   | 8     | `test/integration/`   | Cross-layer interactions             |
-| E2E           | 8     | `test/e2e/`           | Full system via CLI (black-box)      |
-| **Total**     | **90**|                       | **100% passing**                     |
+| Unit          | 85    | `test/unit/`          | Domain & Application logic           |
+| Integration   | 16    | `test/integration/`   | Cross-layer interactions             |
+| E2E           | 0     | `test/e2e/`           | Full system via CLI (black-box)      |
+| **Total**     | **101**|                      | **100% passing**                     |
 
 ```bash
 # Run all tests
@@ -370,7 +373,7 @@ https://github.com/abitofhelp
 
 ## Project Status
 
-**Status**: Production Ready (v1.0.0)
+**Status**: Production Ready (v2.0.0)
 
 - ✅ Single-project structure (easy Alire deployment)
 - ✅ Result monad error handling (Domain.Error.Result)
@@ -378,7 +381,8 @@ https://github.com/abitofhelp
 - ✅ Application.Error re-export pattern
 - ✅ Architecture boundary validation (arch_guard.py)
 - ✅ Comprehensive documentation with UML diagrams
-- ✅ Test framework (unit/integration/e2e - 90 tests)
+- ✅ Test framework (unit/integration/e2e - 101 tests)
+- ✅ Windows CI with GitHub Actions
 - ✅ Aspect syntax (not pragmas)
 - ✅ Makefile automation
 - ✅ Alire publication

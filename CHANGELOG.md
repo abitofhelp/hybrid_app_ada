@@ -1,8 +1,8 @@
 # Changelog
 
 **Project:** Hybrid_App_Ada
-**Version:** 1.0.0  
-**Date:** December 02, 2025  
+**Version:** 2.0.0  
+**Date:** December 08, 2025  
 **SPDX-License-Identifier:** BSD-3-Clause
 **License File:** See the LICENSE file in the project root.
 **Copyright:** (c) 2025 Michael Gardner, A Bit of Help, Inc.  
@@ -17,9 +17,46 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-_No unreleased changes._
+### Changed
+
+### Added
+
+### Removed
+
+### Fixed
 
 ---
+
+## [2.0.0] - 2025-12-08
+
+**Test Coverage:** 85 unit + 16 integration + 0 examples = 101 total
+
+### Changed (BREAKING)
+
+- **Upgrade to functional ^3.0.0**: Breaking change from functional library (Boolean discriminants and naming cleanup). This requires hybrid_app_ada consumers to also use functional 3.0.0+.
+
+### Added
+
+- **Windows CI Workflow** (`windows-ci.yml`): Automatic build and test on Windows for every push/PR
+- **Windows Release Validation** (`windows-release.yml`): Pre-release Windows compatibility check
+- **Result Combinators**: Added Bimap, Ensure, With_Context, Fallback, Recover, Tap operations with comprehensive tests
+- **Makefile test-windows target**: Trigger Windows validation workflow from command line
+
+### Changed
+
+- **Renamed Shared_Config to Hybrid_App_Ada_Shared_Config**: Avoid naming conflicts with other projects
+- **Updated docs submodule**: Latest documentation templates
+- **Updated scripts/python submodule**: SPARK support, cleanup fixes, submodule verification
+
+### Fixed
+
+- **Test style compliance**: Added forward declarations for local subprograms (-gnatys)
+- **Test line length**: Fixed lines exceeding 79 characters (-gnatyM)
+- **CI build syntax**: Correct `alr build -- -j4` syntax for gprbuild
+- **Windows CI functional resolution**: Use GitHub URL pin instead of Alire index to bypass caching issues
+
+---
+
 
 ## [1.0.0] - 2025-12-02
 
