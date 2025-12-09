@@ -67,7 +67,7 @@ git submodule update --init --recursive
 
 ### Layer Structure
 
-![Layer Dependencies](docs/diagrams/layer_dependencies.svg)
+![Application Architecture](docs/diagrams/application_architecture.svg)
 
 **5 Layers (Dependency Rule: All dependencies point INWARD)**:
 
@@ -115,7 +115,7 @@ hybrid_app_ada/
 
 ### Key Architectural Rules
 
-![Application Error Pattern](docs/diagrams/application_error_pattern.svg)
+![Application Error Pattern](docs/diagrams/ada/application_error_pattern_ada.svg)
 
 **Critical Boundary Rule:**
 > **Presentation is the ONLY outer layer prevented from direct Domain access**
@@ -169,7 +169,7 @@ This project uses **two distinct Result types**:
 
 ### Static Dispatch Dependency Injection
 
-![Static vs Dynamic Dispatch](docs/diagrams/dynamic_static_dispatch.svg)
+![Static vs Dynamic Dispatch](docs/diagrams/ada/dynamic_static_dispatch_ada.svg)
 
 ```ada
 -- Compile-time polymorphism (USED in this project)
@@ -287,12 +287,12 @@ make stats               # Code statistics
 
 ### Diagrams
 
-- `docs/diagrams/layer_dependencies.svg` - 5-layer architecture
-- `docs/diagrams/application_error_pattern.svg` - Re-export pattern
-- `docs/diagrams/package_structure.svg` - Actual packages
-- `docs/diagrams/error_handling_flow.svg` - Error propagation
-- `docs/diagrams/static_dispatch.svg` - Static DI with generics
-- `docs/diagrams/dynamic_static_dispatch.svg` - Static vs dynamic comparison
+- `docs/diagrams/application_architecture.svg` - 5-layer architecture overview
+- `docs/diagrams/ada/application_error_pattern_ada.svg` - Re-export pattern
+- `docs/diagrams/ada/package_structure_ada.svg` - Actual packages
+- `docs/diagrams/ada/error_handling_flow_ada.svg` - Error propagation
+- `docs/diagrams/ada/static_dispatch_ada.svg` - Static DI with generics
+- `docs/diagrams/ada/dynamic_static_dispatch_ada.svg` - Static vs dynamic comparison
 
 ## Code Standards
 
