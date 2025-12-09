@@ -47,7 +47,7 @@ git submodule update --init --recursive
 - ✅ Application.Error re-export pattern
 - ✅ Architecture boundary validation (arch_guard.py)
 - ✅ Comprehensive documentation with UML diagrams
-- ✅ Test framework (unit/integration/e2e - 101 tests)
+- ✅ Test framework (unit/integration/e2e - 109 tests)
 - ✅ Windows CI with GitHub Actions
 - ✅ Aspect syntax (not pragmas)
 - ✅ Makefile automation
@@ -148,6 +148,25 @@ package Application.Error is
 end Application.Error;
 ```
 
+### Error Ownership: Domain vs Functional Result
+
+This project uses **two distinct Result types**:
+
+1. **`Domain.Error.Result`** - Self-contained Result monad in the Domain layer
+   - Used throughout Domain and Application layers
+   - Zero external dependencies
+   - Owns the `Error_Type` definition
+
+2. **`Functional.Result`** (from `functional` crate) - Used only in Infrastructure
+   - Bridges exception-throwing I/O to Result-based error handling
+   - Infrastructure catches exceptions, converts to `Functional.Result`
+   - Then converts to `Domain.Error.Result` before returning to Application
+
+**Why two Result types?**
+- Domain must have zero external dependencies (architecture rule)
+- Infrastructure needs exception-to-Result conversion at I/O boundaries
+- The conversion happens once at the boundary, not throughout the code
+
 ### Static Dispatch Dependency Injection
 
 ![Static vs Dynamic Dispatch](docs/diagrams/dynamic_static_dispatch.svg)
@@ -238,8 +257,8 @@ Tests use a custom lightweight test framework (no AUnit dependency):
 |---------------|-------|-----------------------|--------------------------------------|
 | Unit          | 85    | `test/unit/`          | Domain & Application logic           |
 | Integration   | 16    | `test/integration/`   | Cross-layer interactions             |
-| E2E           | 0     | `test/e2e/`           | Full system via CLI (black-box)      |
-| **Total**     | **101**|                      | **100% passing**                     |
+| E2E           | 8     | `test/e2e/`           | Full system via CLI (black-box)      |
+| **Total**     | **109**|                      | **100% passing**                     |
 
 ```bash
 # Run all tests
@@ -381,7 +400,7 @@ https://github.com/abitofhelp
 - ✅ Application.Error re-export pattern
 - ✅ Architecture boundary validation (arch_guard.py)
 - ✅ Comprehensive documentation with UML diagrams
-- ✅ Test framework (unit/integration/e2e - 101 tests)
+- ✅ Test framework (unit/integration/e2e - 109 tests)
 - ✅ Windows CI with GitHub Actions
 - ✅ Aspect syntax (not pragmas)
 - ✅ Makefile automation

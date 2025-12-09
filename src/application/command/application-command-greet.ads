@@ -41,7 +41,8 @@ is
 
    --  Bounded string for name in DTO. The DTO itself does not enforce
    --  validity rules; domain logic is responsible for validation.
-   package Name_Strings is new
+   --  Named after parent package per Ada agent naming convention
+   package Greet_Strings is new
      Ada.Strings.Bounded.Generic_Bounded_Length (Max => Max_DTO_Name_Length);
 
    --  ========================================================================
@@ -54,7 +55,7 @@ is
    --  for validating the name and returning appropriate Result errors.
 
    type Greet_Command is record
-      Name : Name_Strings.Bounded_String;
+      Name : Greet_Strings.Bounded_String;
    end record;
 
    --  Helper function to create DTO from String. This function does not

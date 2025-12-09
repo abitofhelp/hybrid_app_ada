@@ -121,6 +121,11 @@ is
       --  Get the value if Result is Ok; otherwise raise Program_Error with
       --  the provided custom message. Use only when you can document why
       --  Result should be Ok at the call site.
+      --
+      --  WARNING: Debug/testing helper only - NOT SPARK-compatible.
+      --  This function raises exceptions and should not be used in
+      --  production error handling paths. Prefer Is_Ok/Value or
+      --  Unwrap_Or for production code.
 
       --  =====================================================================
       --  Functional operations (transform and chain)
