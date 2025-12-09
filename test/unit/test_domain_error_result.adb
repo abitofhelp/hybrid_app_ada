@@ -374,7 +374,8 @@ begin
          return (Kind => E.Kind, Message => To_Bounded_String (New_Msg));
       end Add_Location;
 
-      function Add_Context is new Int_Result.With_Context (Add => Add_Location);
+      function Add_Context is new
+        Int_Result.With_Context (Add => Add_Location);
 
       R      : constant Int_Result.Result :=
         Int_Result.Error (Kind => Parse_Error, Message => "file not found");
