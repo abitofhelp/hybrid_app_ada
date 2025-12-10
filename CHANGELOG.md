@@ -1,12 +1,12 @@
 # Changelog
 
 **Project:** Hybrid_App_Ada
-**Version:** 2.0.1
-**Date:** December 10, 2025
+**Version:** 2.0.1  
+**Date:** December 10, 2025  
 **SPDX-License-Identifier:** BSD-3-Clause
 **License File:** See the LICENSE file in the project root.
-**Copyright:** (c) 2025 Michael Gardner, A Bit of Help, Inc.
-**Status:** Released
+**Copyright:** (c) 2025 Michael Gardner, A Bit of Help, Inc.  
+**Status:** Released  
 
 All notable changes to Hybrid_App_Ada will be documented in this file.
 
