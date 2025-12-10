@@ -1,4 +1,4 @@
-# Enterprise Starter Application with Hybrid DDD/Clean/Hexagonal Architecture
+# Hybrid DDD/Clean/Hexagonal application starter for Ada 2022
 
 [![License](https://img.shields.io/badge/license-BSD--3--Clause-blue.svg)](LICENSE) [![Ada](https://img.shields.io/badge/Ada-2022-blue.svg)](https://ada-lang.io) [![Alire](https://img.shields.io/badge/Alire-2.0+-blue.svg)](https://alire.ada.dev)
 

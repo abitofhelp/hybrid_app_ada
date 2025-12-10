@@ -1,12 +1,12 @@
 # Changelog
 
 **Project:** Hybrid_App_Ada
-**Version:** 2.0.0  
-**Date:** December 09, 2025  
+**Version:** 2.0.1
+**Date:** December 10, 2025
 **SPDX-License-Identifier:** BSD-3-Clause
 **License File:** See the LICENSE file in the project root.
-**Copyright:** (c) 2025 Michael Gardner, A Bit of Help, Inc.  
-**Status:** Released  
+**Copyright:** (c) 2025 Michael Gardner, A Bit of Help, Inc.
+**Status:** Released
 
 All notable changes to Hybrid_App_Ada will be documented in this file.
 
@@ -24,6 +24,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 ### Fixed
+
+---
+
+## [2.0.1] - 2025-12-10
+
+### Fixed
+
+- **alire.toml**: Added `project-files` directive and `gnat >= 13` dependency
+- **README.md**: Title updated to match alire.toml description pattern
+- **Root package comment**: Clarified as "Application Hierarchy" (was "Version Hierarchy")
+- **docs submodule**: Updated to include macOS as primary development platform fix
 
 ---
 

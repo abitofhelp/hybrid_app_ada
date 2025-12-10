@@ -6,6 +6,7 @@ maintainers = ["Michael Gardner <mike@abitofhelp.com>"]
 maintainers-logins = ["abitofhelp"]
 licenses = "BSD-3-Clause"
 website = "https://github.com/abitofhelp/hybrid_app_ada"
+project-files = ["hybrid_app_ada.gpr"]
 tags = ["hexagonal", "ddd", "clean", "functional", "monad", "example"]
 
 executables = ["greeter"]
@@ -15,9 +16,10 @@ executables = ["greeter"]
 "*".Style_Checks = "yes"
 
 [[depends-on]]
-functional = "^3.0.0"
+gnat = ">=13"
 
-[environment]
+[[depends-on]]
+functional = "^3.0.0"
 
 [[pins]]
 functional = { path = '../functional' }
