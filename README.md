@@ -11,6 +11,29 @@
 
 > A canonical Ada 2022 application demonstrating a **hybrid DDD/Clean/Hexagonal architecture** with functional error handling.
 
+## SPARK Formal Verification
+
+<table>
+<tr>
+<td width="120"><strong>Status</strong></td>
+<td><img src="https://img.shields.io/badge/SPARK-Planned-yellow.svg" alt="SPARK Planned"></td>
+</tr>
+<tr>
+<td><strong>Scope</strong></td>
+<td>N/A - Architecture supports SPARK, implementation pending</td>
+</tr>
+<tr>
+<td><strong>Mode</strong></td>
+<td>N/A</td>
+</tr>
+<tr>
+<td><strong>Results</strong></td>
+<td>See <a href="CHANGELOG.md">CHANGELOG</a> for updates when available</td>
+</tr>
+</table>
+
+> **Note**: This application is not yet SPARK-friendly. SPARK compatibility is planned for future releases when embedded deployment is required.
+
 ## Overview
 
 A **professional Ada 2022 application starter** demonstrating a **hybrid DDD/Clean/Hexagonal architecture** with **functional programming** principles using the `functional` crate for Result monads.
@@ -60,8 +83,6 @@ git submodule update --init --recursive
 | **macOS** | ✅ Full | CI tested, console I/O |
 | **Windows** | ✅ Full | CI tested (v2.0.0+), console I/O |
 | **Embedded** | 🔧 Untested | Architecture supports it, not yet validated |
-
-> **Note**: This application is not yet SPARK-friendly. SPARK compatibility is planned for future releases when embedded deployment is required.
 
 ## Architecture
 
