@@ -70,7 +70,7 @@ git submodule update --init --recursive
 - ✅ Application.Error re-export pattern
 - ✅ Architecture boundary validation (arch_guard.py)
 - ✅ Comprehensive documentation with UML diagrams
-- ✅ Test framework (unit/integration/e2e - 109 tests)
+- ✅ Test framework (see CHANGELOG)
 - ✅ Windows CI with GitHub Actions
 - ✅ Aspect syntax (not pragmas)
 - ✅ Makefile automation
@@ -421,7 +421,7 @@ https://github.com/abitofhelp
 - ✅ Application.Error re-export pattern
 - ✅ Architecture boundary validation (arch_guard.py)
 - ✅ Comprehensive documentation with UML diagrams
-- ✅ Test framework (unit/integration/e2e - 109 tests)
+- ✅ Test framework (see CHANGELOG)
 - ✅ Windows CI with GitHub Actions
 - ✅ Aspect syntax (not pragmas)
 - ✅ Makefile automation
