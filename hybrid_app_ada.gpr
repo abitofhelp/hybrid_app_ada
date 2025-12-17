@@ -105,8 +105,8 @@ project Hybrid_App_Ada is
          "-gnatyi",          -- Check if-then layout
          "-gnatyk",          -- Check keyword casing
          "-gnatyl",          -- Check layout
-         "-gnatym",          -- Check line length <= 79 (default)
-         "-gnatyM79",        -- Maximum line length of 79 characters (Ada standard)
+         "-gnatym",          -- Check line length <= 79 (overridden by -gnatyM120)
+         "-gnatyM120",       -- Maximum line length of 120 characters
          "-gnatyn",          -- Check casing of entities in Standard
          "-gnatyN",          -- Check casing of predefined identifiers
          "-gnatyO",          -- Check overriding indicators

@@ -19,7 +19,7 @@ executables = ["greeter"]
 gnat = ">=13"
 
 [[depends-on]]
-functional = "^3.0.0"
+functional = "^4.0.0"
 
 [[pins]]
 functional = { path = '../functional' }

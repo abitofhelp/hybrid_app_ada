@@ -2,7 +2,7 @@
 # Project Makefile
 # =============================================================================
 # Project: hybrid_app_ada
-# Purpose: Hexagonal architecture demonstration with port/adapter pattern
+# Purpose: Hexagonal architecture application with port/adapter pattern
 #
 # This Makefile provides:
 #   - Build targets (build, clean, rebuild)
@@ -14,7 +14,7 @@
 
 PROJECT_NAME := hybrid_app_ada
 
-.PHONY: all build build-dev build-opt build-release build-tests build-profiles check check-arch \
+.PHONY: all build build-dev build-opt build-release build-tests check check-arch \
         clean clean-clutter clean-coverage clean-deep compress deps \
 		help prereqs rebuild refresh run stats test test-all test-coverage test-framework \
 		test-integration test-unit test-e2e test-python test-windows install-tools build-coverage-runtime \
@@ -73,9 +73,8 @@ MAKEFILE_DIR := $(dir $(lastword $(MAKEFILE_LIST)))
 PROJECT_DIR := $(MAKEFILE_DIR)/$(PROJECT_NAME)
 TEST_DIR := test
 
-# Directories to format (library layers + shared + tests)
+# Directories to format (application layers + tests)
 FORMAT_DIRS := \
-				$(wildcard src/api) \
 				$(wildcard src/application) \
   		       	$(wildcard src/bootstrap) \
                	$(wildcard src/domain) \
@@ -95,7 +94,7 @@ all: build
 
 help: ## Display this help message
 	@echo "$(CYAN)$(BOLD)╔══════════════════════════════════════════════════╗$(NC)"
-	@echo "$(CYAN)$(BOLD)║  Hybrid App - Ada 2022                           ║$(NC)"
+	@echo "$(CYAN)$(BOLD)║  Hybrid App - Ada 2022 Application               ║$(NC)"
 	@echo "$(CYAN)$(BOLD)╚══════════════════════════════════════════════════╝$(NC)"
 	@echo " "
 	@echo "$(YELLOW)Build Commands:$(NC)"
@@ -140,9 +139,6 @@ help: ## Display this help message
 	@echo "  install-tools           - Install development tools (GMP, gcovr, gnatformat)"
 	@echo "  build-coverage-runtime  - Build GNATcoverage runtime library"
 	@echo ""
-	@echo "$(YELLOW)Advanced Commands:$(NC)"
-	@echo "  build-profiles     - Test compilation with all build profiles"
-	@echo ""
 	@echo "$(YELLOW)Workflow Shortcuts:$(NC)"
 	@echo "  all                - Build project (default)"
 	@echo ""
@@ -164,16 +160,19 @@ build-dev: check-arch prereqs
 	@echo "$(GREEN)Building $(PROJECT_NAME) (development mode)...$(NC)"
 	$(ALR) build --development -- $(ALR_BUILD_FLAGS)
 	@echo "$(GREEN)✓ Development build complete$(NC)"
+	@echo "$(GREEN)  Output: bin/greeter$(NC)"
 
 build-opt: check-arch prereqs
 	@echo "$(GREEN)Building $(PROJECT_NAME) (optimized -O2)...$(NC)"
 	$(ALR) build -- -O2 $(ALR_BUILD_FLAGS)
 	@echo "$(GREEN)✓ Optimized build complete$(NC)"
+	@echo "$(GREEN)  Output: bin/greeter$(NC)"
 
 build-release: check-arch prereqs
 	@echo "$(GREEN)Building $(PROJECT_NAME) (release mode)...$(NC)"
 	$(ALR) build --release -- $(ALR_BUILD_FLAGS)
 	@echo "$(GREEN)✓ Release build complete$(NC)"
+	@echo "$(GREEN)  Output: bin/greeter$(NC)"
 
 build-tests: check-arch prereqs
 	@echo "$(GREEN)Building test suites...$(NC)"
@@ -196,46 +195,13 @@ build-tests: check-arch prereqs
 		echo "$(YELLOW)E2E test project not found$(NC)"; \
 	fi
 
-build-profiles: ## Validate library builds with all configuration profiles
-	@echo "$(CYAN)$(BOLD)Testing library compilation with all profiles...$(NC)"
-	@echo "$(CYAN)Note: This validates compilation only (not cross-compilation)$(NC)"
-	@echo ""
-	@PROFILES="standard embedded baremetal concurrent stm32h7s78 stm32mp135_linux"; \
-	FAILED=0; \
-	for profile in $$PROFILES; do \
-		echo "$(YELLOW)Testing profile: $$profile$(NC)"; \
-		if [ -f "config/profiles/$$profile/hybrid_app_ada_config.ads" ]; then \
-			cp -f config/hybrid_app_ada_config.ads config/hybrid_app_ada_config.ads.backup 2>/dev/null || true; \
-			cp -f config/profiles/$$profile/hybrid_app_ada_config.ads config/hybrid_app_ada_config.ads; \
-			if $(ALR) build --development -- -j8 2>&1 | grep -E 'error:|failed' > /dev/null; then \
-				echo "$(RED)✗ Profile $$profile: FAILED$(NC)"; \
-				FAILED=$$((FAILED + 1)); \
-			else \
-				echo "$(GREEN)✓ Profile $$profile: OK$(NC)"; \
-			fi; \
-			mv -f config/hybrid_app_ada_config.ads.backup config/hybrid_app_ada_config.ads 2>/dev/null || true; \
-			$(ALR) clean > /dev/null 2>&1; \
-		else \
-			echo "$(RED)✗ Profile $$profile: config file not found$(NC)"; \
-			FAILED=$$((FAILED + 1)); \
-		fi; \
-		echo ""; \
-	done; \
-	if [ $$FAILED -eq 0 ]; then \
-		echo "$(GREEN)$(BOLD)✓ All profiles compiled successfully$(NC)"; \
-	else \
-		echo "$(RED)$(BOLD)✗ $$FAILED profile(s) failed$(NC)"; \
-		exit 1; \
-	fi
-
-
 clean:
 	@echo "$(YELLOW)Cleaning project build artifacts (keeps dependencies)...$(NC)"
 	@# Use gprclean WITHOUT -r to clean only our project, not dependencies
 	@$(ALR) exec -- gprclean -P $(PROJECT_NAME).gpr -q 2>/dev/null || true
 	@$(ALR) exec -- gprclean -P $(TEST_DIR)/unit/unit_tests.gpr -q 2>/dev/null || true
 	@$(ALR) exec -- gprclean -P $(TEST_DIR)/integration/integration_tests.gpr -q 2>/dev/null || true
-	@rm -rf $(BUILD_DIR) $(BIN_DIR) lib $(TEST_DIR)/bin $(TEST_DIR)/obj
+	@rm -rf $(BUILD_DIR) $(BIN_DIR) $(TEST_DIR)/bin $(TEST_DIR)/obj
 	@find . -name "*.backup" -delete 2>/dev/null || true
 	@if [ -d "assemblies" ]; then \
 		$(ALR) exec -- gprclean -P assemblies/standard/standard.gpr -q 2>/dev/null || true; \
@@ -248,7 +214,7 @@ clean-deep:
 	@echo "$(YELLOW)Deep cleaning ALL artifacts including dependencies...$(NC)"
 	@echo "$(YELLOW)⚠️  This will require rebuilding GNATCOLL, XMLAda, etc. (slow!)$(NC)"
 	@$(ALR) clean
-	@rm -rf $(BUILD_DIR) $(BIN_DIR) lib $(TEST_DIR)/bin $(TEST_DIR)/obj
+	@rm -rf $(BUILD_DIR) $(BIN_DIR) $(TEST_DIR)/bin $(TEST_DIR)/obj
 	@find . -name "*.backup" -delete 2>/dev/null || true
 	@if [ -d "assemblies" ]; then \
 		rm -rf assemblies/*/obj assemblies/*/lib 2>/dev/null || true; \
@@ -444,59 +410,10 @@ test-windows: ## Trigger Windows CI validation on GitHub Actions
 	fi
 
 
-# FIXME: REPLACE WITH THE ADAFMT TOOL WE ARE CREATING WHEN IT IS COMPLETED.
-# THE CURRENT SCRIPT IS COMMENTING COMMENTS AND MESSING UP WITH INDEXED COMMENTS.
+# FIXME: Enable format targets when adafmt tool is complete.
 # format-src:
-# 	@echo "$(GREEN)Formatting source code...$(NC)"
-# 	@if [ ! -f "scripts/python/makefile/ada_formatter_pipeline.donotuse.py" ]; then \
-# 		echo "$(RED)Error: scripts/python/makefile/ada_formatter_pipeline.donotuse.py not found$(NC)"; \
-# 		exit 1; \
-# 	fi
-# 	@for layer in application domain infrastructure; do \
-# 		if [ -d "$$layer/src" ]; then \
-# 			find "$$layer/src" -name "*.ads" -o -name "*.adb" | \
-# 			while read file; do \
-# 				echo "  Formatting $$file..."; \
-# 				$(PYTHON3) scripts/python/makefile/ada_formatter_pipeline.donotuse.py "$(PWD)/$$layer/$$layer.gpr" --include-path "$(PWD)/$$file" || true; \
-# 			done; \
-# 		fi; \
-# 	done
-# 	@echo "$(GREEN)✓ Source formatting complete$(NC)"
-
 # format-tests:
-# 	@echo "$(GREEN)Formatting test code...$(NC)"
-# 	@if [ ! -f "scripts/python/makefile/ada_formatter_pipeline.donotuse.py" ]; then \
-# 		echo "$(RED)Error: scripts/python/makefile/ada_formatter_pipeline.donotuse.py not found$(NC)"; \
-# 		exit 1; \
-# 	fi
-# 	@if [ -d "$(TEST_DIR)/unit" ] && [ -f "$(TEST_DIR)/unit/unit_tests.gpr" ]; then \
-# 		find $(TEST_DIR)/unit -name "*.ads" -o -name "*.adb" | \
-# 		while read file; do \
-# 			echo "  Formatting $$file..."; \
-# 			$(PYTHON3) scripts/python/makefile/ada_formatter_pipeline.donotuse.py "$(PWD)/$(TEST_DIR)/unit/unit_tests.gpr" --include-path "$(PWD)/$$file" || true; \
-# 		done; \
-# 		echo "$(GREEN)✓ Unit test formatting complete$(NC)"; \
-# 	fi
-# 	@if [ -d "$(TEST_DIR)/integration" ] && [ -f "$(TEST_DIR)/integration/integration_tests.gpr" ]; then \
-# 		find $(TEST_DIR)/integration -name "*.ads" -o -name "*.adb" | \
-# 		while read file; do \
-# 			echo "  Formatting $$file..."; \
-# 			$(PYTHON3) scripts/python/makefile/ada_formatter_pipeline.donotuse.py "$(PWD)/$(TEST_DIR)/integration/integration_tests.gpr" --include-path "$(PWD)/$$file" || true; \
-# 		done; \
-# 		echo "$(GREEN)✓ Integration test formatting complete$(NC)"; \
-# 	fi
-# 	@if [ -d "$(TEST_DIR)/domain" ]; then \
-# 		find $(TEST_DIR)/domain -name "*.ads" -o -name "*.adb" | \
-# 		while read file; do \
-# 			echo "  Formatting $$file..."; \
-# 			$(PYTHON3) scripts/python/makefile/ada_formatter_pipeline.donotuse.py "$(PWD)/$(TEST_DIR)/unit/unit_tests.gpr" --include-path "$(PWD)/$$file" || true; \
-# 		done; \
-# 		echo "$(GREEN)✓ Domain test formatting complete$(NC)"; \
-# 	fi
-
 # format-all: format-src format-tests
-# 	@echo "$(GREEN)✓ All code formatting complete$(NC)"
-
 # format: format-all
 
 
@@ -515,9 +432,13 @@ stats:
 	@echo "  Application bodies:    $$(find src/application -name "*.adb" 2>/dev/null | wc -l | tr -d ' ')"
 	@echo "  Infrastructure specs:  $$(find src/infrastructure -name "*.ads" 2>/dev/null | wc -l | tr -d ' ')"
 	@echo "  Infrastructure bodies: $$(find src/infrastructure -name "*.adb" 2>/dev/null | wc -l | tr -d ' ')"
+	@echo "  Presentation specs:    $$(find src/presentation -name "*.ads" 2>/dev/null | wc -l | tr -d ' ')"
+	@echo "  Presentation bodies:   $$(find src/presentation -name "*.adb" 2>/dev/null | wc -l | tr -d ' ')"
+	@echo "  Bootstrap specs:       $$(find src/bootstrap -name "*.ads" 2>/dev/null | wc -l | tr -d ' ')"
+	@echo "  Bootstrap bodies:      $$(find src/bootstrap -name "*.adb" 2>/dev/null | wc -l | tr -d ' ')"
 	@echo ""
 	@echo "Lines of Code:"
-	@find src/application src/domain src/infrastructure -name "*.ads" -o -name "*.adb" 2>/dev/null | \
+	@find src/application src/domain src/infrastructure src/presentation src/bootstrap -name "*.ads" -o -name "*.adb" 2>/dev/null | \
 	  xargs wc -l 2>/dev/null | tail -1 | awk '{printf "  Total: %d lines\n", $$1}' || echo "  Total: 0 lines"
 	@echo ""
 	@echo "Build Artifacts:"
