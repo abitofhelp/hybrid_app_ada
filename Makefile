@@ -201,7 +201,7 @@ clean:
 	@$(ALR) exec -- gprclean -P $(PROJECT_NAME).gpr -q 2>/dev/null || true
 	@$(ALR) exec -- gprclean -P $(TEST_DIR)/unit/unit_tests.gpr -q 2>/dev/null || true
 	@$(ALR) exec -- gprclean -P $(TEST_DIR)/integration/integration_tests.gpr -q 2>/dev/null || true
-	@rm -rf $(BUILD_DIR) $(BIN_DIR) $(TEST_DIR)/bin $(TEST_DIR)/obj
+	@rm -rf $(BUILD_DIR) $(BIN_DIR) lib $(TEST_DIR)/bin $(TEST_DIR)/obj
 	@find . -name "*.backup" -delete 2>/dev/null || true
 	@if [ -d "assemblies" ]; then \
 		$(ALR) exec -- gprclean -P assemblies/standard/standard.gpr -q 2>/dev/null || true; \
@@ -214,7 +214,7 @@ clean-deep:
 	@echo "$(YELLOW)Deep cleaning ALL artifacts including dependencies...$(NC)"
 	@echo "$(YELLOW)⚠️  This will require rebuilding GNATCOLL, XMLAda, etc. (slow!)$(NC)"
 	@$(ALR) clean
-	@rm -rf $(BUILD_DIR) $(BIN_DIR) $(TEST_DIR)/bin $(TEST_DIR)/obj
+	@rm -rf $(BUILD_DIR) $(BIN_DIR) lib $(TEST_DIR)/bin $(TEST_DIR)/obj
 	@find . -name "*.backup" -delete 2>/dev/null || true
 	@if [ -d "assemblies" ]; then \
 		rm -rf assemblies/*/obj assemblies/*/lib 2>/dev/null || true; \
