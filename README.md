@@ -335,8 +335,9 @@ This project follows:
 
 ## Submodule Management
 
-This project uses git submodules for shared Python tooling:
+This project uses git submodules for shared tooling:
 
+- `docs` - Shared documentation templates and guides
 - `scripts/python` - Build, release, and architecture scripts
 - `test/python` - Shared test fixtures and configuration
 
