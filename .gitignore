@@ -279,3 +279,6 @@ ENV/
 # Temporary
 ###############################################################################
 tools/puml/
+
+# GNAT Pretty Print temp files
+*__GNATPP-TEMP

@@ -10,6 +10,7 @@
 --   This is the composition root that produces the final executable.
 -- ==========================================================================
 
+with "../../config/hybrid_app_ada_config.gpr";
 with "../../hybrid_app_ada_shared_config.gpr";
 with "../domain/domain.gpr";
 with "../application/application.gpr";
@@ -17,6 +18,10 @@ with "../infrastructure/infrastructure.gpr";
 with "../presentation/presentation.gpr";
 
 project Bootstrap is
+
+   --  Platform detection for linker configuration
+   type OS_Type is ("macos", "linux", "windows");
+   OS : OS_Type := Hybrid_App_Ada_Config.Alire_Host_OS;
 
    --  Include bootstrap sources and main entry point
    for Source_Dirs use (".", "cli", "..");
@@ -52,5 +57,44 @@ project Bootstrap is
    package Compiler renames Hybrid_App_Ada_Shared_Config.Compiler;
    package Binder renames Hybrid_App_Ada_Shared_Config.Binder;
    package Builder renames Hybrid_App_Ada_Shared_Config.Builder;
+
+   --  ======================================================================
+   --  Linker Package: Platform-Specific Configuration
+   --  ======================================================================
+   --
+   --  All platforms:
+   --    -lgnarl   : GNAT runtime library for tasking
+   --
+   --  Unix-like (macOS, Linux):
+   --    -lpthread : POSIX threads
+   --
+   --  Dead code elimination:
+   --    macOS   : -Wl,-dead_strip (Apple ld64 linker)
+   --    Linux   : -Wl,--gc-sections (GNU ld linker)
+   --    Windows : -Wl,--gc-sections (MinGW GNU ld, no -lpthread)
+   --  ======================================================================
+   package Linker is
+      case OS is
+         when "macos" =>
+            for Switches ("Ada") use (
+               "-lgnarl",
+               "-lpthread",
+               "-Wl,-dead_strip"
+            );
+
+         when "windows" =>
+            for Switches ("Ada") use (
+               "-lgnarl",
+               "-Wl,--gc-sections"
+            );
+
+         when "linux" =>
+            for Switches ("Ada") use (
+               "-lgnarl",
+               "-lpthread",
+               "-Wl,--gc-sections"
+            );
+      end case;
+   end Linker;
 
 end Bootstrap;
