@@ -29,7 +29,9 @@ package body Presentation.Adapter.CLI.Command.Greet is
    begin
       --  Check if user provided exactly one argument (the name)
       if Arg_Count /= 1 then
-         Put_Line (Command_Name & " v" & Hybrid_App_Ada.Version.Version);
+         Put_Line
+           (Command_Name & " v"
+            & Standard.Hybrid_App_Ada.Version.Version);
          Put_Line ("Usage: " & Command_Name & " <name>");
          Put_Line ("Example: " & Command_Name & " Alice");
          return 1;  --  Exit code 1 indicates error
