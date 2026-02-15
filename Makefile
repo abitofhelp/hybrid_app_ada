@@ -5,11 +5,10 @@
 # Purpose: Hexagonal architecture application with port/adapter pattern
 #
 # This Makefile provides:
-#   - Build targets (build, clean, rebuild)
-#   - Test infrastructure (test, test-coverage)
-#   - Format/check targets (format, stats)
-#   - Documentation generation (docs, api-docs)
-#   - Development tools (watch, setup-hooks, ci)
+#   - Build targets (build, clean, rebuild, run)
+#   - Test infrastructure (test, test-coverage, test-python, test-windows)
+#   - Quality targets (check, check-arch, stats)
+#   - Development tools (deps, refresh, install-tools, compress)
 # =============================================================================
 
 PROJECT_NAME := hybrid_app_ada
@@ -18,9 +17,8 @@ PROJECT_NAME := hybrid_app_ada
         clean clean-clutter clean-coverage clean-deep compress deps \
 		help prereqs rebuild refresh run stats test test-all test-coverage test-framework \
 		test-integration test-unit test-e2e test-python test-windows install-tools build-coverage-runtime \
-		submodule-init submodule-update submodule-status
-# FIX: ENABLE AFTER THE TARGETS CONVERT TO USING OUR ADAFMT TOOL, WHICH IS IN DEVELOPMENT.
-#       format format-all format-src format-tests
+		submodule-init submodule-update submodule-status \
+		format format-all format-src format-tests
 
 # =============================================================================
 # OS Detection
@@ -49,6 +47,7 @@ ALR := alr
 GPRBUILD := gprbuild
 GNATFORMAT := gnatformat
 GNATDOC := gnatdoc
+ADAFMT := adafmt
 PYTHON3 := python3
 
 # =============================================================================
@@ -57,8 +56,9 @@ PYTHON3 := python3
 # NOTE: --no-indirect-imports is NOT needed. Architecture is enforced via
 #       Stand-Alone Library with explicit Library_Interface in application.gpr
 #       which prevents transitive Domain access from Presentation layer.
-ALR_BUILD_FLAGS := -j8 | grep -E 'warning:|(style)|error:' || true
-ALR_TEST_FLAGS  := -j8 | grep -E 'warning:|(style)|error:' || true
+# Filter build output to show only warnings/errors (capture both stdout and stderr)
+ALR_BUILD_FLAGS := -j0 2>&1 | grep -E 'warning:|error:|\(style\)|finished|Success' || true
+ALR_TEST_FLAGS  := -j0 2>&1 | grep -E 'warning:|error:|\(style\)|finished|Success' || true
 # =============================================================================
 # Directories
 # =============================================================================
@@ -100,7 +100,7 @@ help: ## Display this help message
 	@echo "$(YELLOW)Build Commands:$(NC)"
 	@echo "  build              - Build project (development mode)"
 	@echo "  build-dev          - Build with development flags"
-	@echo "  build-opt          - Build with optimization (-O2)"
+	@echo "  build-opt          - Build with validation profile"
 	@echo "  build-release      - Build in release mode"
 	@echo "  build-tests        - Build all test executables"
 	@echo "  run                - Build and run the greeter"
@@ -125,11 +125,10 @@ help: ## Display this help message
 	@echo "$(YELLOW)Quality & Architecture Commands:$(NC)"
 	@echo "  check              - Run static analysis"
 	@echo "  check-arch         - Validate hexagonal architecture boundaries"
-# FIX: ENABLE AFTER THE TARGETS CONVERT TO USING OUR ADAFMT TOOL, WHICH IS IN DEVELOPMENT.
-# 	@echo "  format-src         - Auto-format source code only"
-# 	@echo "  format-tests       - Auto-format test code only"
-# 	@echo "  format-all         - Auto-format all code"
-# 	@echo "  format             - Alias for format-all"
+	@echo "  format-src         - Auto-format source code only"
+	@echo "  format-tests       - Auto-format test code only"
+	@echo "  format-all         - Auto-format all code"
+	@echo "  format             - Alias for format-all"
 	@echo "  stats              - Display project statistics by layer"
 	@echo ""
 	@echo "$(YELLOW)Utility Commands:$(NC)"
@@ -160,19 +159,19 @@ build-dev: check-arch prereqs
 	@echo "$(GREEN)Building $(PROJECT_NAME) (development mode)...$(NC)"
 	$(ALR) build --development -- $(ALR_BUILD_FLAGS)
 	@echo "$(GREEN)✓ Development build complete$(NC)"
-	@echo "$(GREEN)  Output: bin/greeter$(NC)"
+	@echo "$(GREEN)  Output: $(BIN_DIR)/greeter$(NC)"
 
 build-opt: check-arch prereqs
-	@echo "$(GREEN)Building $(PROJECT_NAME) (optimized -O2)...$(NC)"
-	$(ALR) build -- -O2 $(ALR_BUILD_FLAGS)
-	@echo "$(GREEN)✓ Optimized build complete$(NC)"
-	@echo "$(GREEN)  Output: bin/greeter$(NC)"
+	@echo "$(GREEN)Building $(PROJECT_NAME) (validation profile)...$(NC)"
+	$(ALR) build --validation -- $(ALR_BUILD_FLAGS)
+	@echo "$(GREEN)✓ Validation build complete$(NC)"
+	@echo "$(GREEN)  Output: $(BIN_DIR)/greeter$(NC)"
 
 build-release: check-arch prereqs
 	@echo "$(GREEN)Building $(PROJECT_NAME) (release mode)...$(NC)"
 	$(ALR) build --release -- $(ALR_BUILD_FLAGS)
 	@echo "$(GREEN)✓ Release build complete$(NC)"
-	@echo "$(GREEN)  Output: bin/greeter$(NC)"
+	@echo "$(GREEN)  Output: $(BIN_DIR)/greeter$(NC)"
 
 build-tests: check-arch prereqs
 	@echo "$(GREEN)Building test suites...$(NC)"
@@ -366,13 +365,9 @@ check:
 
 check-arch: ## Validate hexagonal architecture boundaries
 	@echo "$(GREEN)Validating architecture boundaries...$(NC)"
-	@PYTHONPATH=scripts/python/shared $(PYTHON3) -m arch_guard --project-root .
-	@if [ $$? -eq 0 ]; then \
-		echo "$(GREEN)✓ Architecture validation passed$(NC)"; \
-	else \
-		echo "$(RED)✗ Architecture validation failed$(NC)"; \
-		exit 1; \
-	fi
+	@PYTHONPATH=scripts/python/shared $(PYTHON3) -m arch_guard --project-root . && \
+		echo "$(GREEN)✓ Architecture validation passed$(NC)" || \
+		(echo "$(RED)✗ Architecture validation failed$(NC)"; exit 1)
 
 test-python: ## Run Python script tests (arch_guard.py validation)
 	@echo "$(GREEN)Running Python script tests...$(NC)"
@@ -410,11 +405,20 @@ test-windows: ## Trigger Windows CI validation on GitHub Actions
 	fi
 
 
-# FIXME: Enable format targets when adafmt tool is complete.
-# format-src:
-# format-tests:
-# format-all: format-src format-tests
-# format: format-all
+format-src: ## Format source code
+	@echo "$(GREEN)Formatting source code...$(NC)"
+	@$(ADAFMT) -j0 --write src/
+	@echo "$(GREEN)✓ Source code formatted$(NC)"
+
+format-tests: ## Format test code
+	@echo "$(GREEN)Formatting test code...$(NC)"
+	@$(ADAFMT) -j0 --write $(TEST_DIR)/
+	@echo "$(GREEN)✓ Test code formatted$(NC)"
+
+format-all: format-src format-tests ## Format all code
+	@echo "$(GREEN)✓ All code formatting complete$(NC)"
+
+format: format-all ## Alias for format-all
 
 
 # =============================================================================
@@ -488,7 +492,7 @@ submodule-update: ## Pull latest from all submodule repos
 	git submodule update --remote --merge
 	@echo ""
 	@echo "Submodules updated. Review changes, then run:"
-	@echo "  git add docs scripts/python test/python"
+	@echo "  git add docs scripts/python/shared test/python"
 	@echo "  git commit -m 'chore: update submodules'"
 	@echo "  git push"
 
