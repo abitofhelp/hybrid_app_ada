@@ -27,7 +27,7 @@ project Bootstrap is
    for Source_Dirs use (".", "cli", "..");
    for Object_Dir use "../../obj/bootstrap";
    for Exec_Dir use "../../bin";
-   for Main use ("greeter.adb");
+   for Main use ("greeter_main.adb");
 
    --  ======================================================================
    --  Bootstrap: Composition Root / Aggregate Root
@@ -56,7 +56,11 @@ project Bootstrap is
 
    package Compiler renames Hybrid_App_Ada_Shared_Config.Compiler;
    package Binder renames Hybrid_App_Ada_Shared_Config.Binder;
-   package Builder renames Hybrid_App_Ada_Shared_Config.Builder;
+   package Builder is
+      for Default_Switches ("Ada") use
+        Hybrid_App_Ada_Shared_Config.Builder'Default_Switches ("Ada");
+      for Executable ("greeter_main.adb") use "greeter";
+   end Builder;
 
    --  ======================================================================
    --  Linker Package: Platform-Specific Configuration

@@ -1,6 +1,6 @@
 pragma Ada_2022;
 --  =========================================================================
---  Greeter - Main Program Entry Point
+--  Greeter_Main - Main Program Entry Point
 --  =========================================================================
 --  Copyright (c) 2025 Michael Gardner, A Bit of Help, Inc.
 --  SPDX-License-Identifier: BSD-3-Clause
@@ -35,7 +35,7 @@ pragma Ada_2022;
 with Ada.Command_Line;
 with Bootstrap.CLI;
 
-procedure Greeter is
+procedure Greeter_Main is
 
    --  Exit code to return to OS (0 = success, non-zero = error)
    Exit_Code : Integer;
@@ -59,4 +59,4 @@ begin
 
    Ada.Command_Line.Set_Exit_Status (Ada.Command_Line.Exit_Status (Exit_Code));
 
-end Greeter;
+end Greeter_Main;
