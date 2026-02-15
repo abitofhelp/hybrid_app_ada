@@ -3,13 +3,18 @@
 -- ===========================================================================
 -- Purpose:
 --   Unit test project for testing domain and application layers.
---   Inherits validation profile settings from hybrid_app_ada.gpr for consistency.
+--   Inherits settings from hybrid_app_ada_shared_config.gpr for consistency.
 --
--- Build: alr build --validation
---        make build-tests
+-- Build: alr exec -- gprbuild -P test/unit/unit_tests.gpr -p
+--        make test-unit
 -- ===========================================================================
 
-with "../../hybrid_app_ada.gpr";
+with "../../hybrid_app_ada_shared_config.gpr";
+with "../../config/hybrid_app_ada_config.gpr";
+with "../../src/domain/domain.gpr";
+with "../../src/application/application.gpr";
+with "../../src/infrastructure/infrastructure.gpr";
+with "../../src/version/version.gpr";
 
 project Unit_Tests is
 
@@ -20,17 +25,8 @@ project Unit_Tests is
    --  Only the runner is Main; individual tests are procedures it calls
    for Main use ("unit_runner.adb");
 
-   package Compiler is
-      --  Inherit compiler settings from main project (uses validation profile)
-      for Default_Switches ("Ada") use
-         Hybrid_App_Ada.Compiler'Default_Switches("Ada");
-   end Compiler;
-
-   package Binder is
-      --  Inherit binder settings from main project
-      for Switches ("Ada") use
-         Hybrid_App_Ada.Binder'Default_Switches("Ada");
-   end Binder;
+   package Compiler renames Hybrid_App_Ada_Shared_Config.Compiler;
+   package Binder renames Hybrid_App_Ada_Shared_Config.Binder;
 
    package Builder is
       for Switches ("Ada") use ("-g");  -- Debug symbols

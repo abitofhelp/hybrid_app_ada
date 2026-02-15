@@ -5,13 +5,13 @@
 --   End-to-End test project for testing complete system through CLI.
 --   Tests execute the greeter binary and verify output (black-box testing).
 --   Does NOT import application code - tests from user's perspective.
---   Inherits validation profile settings from hybrid_app_ada.gpr for consistency.
+--   Inherits settings from hybrid_app_ada_shared_config.gpr for consistency.
 --
--- Build: alr build --validation
---        make build-tests
+-- Build: alr exec -- gprbuild -P test/e2e/e2e_tests.gpr -p
+--        make test-e2e
 -- ===========================================================================
 
-with "../../hybrid_app_ada.gpr";
+with "../../hybrid_app_ada_shared_config.gpr";
 
 project E2E_Tests is
 
@@ -23,17 +23,8 @@ project E2E_Tests is
    --  E2E tests should execute bin/greeter and verify output
    for Main use ("e2e_runner.adb");
 
-   package Compiler is
-      --  Inherit compiler settings from main project (uses validation profile)
-      for Default_Switches ("Ada") use
-         Hybrid_App_Ada.Compiler'Default_Switches("Ada");
-   end Compiler;
-
-   package Binder is
-      --  Inherit binder settings from main project
-      for Switches ("Ada") use
-         Hybrid_App_Ada.Binder'Default_Switches("Ada");
-   end Binder;
+   package Compiler renames Hybrid_App_Ada_Shared_Config.Compiler;
+   package Binder renames Hybrid_App_Ada_Shared_Config.Binder;
 
    package Builder is
       for Switches ("Ada") use ("-g");  -- Debug symbols
