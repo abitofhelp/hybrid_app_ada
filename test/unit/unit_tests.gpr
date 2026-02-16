@@ -15,6 +15,7 @@ with "../../src/domain/domain.gpr";
 with "../../src/application/application.gpr";
 with "../../src/infrastructure/infrastructure.gpr";
 with "../../src/version/version.gpr";
+with "../../src/root/root.gpr";
 
 project Unit_Tests is
 

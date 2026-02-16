@@ -16,6 +16,7 @@
 -- ==========================================================================
 
 with "../../hybrid_app_ada_shared_config.gpr";
+with "../root/root.gpr";
 
 library project Version is
 
@@ -26,8 +27,7 @@ library project Version is
    for Library_Kind use "static";
 
    for Library_Interface use
-     ("Hybrid_App_Ada",
-      "Hybrid_App_Ada.Version");
+     ("Hybrid_App_Ada.Version");
 
    package Compiler renames Hybrid_App_Ada_Shared_Config.Compiler;
    package Binder renames Hybrid_App_Ada_Shared_Config.Binder;

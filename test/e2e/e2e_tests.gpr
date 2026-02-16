@@ -12,6 +12,7 @@
 -- ===========================================================================
 
 with "../../hybrid_app_ada_shared_config.gpr";
+with "../../src/root/root.gpr";
 
 project E2E_Tests is
 

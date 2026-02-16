@@ -7,23 +7,23 @@ pragma Ada_2022;
 --
 --  Purpose:
 --    Integration test for complete greeting flow across all layers.
---    Tests Infrastructure → Application → Domain integration.
+--    Tests Hybrid_App_Ada.Infrastructure → Hybrid_App_Ada.Application → Hybrid_App_Ada.Domain integration.
 --  ======================================================================
 
 with Ada.Text_IO;
-with Application.Command.Greet;
-with Application.Port.Outbound.Writer;
-with Application.Usecase.Greet;
-with Domain.Value_Object.Person;
-with Infrastructure.Adapter.Console_Writer;
+with Hybrid_App_Ada.Application.Command.Greet;
+with Hybrid_App_Ada.Application.Port.Outbound.Writer;
+with Hybrid_App_Ada.Application.Usecase.Greet;
+with Hybrid_App_Ada.Domain.Value_Object.Person;
+with Hybrid_App_Ada.Infrastructure.Adapter.Console_Writer;
 with Test_Framework;
 
 procedure Test_Greet_Full_Flow is
 
    use Ada.Text_IO;
-   use Application.Command.Greet;
-   use Application.Port.Outbound.Writer;
-   use Domain.Value_Object.Person;
+   use Hybrid_App_Ada.Application.Command.Greet;
+   use Hybrid_App_Ada.Application.Port.Outbound.Writer;
+   use Hybrid_App_Ada.Domain.Value_Object.Person;
 
    --  Test statistics
    Total_Tests  : Natural := 0;
@@ -44,15 +44,15 @@ procedure Test_Greet_Full_Flow is
    pragma Style_Checks (On);
 
    --  ========================================================================
-   --  Wire Infrastructure adapter to Application port (DI via generics)
+   --  Wire Hybrid_App_Ada.Infrastructure adapter to Hybrid_App_Ada.Application port (DI via generics)
    --  ========================================================================
 
    package Writer_Port_Instance is new
-     Application.Port.Outbound.Writer.Generic_Writer
-       (Write => Infrastructure.Adapter.Console_Writer.Write);
+     Hybrid_App_Ada.Application.Port.Outbound.Writer.Generic_Writer
+       (Write => Hybrid_App_Ada.Infrastructure.Adapter.Console_Writer.Write);
 
    --  Instantiate use case with real console writer
-   package Greet_UseCase_Instance is new Application.Usecase.Greet
+   package Greet_UseCase_Instance is new Hybrid_App_Ada.Application.Usecase.Greet
      (Writer => Writer_Port_Instance.Write_Message);
 
 begin

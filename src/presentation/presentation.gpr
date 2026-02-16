@@ -13,6 +13,7 @@
 with "../../hybrid_app_ada_shared_config.gpr";
 with "../application/application.gpr";
 with "../version/version.gpr";
+with "../root/root.gpr";
 
 library project Presentation is
 
@@ -44,11 +45,11 @@ library project Presentation is
    for Library_Standalone use "standard";
 
    for Library_Interface use
-     ("Presentation",
-      "Presentation.Adapter",
-      "Presentation.Adapter.CLI",
-      "Presentation.Adapter.CLI.Command",
-      "Presentation.Adapter.CLI.Command.Greet");
+     ("Hybrid_App_Ada.Presentation",
+      "Hybrid_App_Ada.Presentation.Adapter",
+      "Hybrid_App_Ada.Presentation.Adapter.CLI",
+      "Hybrid_App_Ada.Presentation.Adapter.CLI.Command",
+      "Hybrid_App_Ada.Presentation.Adapter.CLI.Command.Greet");
 
    package Compiler renames Hybrid_App_Ada_Shared_Config.Compiler;
    package Binder renames Hybrid_App_Ada_Shared_Config.Binder;

@@ -7,33 +7,33 @@ pragma Ada_2022;
 --
 --  Purpose:
 --    Main program entry point for the greeter CLI application.
---    Delegates all work to Bootstrap.CLI composition root.
+--    Delegates all work to Hybrid_App_Ada.Bootstrap.CLI composition root.
 --
 --  Architecture:
 --    Hybrid DDD/Clean/Hexagonal Architecture with 5 layers:
---    1. Domain - Pure business logic (innermost, zero dependencies)
---    2. Application - Use cases and ports (depends on Domain only)
---    3. Infrastructure - Adapters implementing output ports
---    4. Presentation - User interfaces (CLI, Web, etc.)
---    5. Bootstrap - Composition root wiring all layers together
+--    1. Hybrid_App_Ada.Domain - Pure business logic (innermost, zero dependencies)
+--    2. Hybrid_App_Ada.Application - Use cases and ports (depends on Hybrid_App_Ada.Domain only)
+--    3. Hybrid_App_Ada.Infrastructure - Adapters implementing output ports
+--    4. Hybrid_App_Ada.Presentation - User interfaces (CLI, Web, etc.)
+--    5. Hybrid_App_Ada.Bootstrap - Composition root wiring all layers together
 --
 --  Design Principles:
---    - Dependency Inversion: Dependencies point inbound toward Domain
+--    - Dependency Inversion: Dependencies point inbound toward Hybrid_App_Ada.Domain
 --    - Static DI: Generic instantiation for zero-runtime-cost injection
 --    - Railway-Oriented Programming: Result monad for error handling
---    - Ports & Adapters: Application defines interfaces,Infrastructure conform
+--    - Ports & Adapters: Hybrid_App_Ada.Application defines interfaces,Hybrid_App_Ada.Infrastructure conform
 --
 --  Main Responsibilities:
 --    - Entry point (kept minimal)
---    - Delegates to Bootstrap.CLI.Run
+--    - Delegates to Hybrid_App_Ada.Bootstrap.CLI.Run
 --    - Sets OS exit code
 --
 --  See Also:
---    Bootstrap.CLI - Composition root that wires all layers
+--    Hybrid_App_Ada.Bootstrap.CLI - Composition root that wires all layers
 --  =========================================================================
 
 with Ada.Command_Line;
-with Bootstrap.CLI;
+with Hybrid_App_Ada.Bootstrap.CLI;
 
 procedure Greeter_Main is
 
@@ -42,16 +42,16 @@ procedure Greeter_Main is
 
 begin
    --  ======================================================================
-   --  Bootstrap and run the CLI application
+   --  Hybrid_App_Ada.Bootstrap and run the CLI application
    --  ======================================================================
 
-   --  Call Bootstrap.CLI to:
+   --  Call Hybrid_App_Ada.Bootstrap.CLI to:
    --  1. Instantiate all generic packages (dependency injection)
    --  2. Wire all layers together
    --  3. Execute the application
    --  4. Return exit code
 
-   Exit_Code := Bootstrap.CLI.Run;
+   Exit_Code := Hybrid_App_Ada.Bootstrap.CLI.Run;
 
    --  ======================================================================
    --  Set the OS exit code and return

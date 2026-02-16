@@ -6,19 +6,19 @@ pragma Ada_2022;
 --  SPDX-License-Identifier: BSD-3-Clause
 --
 --  Purpose:
---    Integration test for Infrastructure.Adapter.Console_Writer.
+--    Integration test for Hybrid_App_Ada.Infrastructure.Adapter.Console_Writer.
 --    Tests adapter implementation and then exception handling.
 --  ======================================================================
 
 with Ada.Text_IO;
-with Infrastructure.Adapter.Console_Writer;
-with Application.Port.Outbound.Writer;
+with Hybrid_App_Ada.Infrastructure.Adapter.Console_Writer;
+with Hybrid_App_Ada.Application.Port.Outbound.Writer;
 with Test_Framework;
 
 procedure Test_Infrastructure_Console_Writer is
 
    use Ada.Text_IO;
-   use Application.Port.Outbound.Writer;
+   use Hybrid_App_Ada.Application.Port.Outbound.Writer;
 
    --  Test statistics
    Total_Tests  : Natural := 0;
@@ -40,7 +40,7 @@ procedure Test_Infrastructure_Console_Writer is
 
 begin
    Put_Line ("========================================");
-   Put_Line ("Testing: Infrastructure.Console_Writer");
+   Put_Line ("Testing: Hybrid_App_Ada.Infrastructure.Console_Writer");
    Put_Line ("========================================");
    New_Line;
 
@@ -50,7 +50,7 @@ begin
 
    declare
       Result : constant Unit_Result.Result :=
-        Infrastructure.Adapter.Console_Writer.Write ("Test message");
+        Hybrid_App_Ada.Infrastructure.Adapter.Console_Writer.Write ("Test message");
    begin
       Run_Test
         ("Write simple message - Is_Ok",
@@ -63,7 +63,7 @@ begin
 
    declare
       Result : constant Unit_Result.Result :=
-        Infrastructure.Adapter.Console_Writer.Write ("");
+        Hybrid_App_Ada.Infrastructure.Adapter.Console_Writer.Write ("");
    begin
       Run_Test
         ("Write empty message - Is_Ok",
@@ -76,7 +76,7 @@ begin
 
    declare
       Result : constant Unit_Result.Result :=
-        Infrastructure.Adapter.Console_Writer.Write
+        Hybrid_App_Ada.Infrastructure.Adapter.Console_Writer.Write
           ("Special: !@#$%^&*()");
    begin
       Run_Test
@@ -90,7 +90,7 @@ begin
 
    declare
       Result : constant Unit_Result.Result :=
-        Infrastructure.Adapter.Console_Writer.Write ("Unicode: José María");
+        Hybrid_App_Ada.Infrastructure.Adapter.Console_Writer.Write ("Unicode: José María");
    begin
       Run_Test
         ("Write Unicode - Is_Ok",
@@ -104,7 +104,7 @@ begin
    declare
       Long_Message : constant String (1 .. 500) := [others => 'X'];
       Result       : constant Unit_Result.Result :=
-        Infrastructure.Adapter.Console_Writer.Write (Long_Message);
+        Hybrid_App_Ada.Infrastructure.Adapter.Console_Writer.Write (Long_Message);
    begin
       Run_Test
         ("Write long message - Is_Ok",
@@ -117,11 +117,11 @@ begin
 
    declare
       Result1 : constant Unit_Result.Result :=
-        Infrastructure.Adapter.Console_Writer.Write ("Message 1");
+        Hybrid_App_Ada.Infrastructure.Adapter.Console_Writer.Write ("Message 1");
       Result2 : constant Unit_Result.Result :=
-        Infrastructure.Adapter.Console_Writer.Write ("Message 2");
+        Hybrid_App_Ada.Infrastructure.Adapter.Console_Writer.Write ("Message 2");
       Result3 : constant Unit_Result.Result :=
-        Infrastructure.Adapter.Console_Writer.Write ("Message 3");
+        Hybrid_App_Ada.Infrastructure.Adapter.Console_Writer.Write ("Message 3");
    begin
       Run_Test
         ("Multiple writes - all Ok",
@@ -136,7 +136,7 @@ begin
 
    declare
       Result : constant Unit_Result.Result :=
-        Infrastructure.Adapter.Console_Writer.Write
+        Hybrid_App_Ada.Infrastructure.Adapter.Console_Writer.Write
           ("Line 1" & ASCII.LF & "Line 2");
    begin
       Run_Test
@@ -150,7 +150,7 @@ begin
 
    declare
       Result : constant Unit_Result.Result :=
-        Infrastructure.Adapter.Console_Writer.Write
+        Hybrid_App_Ada.Infrastructure.Adapter.Console_Writer.Write
           ("Col1" & ASCII.HT & "Col2");
    begin
       Run_Test
@@ -161,7 +161,7 @@ begin
    --  Print summary
    New_Line;
    Put_Line ("========================================");
-   Put_Line ("Test Summary: Infrastructure.Console_Writer");
+   Put_Line ("Test Summary: Hybrid_App_Ada.Infrastructure.Console_Writer");
    Put_Line ("========================================");
    Put_Line ("Total tests: " & Total_Tests'Image);
    Put_Line ("Passed:      " & Passed_Tests'Image);

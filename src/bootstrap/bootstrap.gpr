@@ -16,6 +16,7 @@ with "../domain/domain.gpr";
 with "../application/application.gpr";
 with "../infrastructure/infrastructure.gpr";
 with "../presentation/presentation.gpr";
+with "../root/root.gpr";
 
 project Bootstrap is
 
