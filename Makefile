@@ -371,7 +371,7 @@ check-arch: ## Validate hexagonal architecture boundaries
 
 test-python: ## Run Python script tests (arch_guard.py validation)
 	@echo "$(GREEN)Running Python script tests...$(NC)"
-	@cd test/python && $(PYTHON3) -m pytest -v
+	@cd test/scripts/python/shared && $(PYTHON3) -m pytest -v
 	@echo "$(GREEN)✓ Python tests complete$(NC)"
 
 test-windows: ## Trigger Windows CI validation on GitHub Actions
@@ -492,7 +492,7 @@ submodule-update: ## Pull latest from all submodule repos
 	git submodule update --remote --merge
 	@echo ""
 	@echo "Submodules updated. Review changes, then run:"
-	@echo "  git add docs scripts/python/shared test/python"
+	@echo "  git add docs scripts/python/shared test/scripts/python/shared"
 	@echo "  git commit -m 'chore: update submodules'"
 	@echo "  git push"
 
