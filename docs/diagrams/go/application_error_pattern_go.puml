@@ -1,0 +1,132 @@
+@startuml application_error_pattern_go
+!theme plain
+
+title Application.Error Re-export Pattern (Go)\nPresentation Layer Access to Error Types
+
+package "Domain Layer" as Domain #FFF9E6 {
+  class "domain/error" as DomainError {
+    + ErrorType : struct
+    + ErrorKind : type
+    + ValidationError : const
+    + InfrastructureError : const
+    + Result[T] : generic
+    --
+    **Canonical definitions**
+    Zero external deps
+  }
+}
+
+package "Application Layer" as Application #E8F5E9 {
+  class "application/error" as AppError #FFFF99 {
+    + ErrorType : type alias
+    + ErrorKind : type alias
+    + ValidationError : const
+    + InfrastructureError : const
+    --
+    **Re-exports for Presentation**
+    Facade pattern
+  }
+}
+
+package "Presentation Layer" as Presentation #FFE4E1 {
+  class "presentation/adapter/cli" as CLI {
+    + GreetCommand : struct
+    + Run() : int
+    --
+    Uses Application.Error
+    ❌ Cannot import Domain
+  }
+}
+
+package "Infrastructure Layer" as Infrastructure #E6F3FF {
+  class "infrastructure/adapter/console" as Console {
+    + Writer : struct
+    + Write(ctx, msg) : Result
+    --
+    ✅ Can import Domain
+    Directly uses domain/error
+  }
+}
+
+' Dependencies
+AppError -down-> DomainError : type aliases
+CLI -down-> AppError : imports ✅
+CLI .right.> DomainError : ❌ FORBIDDEN
+Console -down-> DomainError : imports ✅
+
+note right of AppError
+  **Application Error Facade**
+  ═══════════════════════════
+
+  ```go
+  package error
+
+  import domerr "github.com/.../domain/error"
+
+  // Re-export types for Presentation
+  type ErrorType = domerr.ErrorType
+  type ErrorKind = domerr.ErrorKind
+
+  // Re-export constants
+  const (
+      ValidationError     = domerr.ValidationError
+      InfrastructureError = domerr.InfrastructureError
+  )
+  ```
+end note
+
+note bottom of CLI
+  **Presentation Usage**
+  ═══════════════════════════
+
+  ```go
+  package cli
+
+  import apperr "github.com/.../application/error"
+
+  func (c *GreetCommand) Run() int {
+      result := c.useCase.Execute(ctx, cmd)
+
+      if result.IsErr() {
+          err := result.Error()
+          switch err.Kind {
+          case apperr.ValidationError:
+              fmt.Fprintf(os.Stderr, "Invalid: %s\n", err.Message)
+              return 1
+          case apperr.InfrastructureError:
+              fmt.Fprintf(os.Stderr, "System error\n")
+              return 2
+          }
+      }
+      return 0
+  }
+  ```
+end note
+
+legend right
+  **Why Re-export?**
+  ═══════════════════════════════
+
+  **Architecture Rule:**
+  Presentation ❌ Domain
+  (No transitive access!)
+
+  **Solution:**
+  Application re-exports error types
+  as type aliases (zero overhead)
+
+  **Benefits:**
+  ✅ Presentation can handle errors
+  ✅ Domain isolation preserved
+  ✅ arch_guard can verify
+  ✅ Clean layer boundaries
+
+  **Go Type Alias Pattern**
+  ═══════════════════════════════
+  • `type X = other.X` (alias)
+  • Zero runtime overhead
+  • Same type identity
+  • Allows re-exporting
+endlegend
+
+@enduml

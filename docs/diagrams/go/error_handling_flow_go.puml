@@ -1,0 +1,191 @@
+@startuml error_handling_flow_go
+!theme plain
+
+title Error Handling Flow\nRailway-Oriented Programming with Result[T] (Go Application)
+
+actor "User" as User
+
+participant "cmd/greeter\nmain()" as Main #E0FFE0
+participant "bootstrap/cli\nRun()" as Bootstrap #FFEBCD
+participant "presentation/cli\nGreetCommand" as Presentation #FFE4E1
+participant "application/usecase\nGreetUseCase" as Application #E8F5E9
+participant "infrastructure\nconsole.Writer" as Infrastructure #E6F3FF
+participant "domain\nResult[T]" as Domain #FFF9E6
+
+== Happy Path (Success) ==
+
+User -> Main : ./greeter Alice
+activate Main
+
+Main -> Bootstrap : Run()
+activate Bootstrap
+
+Bootstrap -> Presentation : cmd.Run()
+activate Presentation
+
+Presentation -> Application : useCase.Execute(ctx, cmd)
+activate Application
+
+Application -> Application : valueobject.CreatePerson(name)
+note right
+  Domain validation
+  Returns Result[Person]
+end note
+
+Application -> Infrastructure : writer.Write(ctx, message)
+activate Infrastructure
+
+Infrastructure -> Infrastructure : fmt.Println(message)
+note right
+  **Error Handling**
+  Check error return
+  Wrap to Result type
+end note
+
+Infrastructure --> Application : domerr.Ok(model.UnitValue)
+deactivate Infrastructure
+
+Application --> Presentation : domerr.Ok(model.UnitValue)
+deactivate Application
+
+Presentation --> Bootstrap : return 0 (success)
+deactivate Presentation
+
+Bootstrap --> Main : return 0
+deactivate Bootstrap
+
+Main --> User : exit 0
+deactivate Main
+
+== Error Path (Infrastructure Failure) ==
+
+User -> Main : ./greeter Bob
+activate Main
+
+Main -> Bootstrap : Run()
+activate Bootstrap
+
+Bootstrap -> Presentation : cmd.Run()
+activate Presentation
+
+Presentation -> Application : useCase.Execute(ctx, cmd)
+activate Application
+
+Application -> Infrastructure : writer.Write(ctx, message)
+activate Infrastructure
+
+Infrastructure -> Infrastructure : fmt.Println returns\nerror
+note right #FFCCCC
+  **Error Boundary**
+  Go error checked
+  Wrapped to Result
+end note
+
+Infrastructure --> Application : Err(InfrastructureError)
+deactivate Infrastructure
+
+Application --> Presentation : Err(InfrastructureError)
+deactivate Application
+
+Presentation -> Presentation : Handle error
+note right
+  ```go
+  switch err.Kind {
+  case apperr.InfrastructureError:
+      fmt.Fprintln(os.Stderr, "System error")
+      return 2
+  }
+  ```
+end note
+
+Presentation --> Bootstrap : return 2
+deactivate Presentation
+
+Bootstrap --> Main : return 2
+deactivate Bootstrap
+
+Main --> User : exit 2
+deactivate Main
+
+== Error Path (Domain Validation) ==
+
+User -> Main : ./greeter ""
+activate Main
+
+Main -> Bootstrap : Run()
+activate Bootstrap
+
+Bootstrap -> Presentation : cmd.Run()
+activate Presentation
+
+Presentation -> Application : useCase.Execute(ctx, cmd)
+activate Application
+
+Application -> Domain : valueobject.CreatePerson("")
+activate Domain
+
+Domain -> Domain : Validate name\n(len > 0)
+note right #FFCCCC
+  **Domain Validation**
+  Pure function check
+  No panics
+  Returns Error variant
+end note
+
+Domain --> Application : Err(ValidationError)
+deactivate Domain
+
+Application --> Presentation : Err(ValidationError)
+deactivate Application
+
+Presentation -> Presentation : Handle error
+note right
+  ```go
+  switch err.Kind {
+  case apperr.ValidationError:
+      fmt.Fprintf(os.Stderr, "Invalid: %s\n", err.Message)
+      return 1
+  }
+  ```
+end note
+
+Presentation --> Bootstrap : return 1
+deactivate Presentation
+
+Bootstrap --> Main : return 1
+deactivate Bootstrap
+
+Main --> User : exit 1
+deactivate Main
+
+legend right
+  **Error Handling Rules**
+  ════════════════════════════════════
+  1. **Domain**: Validates, returns Err variant
+  2. **Application**: Orchestrates, propagates errors
+  3. **Infrastructure**: Checks Go errors,
+     converts to Result Err
+  4. **Presentation**: Maps errors to exit codes,
+     displays user-friendly messages
+
+  **Key Patterns**
+  ════════════════════════════════════
+  • Result[T] monad (not Go errors)
+  • Error wrapping at infrastructure boundary
+  • Railway-oriented programming
+  • Errors flow outward through layers
+
+  **Exit Codes**
+  ════════════════════════════════════
+  • 0 - Success
+  • 1 - Validation error (user input)
+  • 2 - Infrastructure error (I/O)
+  • 3+ - Other errors
+
+  **Error Kinds**
+  ════════════════════════════════════
+  • ValidationError - Input validation
+  • InfrastructureError - I/O errors
+endlegend
+
+@enduml

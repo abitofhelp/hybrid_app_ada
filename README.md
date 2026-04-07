@@ -88,7 +88,7 @@ git submodule update --init --recursive
 
 ### Layer Structure
 
-![Application Architecture](https://raw.githubusercontent.com/abitofhelp/hybrid_app_docs/main/diagrams/application_architecture.svg)
+![Application Architecture](https://raw.githubusercontent.com/abitofhelp/hybrid_app_ada/main/docs/diagrams/application_architecture.svg)
 
 **5 Layers (Dependency Rule: All dependencies point INWARD)**:
 
@@ -136,7 +136,7 @@ hybrid_app_ada/
 
 ### Key Architectural Rules
 
-![Application Error Pattern](https://raw.githubusercontent.com/abitofhelp/hybrid_app_docs/main/diagrams/ada/application_error_pattern_ada.svg)
+![Application Error Pattern](https://raw.githubusercontent.com/abitofhelp/hybrid_app_ada/main/docs/diagrams/ada/application_error_pattern_ada.svg)
 
 **Critical Boundary Rule:**
 > **Presentation is the ONLY outer layer prevented from direct Domain access**
@@ -190,7 +190,7 @@ This project uses **two distinct Result types**:
 
 ### Static Dispatch Dependency Injection
 
-![Static vs Dynamic Dispatch](https://raw.githubusercontent.com/abitofhelp/hybrid_app_docs/main/diagrams/ada/dynamic_static_dispatch_ada.svg)
+![Static vs Dynamic Dispatch](https://raw.githubusercontent.com/abitofhelp/hybrid_app_ada/main/docs/diagrams/ada/dynamic_static_dispatch_ada.svg)
 
 ```ada
 -- Compile-time polymorphism (USED in this project)

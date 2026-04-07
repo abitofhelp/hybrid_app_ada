@@ -1,0 +1,167 @@
+@startuml api_reexport_pattern_go
+!theme plain
+
+title Application Error Re-export Pattern (APPLICATION)\nProviding Error Types to Presentation Layer (Go)
+
+package "Domain Layer" as Domain #FFF9E6 {
+  class "domain/error" as DomainError {
+    + ErrorType : struct
+    + ErrorKind : type
+    + ValidationError : const
+    + InfrastructureError : const
+    + Result[T] : generic
+    + Ok[T](v) : Result[T]
+    + Err[T](e) : Result[T]
+    --
+    Canonical error definitions
+  }
+
+  class "domain/valueobject" as DomainPerson {
+    + Person : struct (immutable)
+    + CreatePerson(name) : Result[Person]
+    + Name() : string
+    --
+    Domain value object
+  }
+}
+
+package "Application Layer" as Application #E8F5E9 {
+  class "application/error" as AppError #FFFF99 {
+    + ErrorType : type alias
+    + ErrorKind : type alias
+    + ValidationError : const
+    + InfrastructureError : const
+    --
+    **Re-exports for Presentation**
+  }
+
+  class "application/command" as AppCommand {
+    + GreetCommand : struct
+    + NewGreetCommand(name) : GreetCommand
+    + Name() : string
+    --
+    Input DTO
+  }
+
+  class "application/port/inbound" as AppPortIn {
+    + GreetPort : interface
+    --
+    Input port contract
+  }
+}
+
+package "Presentation Layer" as Presentation #FFE4E1 {
+  class "presentation/adapter/cli" as CLI {
+    + GreetCommand : struct
+    -useCase : GreetPort
+    + NewGreetCommand(uc) : *GreetCommand
+    + Run() : int
+    --
+    CLI adapter
+    Uses application/error ✅
+    ❌ Cannot import domain
+  }
+}
+
+package "Bootstrap Layer" as Bootstrap #FFEBCD {
+  class "bootstrap/cli" as BootstrapCLI {
+    + Run() : int
+    --
+    **Composition Root**
+    Wires all dependencies
+  }
+}
+
+' Re-export relationships
+DomainError <.. AppError : type aliases
+
+' Presentation dependencies
+CLI -down-> AppCommand : uses DTO
+CLI -down-> AppPortIn : depends on interface
+CLI -down-> AppError : uses errors ✅
+CLI .right.> DomainError : ❌ FORBIDDEN
+
+' Bootstrap wiring
+BootstrapCLI -down-> CLI : creates
+
+note right of AppError
+  **Application Error Facade**
+  ═══════════════════════════
+
+  ```go
+  package error
+
+  import domerr "github.com/.../domain/error"
+
+  // Type aliases - zero overhead
+  type ErrorType = domerr.ErrorType
+  type ErrorKind = domerr.ErrorKind
+
+  // Re-export constants
+  const (
+      ValidationError     = domerr.ValidationError
+      InfrastructureError = domerr.InfrastructureError
+  )
+  ```
+end note
+
+note bottom of CLI
+  **Presentation Usage**
+  ════════════════════════
+
+  ```go
+  package cli
+
+  import (
+      apperr "github.com/.../application/error"
+      "github.com/.../application/command"
+  )
+
+  type GreetCommand struct {
+      useCase inbound.GreetPort
+  }
+
+  func (c *GreetCommand) Run() int {
+      cmd := command.NewGreetCommand(os.Args[1])
+      result := c.useCase.Execute(context.Background(), cmd)
+
+      if result.IsErr() {
+          err := result.Error()
+          switch err.Kind {
+          case apperr.ValidationError:
+              fmt.Fprintf(os.Stderr, "Invalid: %s\n", err.Message)
+              return 1
+          case apperr.InfrastructureError:
+              fmt.Fprintf(os.Stderr, "System error\n")
+              return 2
+          }
+      }
+      return 0
+  }
+  ```
+end note
+
+legend right
+  **Application Re-export Pattern**
+  ═══════════════════════════════
+  ✅ Type aliases (zero overhead)
+  ✅ Presentation can handle errors
+  ✅ Domain isolation preserved
+  ✅ arch_guard can verify
+
+  **Architecture Rule**
+  ═══════════════════════════════
+  • Presentation ❌ Domain (forbidden)
+  • Presentation ✅ Application
+  • Application ✅ Domain
+  • Infrastructure ✅ Domain
+
+  **Why Not Direct Access?**
+  ═══════════════════════════════
+  • Prevents tight coupling
+  • Domain can evolve independently
+  • Clear responsibility boundaries
+  • Testable in isolation
+endlegend
+
+@enduml

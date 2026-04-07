@@ -1,0 +1,141 @@
+@startuml dynamic_static_dispatch
+!theme plain
+skinparam linetype ortho
+
+title Static vs Dynamic Dispatch\nDependency Injection in Ada with Generics
+
+package "Dynamic Dispatch\n(Runtime Polymorphism)" as DynamicPkg #FFE4E1 {
+  interface "Writer_Interface'Class" <<tagged type>> {
+    +Write(Message) : Result
+  }
+
+  class Console_Writer {
+    +Write(Message) : Result
+  }
+
+  class Greet_Use_Case {
+    -Writer : Writer_Interface'Class
+    +Execute(Cmd) : Result
+  }
+
+  Console_Writer .up.|> "Writer_Interface'Class"
+  Greet_Use_Case o-right-> "Writer_Interface'Class" : depends on\ntagged type
+}
+
+package "Static Dispatch\n(Compile-Time Polymorphism)" as StaticPkg #E8F5E9 {
+  class "Console_Writer" as StaticCW <<concrete package>> {
+    +Write(Message) : Result
+  }
+
+  class "Use_Case\nwith function Console_Write" as StaticGUC <<generic package>> {
+    +Execute(Cmd) : Result
+  }
+
+  class "Bootstrap\nInstantiation" as StaticInst <<wired at compile time>> {
+    package Greet_UC is new
+      Use_Case (Console_Write =>
+        Console_Writer.Write);
+  }
+
+  StaticCW .down.> StaticInst : concrete function
+  StaticGUC .down.> StaticInst : instantiated with\nconcrete function
+}
+
+note right of Greet_Use_Case
+  **Runtime Cost:**
+  • Dispatching call each time
+  • No inlining possible
+  • Tagged type overhead
+
+  **Benefits:**
+  • Runtime flexibility
+  • Can swap at runtime
+end note
+
+note right of StaticGUC
+  **Compile-Time Cost:**
+  • Zero overhead
+  • Direct call (inlinable)
+  • No dispatching
+
+  **Trade-off:**
+  • Fixed at compile time
+  • Larger binary (instantiation)
+end note
+
+note bottom of StaticPkg #CCFFCC
+  **This Project Uses Static Dispatch**
+
+  ```ada
+  -- Bootstrap instantiates with concrete functions
+  package Console_Port_Inst is new
+    Application.Console_Port.Port
+      (Write => Infrastructure.Adapter.Console_Writer.Write);
+
+  package Greet_UC is new
+    Application.Usecase.Greet.Use_Case
+      (Console_Write => Console_Port_Inst.Write_Message);
+
+  package Greet_Cmd is new
+    Presentation.Greet_Command.Command
+      (Execute_Greet_Use_Case => Greet_UC.Execute);
+
+  -- Compiler knows exact functions
+  -- All calls are statically dispatched
+  ```
+end note
+
+note bottom of DynamicPkg #FFCCCC
+  **Traditional Ada Pattern (NOT used)**
+
+  ```ada
+  -- Tagged type-based injection
+  type Use_Case is tagged record
+     Writer : Writer_Interface'Class;
+  end record;
+
+  -- Runtime dispatch via dispatching call
+  procedure Execute (Self : Use_Case; ...) is
+  begin
+     Self.Writer.Write (...);  -- dispatching
+  end Execute;
+  ```
+end note
+
+legend right
+  **Why Static Dispatch?**
+  ═══════════════════════════════════════
+
+  **Performance:**
+  • Zero runtime overhead
+  • Subprogram calls can be inlined
+  • No tagged type allocation
+
+  **Type Safety:**
+  • Full type checking at compile time
+  • Errors caught before runtime
+
+  **Matching Go Pattern:**
+  • Go uses generics for static dispatch
+  • Ada generics provide equivalent pattern
+  • Same architecture, same performance
+
+  **Ada Generics (since Ada 83)**
+  ═══════════════════════════════════════
+  ```ada
+  generic
+     with function Console_Write (Message : String)
+       return Unit_Result.Result;
+  package Use_Case is
+     function Execute (Cmd : Command)
+       return Unit_Result.Result;
+  end Use_Case;
+
+  -- Instantiation binds concrete function:
+  --   package UC is new Use_Case
+  --     (Console_Write => Writer.Write);
+  -- Compiler generates code for Writer.Write
+  ```
+endlegend
+
+@enduml

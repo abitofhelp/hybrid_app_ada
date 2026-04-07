@@ -1,0 +1,145 @@
+@startuml dynamic_static_dispatch_go
+!theme plain
+
+title Interface-Based Dependency Injection in Go\nComparison: Traditional OOP vs Go Interfaces
+
+package "Traditional OOP\n(Runtime Polymorphism)" as DynamicPkg #FFE4E1 {
+  interface "Writer" as DynWriter {
+    +Write(msg) error
+  }
+
+  class "ConsoleWriter" as DynConsole {
+    +Write(msg) error
+  }
+
+  class "UseCase" as DynUC {
+    -writer Writer
+    +Execute(cmd) error
+  }
+
+  DynConsole ..|> DynWriter
+  DynUC o--> DynWriter
+}
+
+package "Go Interface Pattern\n(Compile-Time + Runtime)" as StaticPkg #E8F5E9 {
+  interface "WriterPort" as Port {
+    +Write(ctx, msg) Result[Unit]
+  }
+
+  class "console.Writer" as Console {
+    +Write(ctx, msg) Result[Unit]
+  }
+
+  class "GreetUseCase" as UC {
+    -writer WriterPort
+    +Execute(ctx, cmd) Result[Unit]
+  }
+
+  Console ..|> Port : implicit
+  UC o--> Port
+}
+
+note bottom of DynamicPkg
+  **Traditional OOP**
+  ═══════════════════════════════════
+
+  ```java
+  // Explicit interface implementation
+  public class ConsoleWriter implements Writer {
+      @Override
+      public void write(String msg) {
+          System.out.println(msg);
+      }
+  }
+
+  public class UseCase {
+      private Writer writer;
+
+      public UseCase(Writer writer) {
+          this.writer = writer;
+      }
+  }
+  ```
+
+  **Characteristics:**
+  • Explicit "implements" declaration
+  • Interface defined by implementer
+  • Tight coupling to interface package
+end note
+
+note bottom of StaticPkg
+  **Go Interface Pattern**
+  ═══════════════════════════════════
+
+  ```go
+  // Interface defined by CONSUMER
+  package outbound
+
+  type WriterPort interface {
+      Write(ctx context.Context, msg string)
+          domerr.Result[model.Unit]
+  }
+  ```
+
+  ```go
+  // Implementation - NO explicit "implements"
+  package console
+
+  type Writer struct{}
+
+  func (w *Writer) Write(ctx context.Context,
+      msg string) domerr.Result[model.Unit] {
+      _, err := fmt.Println(msg)
+      // ...
+  }
+  ```
+
+  **Characteristics:**
+  • Implicit interface satisfaction
+  • Interface defined where used (consumer)
+  • Decoupled - implementer doesn't import interface
+end note
+
+legend right
+  **Go's Unique Approach**
+  ═══════════════════════════════════════
+
+  **Interface Satisfaction:**
+  • Implicit (duck typing)
+  • No "implements" keyword
+  • Compile-time verified
+  • Runtime dispatch for interface calls
+
+  **Benefits:**
+  • Implementer decoupled from interface pkg
+  • Easy to add interfaces retroactively
+  • Small, focused interfaces
+  • Natural dependency inversion
+
+  **Bootstrap Wiring**
+  ═══════════════════════════════════════
+  ```go
+  // Composition root
+  func main() {
+      writer := console.NewWriter()
+      useCase := usecase.NewGreetUseCase(writer)
+      // writer satisfies WriterPort interface
+  }
+  ```
+
+  **Testing**
+  ═══════════════════════════════════════
+  ```go
+  // Mock in tests
+  type mockWriter struct {
+      messages []string
+  }
+  func (m *mockWriter) Write(ctx context.Context,
+      msg string) domerr.Result[model.Unit] {
+      m.messages = append(m.messages, msg)
+      return domerr.Ok(model.UnitValue)
+  }
+  ```
+endlegend
+
+@enduml

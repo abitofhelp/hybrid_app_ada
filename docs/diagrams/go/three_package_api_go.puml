@@ -1,0 +1,176 @@
+@startuml three_package_api_go
+!theme plain
+skinparam linetype ortho
+skinparam nodesep 60
+skinparam ranksep 80
+
+title Layered Application Architecture\nComposition Root + Platform Flexibility (Go)
+
+package "Entry Point" as Entry #E0FFE0 {
+  component "cmd/greeter/main.go" as Main
+  note right of Main
+    ```go
+    package main
+
+    import "github.com/.../bootstrap/cli"
+
+    func main() {
+        os.Exit(cli.Run())
+    }
+    ```
+  end note
+}
+
+package "Bootstrap Layer" as BootstrapLayer #FFEBCD {
+
+  package "Composition Roots" as Roots {
+    component "bootstrap/cli" as BootstrapCLI #FFD699
+    component "bootstrap/embedded" as BootstrapEmb #FFD699
+    component "bootstrap/web" as BootstrapWeb #FFD699
+
+    note right of BootstrapCLI
+      **Composition Root**
+      - Creates all dependencies
+      - Wires infrastructure
+      - Returns exit code
+    end note
+
+    note right of BootstrapEmb
+      **Future: Embedded**
+      STM32, embedded targets
+    end note
+
+    note right of BootstrapWeb
+      **Future: Web/WASM**
+      WebAssembly targets
+    end note
+  }
+}
+
+package "Presentation Layer" as PresentationLayer #FFE4E1 {
+  component "cli.GreetCommand" as CLI
+  note right of CLI
+    **CLI Adapter**
+    - Parses arguments
+    - Calls use case
+    - Maps errors to exit codes
+    - Uses application/error
+  end note
+}
+
+package "Application Layer" as AppLayer #E8F5E9 {
+  component "usecase.GreetUseCase" as UC #CCFFCC
+  component "Ports (interfaces)" as Ports
+  component "Commands" as Cmds
+
+  note right of UC
+    **Business Logic**
+    - Platform agnostic
+    - Interface dependencies
+    - **Testable in isolation**
+  end note
+}
+
+package "Infrastructure Layer" as InfraLayer #E6F3FF {
+  component "console.Writer" as CW
+  component "uart.Writer" as UW
+  component "web.Writer" as WW
+}
+
+package "Domain Layer" as DomainLayer #FFF9E6 {
+  component "Value Objects" as VOs
+  component "Error + Result" as Errors
+}
+
+' Entry to Bootstrap
+Main -down-> BootstrapCLI : calls Run()
+
+' Bootstrap wiring
+BootstrapCLI -down-> CLI : creates
+BootstrapCLI -down-> UC : creates with
+BootstrapCLI -down-> CW : creates
+
+BootstrapEmb -down-> UC : creates with
+BootstrapEmb -down-> UW : creates
+
+BootstrapWeb -down-> UC : creates with
+BootstrapWeb -down-> WW : creates
+
+' Presentation dependencies
+CLI -down-> UC : uses (via interface)
+CLI -down-> Cmds : uses
+
+' Use case dependencies
+UC -down-> Ports : depends on interfaces
+UC -down-> VOs : creates Person
+UC -[hidden]down-> Errors
+
+' Infrastructure implements ports
+CW -down-> Ports : implements WriterPort
+UW -down-> Ports : implements WriterPort
+WW -down-> Ports : implements WriterPort
+
+' Ports use domain
+Ports -down-> Errors : uses Result
+
+' Highlighting
+note top of UC #CCFFCC
+  **Testable Business Logic**
+  ═══════════════════════════════════
+  Everything here is:
+  - Interface-based (mockable)
+  - Platform agnostic
+  - Unit testable
+  - application/usecase/*
+  - application/command/*
+  - domain/*
+end note
+
+note bottom of BootstrapCLI #FFE4B5
+  **Composition Root**
+  ═══════════════════════════════════
+  Wires concrete implementations:
+  - bootstrap/cli (console)
+  - bootstrap/embedded (UART)
+  - bootstrap/web (DOM)
+  infrastructure/adapter/*
+end note
+
+legend right
+  **Why This Architecture?**
+  ═══════════════════════════════════════
+
+  **1. application/usecase (Business Logic)**
+  • Depends only on interfaces
+  • Platform agnostic, testable
+  • Shared by ALL bootstrap variants
+  • No infrastructure dependencies
+
+  **2. bootstrap/xxx (Composition Roots)**
+  • Creates concrete implementations
+  • Wires infrastructure to use cases
+  • One bootstrap per target platform
+  • Single place for all wiring
+
+  **3. presentation (Adapters)**
+  • CLI, Web, GUI adapters
+  • Converts external input to commands
+  • Maps results to external format
+
+  **Platform Flexibility**
+  ═══════════════════════════════════════
+  • CLI: console.Writer (fmt.Println)
+  • Embedded: uart.Writer (serial port)
+  • Web: web.Writer (DOM API)
+  • Test: mock.Writer (captured output)
+
+  **Key Insight**
+  ═══════════════════════════════════════
+  Business logic in usecase is:
+  ✅ Interface-based (mockable)
+  ✅ Shared across all platforms
+  ✅ Zero code duplication
+  ✅ Easy to test in isolation
+endlegend
+
+@enduml

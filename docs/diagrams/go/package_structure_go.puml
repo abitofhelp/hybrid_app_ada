@@ -1,0 +1,130 @@
+@startuml package_structure_go
+!theme plain
+skinparam componentStyle rectangle
+
+title Package Structure\nActual Packages in Each Layer (Go)
+
+frame "Bootstrap Layer" #FFEBCD {
+  component "bootstrap/cli" as BootstrapCLI
+  note right of BootstrapCLI
+    **Composition Root**
+    - Wires all dependencies
+    - Constructor injection
+    - Application entry point
+
+    ```go
+    writer := console.NewWriter()
+    useCase := usecase.NewGreetUseCase(writer)
+    cmd := cli.NewGreetCommand(useCase)
+    ```
+  end note
+}
+
+frame "Presentation Layer" #FFE4E1 {
+  component "presentation/adapter/cli" as PresentationGreet
+  note right of PresentationGreet
+    **Depends on:**
+    - application/command
+    - application/port/inbound
+    - **application/error** ✅
+
+    **Cannot access:**
+    ❌ domain/* packages
+
+    **Receives GreetPort interface:**
+    useCase inbound.GreetPort
+  end note
+}
+
+frame "Infrastructure Layer" #E6F3FF {
+  component "infrastructure/adapter/console" as InfraConsole
+  note right of InfraConsole
+    **Depends on:**
+    - application/port/outbound
+    - domain/error (direct) ✅
+    - application/model
+
+    **Implements WriterPort:**
+    Writer.Write(ctx, msg) Result
+  end note
+}
+
+frame "Application Layer" #E8F5E9 {
+  component "application/error" as AppError #FFFF99
+  component "application/command" as AppCommand
+  component "application/usecase" as AppUsecase
+  component "application/port/outbound" as AppPortOut
+
+  note right of AppError
+    **Re-exports domain/error**
+    For Presentation layer use
+
+    ```go
+    package error
+
+    import domerr "domain/error"
+
+    type ErrorType = domerr.ErrorType
+    type ErrorKind = domerr.ErrorKind
+    const ValidationError = domerr.ValidationError
+    ```
+  end note
+}
+
+frame "Domain Layer" #FFF9E6 {
+  component "domain/error" as DomainError
+  component "domain/valueobject" as DomainPerson
+
+  note right of DomainError
+    **Zero external deps**
+    Pure domain logic
+    Canonical error types
+    Result[T] monad
+  end note
+}
+
+' Dependencies (center-seeking - all point inbound)
+PresentationGreet -down-> AppCommand : uses DTO
+PresentationGreet -down-> AppUsecase : uses via interface
+PresentationGreet -down-> AppError : uses ✅
+
+InfraConsole -down-> AppPortOut : implements Port
+InfraConsole -down-> DomainError : uses ✅
+
+AppCommand -down-> DomainPerson : uses
+AppUsecase -down-> DomainPerson : validates
+AppPortOut -down-> DomainError : uses Result
+AppError -down-> DomainError : re-exports
+
+' Forbidden dependency (shown as violation)
+PresentationGreet .right.> DomainError #red : ❌ FORBIDDEN\nNo transitive access
+
+legend bottom
+  **Package Naming Convention**
+  ════════════════════════════════════
+  Go uses lowercase, slash-separated paths:
+  • parent/child/grandchild pattern
+  • snake_case for multi-word packages
+  • go.mod per module
+
+  **Example:**
+  • Package: domain/valueobject
+  • File: domain/valueobject/person.go
+  • Type: Person
+
+  **Dependency Rules**
+  ════════════════════════════════════
+  ✅ Presentation → application/* packages
+  ✅ Infrastructure → application/* + domain/* packages
+  ✅ Application → domain/* packages
+  ❌ Presentation → domain/* packages (forbidden!)
+
+  **Interface-Based Injection**
+  ════════════════════════════════════
+  • UseCase depends on WriterPort interface
+  • Command depends on GreetPort interface
+  • Concrete types created in bootstrap
+  • Easy mocking for tests
+endlegend
+
+@enduml
