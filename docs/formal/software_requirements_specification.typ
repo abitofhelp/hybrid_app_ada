@@ -677,22 +677,24 @@ The starter does not require direct hardware integration, but it must permit emb
 
 === Hardware Requirements
 
+// Sort rows alphabetically by the first column.
 #table(
   columns: (auto, 1fr),
   table.header([*Category*], [*Requirement*]),
   [CPU], [Any modern processor.],
-  [RAM], [64 MB minimum.],
   [Disk], [10 MB minimum.],
+  [RAM], [64 MB minimum.],
 )
 
 === Software Requirements
 
+// Sort rows alphabetically by the first column.
 #table(
   columns: (auto, 1fr),
   table.header([*Category*], [*Requirement*]),
-  [Operating System], [Linux, macOS, BSD, Windows 11.],
-  [Compiler], [GNAT FSF 13+ or GNAT Pro.],
   [Build System], [Alire 2.0+, GNU Make.],
+  [Compiler], [GNAT FSF 13+ or GNAT Pro.],
+  [Operating System], [Linux, macOS, BSD, Windows 11.],
 )
 
 == Technical Constraints
@@ -732,17 +734,18 @@ Architecture conformance shall be enforced through a combination of project/buil
 
 == Verification Methods
 
+// Sort rows alphabetically by the first column.
 #table(
   columns: (auto, 1fr),
   table.header([*Method*], [*Description*]),
-  [Code Review], [All code reviewed before merge.],
-  [Static Analysis],
-  [Zero compiler warnings and SPARK legality/proof checks where applicable.],
-
-  [Dynamic Testing], [All tests must pass.],
-  [Coverage Analysis], [Greater than 90 percent line coverage target.],
   [Architecture Validation],
   [`arch_guard.py` validates direct dependency rules during developer builds and CI/CD; project/build interface restrictions provide additional enforcement where configured.],
+
+  [Code Review], [All code reviewed before merge.],
+  [Coverage Analysis], [Greater than 90 percent line coverage target.],
+  [Dynamic Testing], [All tests must pass.],
+  [Static Analysis],
+  [Zero compiler warnings and SPARK legality/proof checks where applicable.],
 )
 
 == Traceability Matrix

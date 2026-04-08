@@ -106,39 +106,44 @@ Benefits of this style include:
 
 == Layer Architecture
 
+// Sort rows alphabetically by the first column.
 #table(
   columns: (auto, 1fr, auto),
   table.header([*Layer / Boundary*], [*Purpose*], [*Depends On*]),
+  [Application], [Use cases, commands, and port definitions.], [Domain],
   [Bootstrap],
   [Composition root that wires the application together through static dependency injection.],
   [All layers],
 
-  [Presentation],
-  [Driving adapters and user-interface entry points.],
-  [Application only],
+  [Domain],
+  [Pure business concepts, error types, and value objects.],
+  [Nothing],
 
   [Infrastructure],
   [Driven adapters implementing technical concerns and external integration.],
   [Application + Domain],
 
-  [Application], [Use cases, commands, and port definitions.], [Domain],
-  [Domain],
-  [Pure business concepts, error types, and value objects.],
-  [Nothing],
+  [Presentation],
+  [Driving adapters and user-interface entry points.],
+  [Application only],
 )
 
 Detailed architecture guidance is maintained in `docs/guides/`. Supporting UML diagrams are maintained in `docs/diagrams/`.
 
 == Layer Responsibilities
 
+// Sort rows alphabetically by the first column.
 #table(
   columns: (auto, 1fr),
   table.header([*Layer*], [*Responsibility*]),
-  [Domain],
-  [Pure business logic, value objects, error types, and result handling with zero external dependencies.],
-
   [Application],
   [Use-case orchestration, command DTOs, port definitions, and output formatting.],
+
+  [Bootstrap],
+  [Static composition root that performs generic instantiation and binds ports to adapters.],
+
+  [Domain],
+  [Pure business logic, value objects, error types, and result handling with zero external dependencies.],
 
   [Infrastructure],
   [Adapter implementations, exception-to-result conversion, and interaction with the outside world.],
@@ -146,25 +151,22 @@ Detailed architecture guidance is maintained in `docs/guides/`. Supporting UML d
   [Presentation],
   [User-interface handling, argument parsing, and error formatting through the application boundary.],
 
-  [Bootstrap],
-  [Static composition root that performs generic instantiation and binds ports to adapters.],
-
   [Version package],
   [Cross-cutting version metadata kept outside the hexagonal layers.],
 )
 
 == Dependency Rules
 
+// Sort rows alphabetically by the first column.
 #table(
   columns: (auto, 1fr),
   table.header([*Component*], [*May Depend On*]),
-  [Domain], [Nothing (zero dependencies).],
   [Application], [Domain only.],
+  [Bootstrap], [All layers; Bootstrap is the intentional composition root.],
+  [Domain], [Nothing (zero dependencies).],
   [Infrastructure], [Application and Domain.],
   [Presentation],
   [Application only; Presentation shall not depend directly on Domain.],
-
-  [Bootstrap], [All layers; Bootstrap is the intentional composition root.],
 )
 
 Architecture conformance is enforced through layered controls:
@@ -465,33 +467,34 @@ All dependency injection is static and resolved at compile time.
 
 This project uses a layered exception-boundary strategy consistent with the shared hybrid architecture family.
 
+// Sort rows alphabetically by the first column.
 #table(
   columns: (auto, auto, auto, 1fr),
   table.header(
     [*Layer*], [*Functional.Try*], [*Manual `exception`*], [*Rationale*]
   ),
-  [Presentation],
-  [Required],
+  [Application],
+  [N/A],
   [Forbidden],
-  [Boundary to user input and UI concerns.],
+  [Use-case orchestration through Result types only.],
+
+  [Bootstrap], [Optional], [Allowed], [Startup and wiring may fail fast.],
+  [Domain],
+  [N/A],
+  [Forbidden],
+  [Core logic and value semantics; runtime exceptions indicate bugs.],
 
   [Infrastructure],
   [Required],
   [Forbidden],
   [Boundary to external systems and I/O.],
 
-  [Application],
-  [N/A],
-  [Forbidden],
-  [Use-case orchestration through Result types only.],
-
-  [Domain],
-  [N/A],
-  [Forbidden],
-  [Core logic and value semantics; runtime exceptions indicate bugs.],
-
-  [Bootstrap], [Optional], [Allowed], [Startup and wiring may fail fast.],
   [Main / entry point], [Optional], [Allowed], [Top-level clean exit handling.],
+  [Presentation],
+  [Required],
+  [Forbidden],
+  [Boundary to user input and UI concerns.],
+
   [Test], [Optional], [Allowed], [Tests may validate exceptional scenarios.],
 )
 
@@ -606,14 +609,15 @@ The project is designed with future SPARK verification in mind. The architecture
 
 == Layer Assessment
 
+// Sort rows alphabetically by the first column.
 #table(
   columns: (auto, auto, 1fr),
   table.header([*Layer*], [*SPARK Readiness*], [*Notes*]),
-  [Domain], [High], [Pure functions, bounded types, no side effects.],
   [Application], [Medium], [Mostly pure orchestration and generic formals.],
+  [Bootstrap], [Medium], [Static wiring, but instantiates non-SPARK layers.],
+  [Domain], [High], [Pure functions, bounded types, no side effects.],
   [Infrastructure], [Low], [Uses Text_IO and boundary exception handling.],
   [Presentation], [Low], [Uses command-line and UI concerns.],
-  [Bootstrap], [Medium], [Static wiring, but instantiates non-SPARK layers.],
 )
 
 == SPARK-Compatible Components

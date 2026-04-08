@@ -98,12 +98,13 @@ This document covers:
 
 == Testing Levels
 
+// Sort rows alphabetically by the first column.
 #table(
   columns: (auto, auto, 1fr),
   table.header([Level], [Location], [Purpose]),
-  [Unit Tests], [`test/unit/`], [Test individual components in isolation, especially Domain and Application logic.],
-  [Integration Tests], [`test/integration/`], [Test cross-layer interactions with real adapters and wiring.],
   [End-to-End Tests], [`test/e2e/`], [Test the full application through the CLI as a black-box interface.],
+  [Integration Tests], [`test/integration/`], [Test cross-layer interactions with real adapters and wiring.],
+  [Unit Tests], [`test/unit/`], [Test individual components in isolation, especially Domain and Application logic.],
 )
 
 See CHANGELOG for current test counts per release.
@@ -294,14 +295,15 @@ When defects are fixed, add or update tests so the corrected behavior is permane
 
 == Requirements to Test Categories
 
+// Sort rows alphabetically by the first column.
 #table(
   columns: (auto, 1fr),
   table.header([Requirement Area], [Primary Test Coverage]),
-  [Domain validation and Result handling], [Unit tests],
   [Application use cases and DTO behavior], [Unit tests and integration tests],
+  [Architecture boundary enforcement], [`scripts/arch_guard.py`],
+  [Domain validation and Result handling], [Unit tests],
   [Infrastructure adapter behavior], [Integration tests],
   [Presentation / CLI behavior], [End-to-end tests],
-  [Architecture boundary enforcement], [`scripts/arch_guard.py`],
 )
 
 == Detailed Traceability
