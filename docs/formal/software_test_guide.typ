@@ -8,6 +8,12 @@
 // Modification Policy:
 //   - Edit this file for project-specific STG content.
 //   - Keep shared presentation logic in core.typ.
+// Table Ordering:
+//   Sort any table whose rows a reader might scan to locate a specific
+//   entry — definitions, acronyms, constraints, packages, interfaces,
+//   and similar reference tables.  Sort alphabetically by the first
+//   column.  Tables with an inherent sequence (requirement IDs within
+//   a section, change history, workflow steps) retain their logical order.
 // SPDX-License-Identifier: BSD-3-Clause
 // ============================================================================
 
@@ -139,13 +145,14 @@ test/
 
 == Naming Conventions
 
+// Sorted alphabetically by Element.
 #table(
   columns: (auto, auto, 1fr),
   table.header([Element], [Convention], [Example]),
-  [Test file], [`test_<layer>_<component>.adb`], [`test_application_usecase_greet.adb`],
-  [Runner], [`<category>_runner.adb`], [`integration_runner.adb`],
-  [Project file], [`<category>_tests.gpr`], [`e2e_tests.gpr`],
   [Framework file], [`test_framework.ads/adb`], [`test/common/test_framework.ads`],
+  [Project file], [`<category>_tests.gpr`], [`e2e_tests.gpr`],
+  [Runner], [`<category>_runner.adb`], [`integration_runner.adb`],
+  [Test file], [`test_<layer>_<component>.adb`], [`test_application_usecase_greet.adb`],
 )
 
 == Architectural Coverage Intent

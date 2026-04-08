@@ -7,6 +7,12 @@
 // Modification Policy:
 //   - Keep shared presentation logic in core.typ.
 //   - Keep project-specific design content here.
+// Table Ordering:
+//   Sort any table whose rows a reader might scan to locate a specific
+//   entry — definitions, acronyms, constraints, packages, interfaces,
+//   and similar reference tables.  Sort alphabetically by the first
+//   column.  Tables with an inherent sequence (requirement IDs within
+//   a section, change history, workflow steps) retain their logical order.
 // SPDX-License-Identifier: BSD-3-Clause
 // ============================================================================
 
@@ -16,7 +22,7 @@
   authors: ("Michael Gardner",),
   copyright: "© 2025 Michael Gardner, A Bit of Help, Inc.",
   license_file: "See the LICENSE file in the project root",
-  project-name: "HYBRID_APP_ADA",
+  project_name: "HYBRID_APP_ADA",
   spdx_license: "BSD-3-Clause",
   status: "Released",
   status_date: "2025-12-11",
@@ -58,7 +64,7 @@
   ),
 )
 
-#show: formal_doc.with(doc, profile)
+#show: formal_doc.with(doc, profile, change_history)
 
 = Introduction
 
@@ -234,13 +240,14 @@ src/
 
 === Domain Layer
 
+// Sorted alphabetically by Package.
 #table(
   columns: (auto, 1fr, auto),
   table.header([*Package*], [*Purpose*], [*SPARK*]),
   [`Domain`], [Layer root.], [On],
-  [`Domain.Unit`], [Unit type for void-like operations.], [On],
   [`Domain.Error`], [Error type with kind and bounded message.], [On],
   [`Domain.Error.Result`], [Generic Result[T] monad.], [On],
+  [`Domain.Unit`], [Unit type for void-like operations.], [On],
   [`Domain.Value_Object`], [Value object root.], [On],
   [`Domain.Value_Object.Option`], [Option[T] monad.], [On],
   [`Domain.Value_Object.Person`], [Person value object.], [On],
@@ -248,15 +255,16 @@ src/
 
 === Application Layer
 
+// Sorted alphabetically by Package.
 #table(
   columns: (auto, 1fr, auto),
   table.header([*Package*], [*Purpose*], [*SPARK*]),
   [`Application`], [Layer root.], [On],
+  [`Application.Command.Greet`], [Greeting command DTO.], [On],
   [`Application.Error`],
   [Re-exports Domain.Error for Presentation consumption.],
   [On],
 
-  [`Application.Command.Greet`], [Greeting command DTO.], [On],
   [`Application.Port.Outbound.Writer`],
   [Writer outbound port definition.],
   [On],
@@ -266,6 +274,7 @@ src/
 
 === Infrastructure Layer
 
+// Sorted alphabetically by Package.
 #table(
   columns: (auto, 1fr, auto),
   table.header([*Package*], [*Purpose*], [*SPARK*]),
@@ -277,19 +286,20 @@ src/
 
 === Presentation and Bootstrap
 
+// Sorted alphabetically by Package.
 #table(
   columns: (auto, 1fr, auto),
   table.header([*Package*], [*Purpose*], [*SPARK*]),
-  [`Presentation.Adapter.CLI.Command.Greet`],
-  [CLI command adapter that parses arguments and maps results to exit codes.],
-  [Off],
-
   [`Bootstrap.CLI.Run`],
   [Static composition root that wires adapters, ports, and use cases.],
   [Off],
 
   [`Hybrid_App_Ada.Version`],
   [Version information for CLI display and release metadata.],
+  [Off],
+
+  [`Presentation.Adapter.CLI.Command.Greet`],
+  [CLI command adapter that parses arguments and maps results to exit codes.],
   [Off],
 )
 
@@ -428,26 +438,27 @@ All dependency injection is static and resolved at compile time.
 
 = Design Patterns
 
+// Sorted alphabetically by Pattern.
 #table(
   columns: (auto, 1fr),
   table.header([*Pattern*], [*Use in HYBRID_APP_ADA*]),
-  [Railway-Oriented Programming],
-  [Result-monad based error handling using `Domain.Error.Result.Generic_Result`.],
+  [Application Service Re-Export],
+  [Application.Error re-exports Domain.Error to preserve boundaries.],
+
+  [DTO Boundary Isolation],
+  [Commands allow larger bounds than domain validation to support independent evolution.],
 
   [Hexagonal Architecture],
   [Ports defined in Application; adapters in Infrastructure and Presentation.],
 
+  [Railway-Oriented Programming],
+  [Result-monad based error handling using `Domain.Error.Result.Generic_Result`.],
+
   [Static Dependency Injection],
   [Ada generics wire ports to implementations in Bootstrap.],
 
-  [Application Service Re-Export],
-  [Application.Error re-exports Domain.Error to preserve boundaries.],
-
   [Value Object Pattern],
   [Immutable, validated domain primitives such as `Person`.],
-
-  [DTO Boundary Isolation],
-  [Commands allow larger bounds than domain validation to support independent evolution.],
 )
 
 == Exception Boundary Specification

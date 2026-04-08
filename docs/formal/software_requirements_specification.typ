@@ -8,6 +8,12 @@
 // Modification Policy:
 //   - Edit this file for project-specific SRS content.
 //   - Keep shared presentation logic in core.typ.
+// Table Ordering:
+//   Sort any table whose rows a reader might scan to locate a specific
+//   entry — definitions, acronyms, constraints, packages, interfaces,
+//   and similar reference tables.  Sort alphabetically by the first
+//   column.  Tables with an inherent sequence (requirement IDs within
+//   a section, change history, workflow steps) retain their logical order.
 // SPDX-License-Identifier: BSD-3-Clause
 // ============================================================================
 
@@ -17,7 +23,7 @@
   authors: ("Michael Gardner",),
   copyright: "© 2025 Michael Gardner, A Bit of Help, Inc.",
   license_file: "See the LICENSE file in the project root",
-  project-name: "HYBRID_APP_ADA",
+  project_name: "HYBRID_APP_ADA",
   spdx_license: "BSD-3-Clause",
   status: "Released", // valid: "Draft" | "Review" | "Released" | "Archived"
   status_date: "2025-12-14",
@@ -60,7 +66,7 @@
   ),
 )
 
-#show: formal_doc.with(doc, profile)
+#show: formal_doc.with(doc, profile, change_history)
 
 = Introduction
 
@@ -82,20 +88,21 @@ This Software Requirements Specification (SRS) defines the functional and non-fu
 
 == Definitions and Acronyms
 
+// Sorted alphabetically by Term.
 #table(
   columns: (auto, 1fr),
   table.header([*Term*], [*Definition*]),
+  [CLI], [Command Line Interface.],
   [DDD],
   [Domain-Driven Design — strategic and tactical patterns for complex software.],
 
+  [DI], [Dependency Injection.],
+  [DTO], [Data Transfer Object.],
   [Hexagonal Architecture],
   [Ports & Adapters pattern isolating business logic from infrastructure.],
 
   [Result Monad], [Functional pattern for error handling without exceptions.],
   [SPARK], [Ada subset for formal verification.],
-  [CLI], [Command Line Interface.],
-  [DI], [Dependency Injection.],
-  [DTO], [Data Transfer Object.],
 )
 
 == References
@@ -164,18 +171,20 @@ Supporting architecture guidance is maintained in `docs/guides/`. Supporting UML
 
 == User Classes
 
+// Sorted alphabetically by User Class.
 #table(
   columns: (auto, 1fr),
   table.header([*User Class*], [*Description*]),
+  [Ada Developers],
+  [Developers starting new applications with modern best practices.],
+
   [Application Developers],
   [Developers learning or adopting hexagonal architecture patterns in Ada.],
 
+  [Educators], [Instructors teaching clean architecture principles.],
+
   [Team Leads],
   [Developers establishing architectural standards for new projects.],
-
-  [Educators], [Instructors teaching clean architecture principles.],
-  [Ada Developers],
-  [Developers starting new applications with modern best practices.],
 )
 
 == Operating Environment
@@ -192,16 +201,18 @@ Supporting architecture guidance is maintained in `docs/guides/`. Supporting UML
 
 == Constraints
 
+// Sorted alphabetically by Constraint.
 #table(
   columns: (auto, 1fr),
   table.header([*Constraint*], [*Rationale*]),
   [Ada 2022],
   [Required for modern language features and contract-based design.],
 
-  [GNAT 13+], [Required compiler baseline.],
-  [Static DI], [Compile-time wiring and zero runtime DI overhead.],
   [Architecture Enforcement],
   [Boundary rules must remain mechanically verifiable.],
+
+  [GNAT 13+], [Required compiler baseline.],
+  [Static DI], [Compile-time wiring and zero runtime DI overhead.],
 )
 
 = Interface Requirements
