@@ -18,7 +18,8 @@ PROJECT_NAME := hybrid_app_ada
 		help prereqs rebuild refresh run stats test test-all test-coverage test-framework \
 		test-integration test-unit test-e2e test-python test-windows install-tools build-coverage-runtime \
 		submodule-init submodule-update submodule-status \
-		format format-all format-src format-tests
+		format format-all format-src format-tests \
+		docs-formal
 
 # =============================================================================
 # OS Detection
@@ -140,6 +141,9 @@ help: ## Display this help message
 	@echo "  refresh                 - Refresh Alire dependencies"
 	@echo "  install-tools           - Install development tools (GMP, gcovr, gnatformat)"
 	@echo "  build-coverage-runtime  - Build GNATcoverage runtime library"
+	@echo ""
+	@echo "$(YELLOW)Documentation Commands:$(NC)"
+	@echo "  docs-formal        - Compile Typst formal docs (SRS, SDS, STG) to PDF"
 	@echo ""
 	@echo "$(YELLOW)Workflow Shortcuts:$(NC)"
 	@echo "  all                - Build project (default)"
@@ -470,6 +474,13 @@ build-coverage-runtime: ## Force rebuild GNATcoverage runtime library
 
 .DEFAULT_GOAL := help
 
+
+## ---------------------------------------------------------------------------
+## Documentation
+## ---------------------------------------------------------------------------
+
+docs-formal: ## Compile Typst formal docs (SRS, SDS, STG) to PDF
+	@python3 scripts/python/shared/makefile/compile_formal_docs.py
 
 ## ---------------------------------------------------------------------------
 ## Submodule Management

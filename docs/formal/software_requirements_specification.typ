@@ -1,5 +1,5 @@
 // ============================================================================
-// File: srs_app.typ
+// File: software_requirements_specification.typ
 // Purpose: Software Requirements Specification for the Hybrid_App_Ada project.
 // Scope: Project-specific SRS content plus invocation of shared formal-document
 //   functionality from core.typ.
@@ -17,7 +17,7 @@
 // SPDX-License-Identifier: BSD-3-Clause
 // ============================================================================
 
-#import "core.typ": change_history_table, formal_doc
+#import "core.typ": formal_doc
 
 #let doc = (
   authors: ("Michael Gardner",),
@@ -66,7 +66,70 @@
   ),
 )
 
-#show: formal_doc.with(doc, profile, change_history)
+// Extra appendix subsections rendered before the auto-appended Change History.
+// Note: Layer Responsibilities Summary retains its architectural hierarchy
+// (Domain → Application → Infrastructure → Presentation → Bootstrap) rather
+// than being alphabetized, because the hierarchy carries meaning.
+#let extra_appendices = [
+  == Glossary
+
+  See Section 1.3, *Definitions and Acronyms*.
+
+  == Layer Responsibilities Summary
+
+  #table(
+    columns: (auto, 1fr, 1fr, auto),
+    table.header([*Layer*], [*Responsibilities*], [*Dependencies*], [*Tests*]),
+    [Domain], [Business logic and validation.], [None], [Unit],
+    [Application],
+    [Use cases, ports, and formatting.],
+    [Domain],
+    [Unit + Integration],
+
+    [Infrastructure], [Driven adapters.], [Application + Domain], [Integration],
+    [Presentation],
+    [User interface and request handling.],
+    [Application only],
+    [End-to-end],
+
+    [Bootstrap], [Dependency wiring.], [All], [End-to-end],
+  )
+
+  == Error Handling Flow
+
+  #table(
+    columns: (1fr,),
+    align: center + horizon,
+    inset: 10pt,
+    stroke: 0.8pt,
+    [Domain validation error],
+    [*↓*],
+    [Result`[Value, Error]` returned],
+    [*↓*],
+    [Application checks `Is_Error` and propagates Result],
+    [*↓*],
+    [Presentation matches `Error_Kind` via Application-owned error types],
+    [*↓*],
+    [User-friendly message displayed],
+    [*↓*],
+    [Exit code `1`],
+  )
+
+  == Version 2.0.0 Changes
+
+  *Breaking Changes:*
+
+  - Upgrade to `functional ^3.0.0` (incompatible with v1.x).
+
+  *New Requirements:*
+
+  - FR-06.8 through FR-06.13: Result combinator operations.
+  - Windows CI support in GitHub Actions.
+
+  See `CHANGELOG` for release metrics.
+]
+
+#show: formal_doc.with(doc, profile, change_history, extra_appendix_body: extra_appendices)
 
 = Introduction
 
@@ -88,7 +151,7 @@ This Software Requirements Specification (SRS) defines the functional and non-fu
 
 == Definitions and Acronyms
 
-// Sorted alphabetically by Term.
+// Sort rows alphabetically by the first column.
 #table(
   columns: (auto, 1fr),
   table.header([*Term*], [*Definition*]),
@@ -171,7 +234,7 @@ Supporting architecture guidance is maintained in `docs/guides/`. Supporting UML
 
 == User Classes
 
-// Sorted alphabetically by User Class.
+// Sort rows alphabetically by the first column.
 #table(
   columns: (auto, 1fr),
   table.header([*User Class*], [*Description*]),
@@ -201,7 +264,7 @@ Supporting architecture guidance is maintained in `docs/guides/`. Supporting UML
 
 == Constraints
 
-// Sorted alphabetically by Constraint.
+// Sort rows alphabetically by the first column.
 #table(
   columns: (auto, 1fr),
   table.header([*Constraint*], [*Rationale*]),
@@ -762,66 +825,3 @@ Architecture conformance shall be enforced through a combination of project/buil
   [FR-07], [Generic instantiation], [Compile-time],
   [FR-08], [`arch_guard.py`], [Python tests],
 )
-
-= Appendices
-
-== Glossary
-
-See Section 1.3, *Definitions and Acronyms*.
-
-== Layer Responsibilities Summary
-
-#table(
-  columns: (auto, 1fr, 1fr, auto),
-  table.header([*Layer*], [*Responsibilities*], [*Dependencies*], [*Tests*]),
-  [Domain], [Business logic and validation.], [None], [Unit],
-  [Application],
-  [Use cases, ports, and formatting.],
-  [Domain],
-  [Unit + Integration],
-
-  [Infrastructure], [Driven adapters.], [Application + Domain], [Integration],
-  [Presentation],
-  [User interface and request handling.],
-  [Application only],
-  [End-to-end],
-
-  [Bootstrap], [Dependency wiring.], [All], [End-to-end],
-)
-
-== Error Handling Flow
-
-#table(
-  columns: (1fr,),
-  align: center + horizon,
-  inset: 10pt,
-  stroke: 0.8pt,
-  [Domain validation error],
-  [*↓*],
-  [Result`[Value, Error]` returned],
-  [*↓*],
-  [Application checks `Is_Error` and propagates Result],
-  [*↓*],
-  [Presentation matches `Error_Kind` via Application-owned error types],
-  [*↓*],
-  [User-friendly message displayed],
-  [*↓*],
-  [Exit code `1`],
-)
-
-== Version 2.0.0 Changes
-
-*Breaking Changes:*
-
-- Upgrade to `functional ^3.0.0` (incompatible with v1.x).
-
-*New Requirements:*
-
-- FR-06.8 through FR-06.13: Result combinator operations.
-- Windows CI support in GitHub Actions.
-
-See `CHANGELOG` for release metrics.
-
-== Change History
-
-#change_history_table(change_history)

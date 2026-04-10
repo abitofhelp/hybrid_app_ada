@@ -1,5 +1,5 @@
 // ============================================================================
-// File: hybrid_app_ada_sds.typ
+// File: software_design_specification.typ
 // Purpose: Software Design Specification for HYBRID_APP_ADA.
 // Scope: Real project SDS content using the shared formal Typst core.
 // Usage: Compile to PDF as the distribution artifact. The .typ source is the
@@ -16,7 +16,7 @@
 // SPDX-License-Identifier: BSD-3-Clause
 // ============================================================================
 
-#import "core.typ": change_history_table, formal_doc
+#import "core.typ": formal_doc
 
 #let doc = (
   authors: ("Michael Gardner",),
@@ -242,7 +242,7 @@ src/
 
 === Domain Layer
 
-// Sorted alphabetically by Package.
+// Sort rows alphabetically by the first column.
 #table(
   columns: (auto, 1fr, auto),
   table.header([*Package*], [*Purpose*], [*SPARK*]),
@@ -257,7 +257,7 @@ src/
 
 === Application Layer
 
-// Sorted alphabetically by Package.
+// Sort rows alphabetically by the first column.
 #table(
   columns: (auto, 1fr, auto),
   table.header([*Package*], [*Purpose*], [*SPARK*]),
@@ -276,7 +276,7 @@ src/
 
 === Infrastructure Layer
 
-// Sorted alphabetically by Package.
+// Sort rows alphabetically by the first column.
 #table(
   columns: (auto, 1fr, auto),
   table.header([*Package*], [*Purpose*], [*SPARK*]),
@@ -288,7 +288,7 @@ src/
 
 === Presentation and Bootstrap
 
-// Sorted alphabetically by Package.
+// Sort rows alphabetically by the first column.
 #table(
   columns: (auto, 1fr, auto),
   table.header([*Package*], [*Purpose*], [*SPARK*]),
@@ -440,7 +440,7 @@ All dependency injection is static and resolved at compile time.
 
 = Design Patterns
 
-// Sorted alphabetically by Pattern.
+// Sort rows alphabetically by the first column.
 #table(
   columns: (auto, 1fr),
   table.header([*Pattern*], [*Use in HYBRID_APP_ADA*]),
@@ -674,9 +674,3 @@ These improve expressiveness without changing the underlying Result-oriented des
 == Windows CI Support
 
 Version 2.0.0 also formalized Windows CI/runtime support as part of the platform matrix.
-
-= Appendices
-
-== Change History
-
-#change_history_table(change_history)
