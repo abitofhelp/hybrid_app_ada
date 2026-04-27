@@ -2,12 +2,13 @@
 
 [![License](https://img.shields.io/badge/license-BSD--3--Clause-blue.svg)](LICENSE) [![Ada](https://img.shields.io/badge/Ada-2022-blue.svg)](https://ada-lang.io) [![Alire](https://img.shields.io/badge/Alire-2.0+-blue.svg)](https://alire.ada.dev)
 
-**Version:** 2.0.1  
-**Date:** December 10, 2025  
+**Doc Version:** 2.0.1<br>
+**Applies to hybrid_app_ada:** ^2.0<br>
+**Last Updated:** 2026-04-26<br>
 **SPDX-License-Identifier:** BSD-3-Clause<br>
 **License File:** See the LICENSE file in the project root<br>
-**Copyright:** © 2025 Michael Gardner, A Bit of Help, Inc.<br>  
-**Status:** Released  
+**Copyright:** © 2026 Michael Gardner, A Bit of Help, Inc.<br>
+**Status:** Released
 
 > A canonical Ada 2022 application demonstrating a **hybrid DDD/Clean/Hexagonal architecture** with functional error handling.
 
