@@ -57,8 +57,12 @@ PYTHON3 := python3
 # NOTE: --no-indirect-imports is NOT needed. Architecture is enforced via
 #       Stand-Alone Library with explicit Library_Interface in application.gpr
 #       which prevents transitive Domain access from Presentation layer.
-# Build flags (compiler options only)
-ALR_BUILD_FLAGS := -j0
+# Build flags (compiler/linker options only)
+# FIXME: -XGNATCOLL_ICONV_OPT= is needed on Linux where iconv is part of glibc
+# (no separate -liconv library). Without this, the linker fails with
+# "cannot find -liconv". On macOS/FreeBSD, the flag is harmless.
+ALR_BUILD_FLAGS   := -XGNATCOLL_ICONV_OPT= -j0
+ALR_RELEASE_FLAGS := -XGNATCOLL_ICONV_OPT= -XLIBRARY_TYPE=static -j0
 
 # Build wrapper: filters output to diagnostics only while propagating the
 # build exit code. See scripts/python/shared/makefile/alr_build.py.
@@ -112,7 +116,7 @@ help: ## Display this help message
 	@echo "  clean-clutter      - Remove temporary files and backups"
 	@echo "  clean-coverage     - Clean coverage data"
 	@echo "  clean-deep         - Deep clean (includes Alire cache)"
-	@echo "  compress           - Create compressed source archive (tgz)"
+	@echo "  compress           - Create compressed source archive (tar.gz)"
 	@echo "  rebuild            - Clean and rebuild"
 	@echo ""
 	@echo "$(YELLOW)Testing Commands:$(NC)"
@@ -175,28 +179,31 @@ build-opt: check-arch prereqs
 	@echo "$(GREEN)  Output: $(BIN_DIR)/greeter$(NC)"
 
 build-release: check-arch prereqs
-	@echo "$(GREEN)Building $(PROJECT_NAME) (release mode)...$(NC)"
-	@$(ALR_BUILD_WRAPPER) $(ALR) build --release -- $(ALR_BUILD_FLAGS)
+	@echo "$(GREEN)Building $(PROJECT_NAME) (release mode, static linking)...$(NC)"
+	@$(ALR_BUILD_WRAPPER) $(ALR) build --release -- $(ALR_RELEASE_FLAGS)
 	@echo "$(GREEN)✓ Release build complete$(NC)"
 	@echo "$(GREEN)  Output: $(BIN_DIR)/greeter$(NC)"
 
 build-tests: check-arch prereqs
 	@echo "$(GREEN)Building test suites...$(NC)"
 	@if [ -f "$(TEST_DIR)/unit/unit_tests.gpr" ]; then \
-		$(ALR_BUILD_WRAPPER) $(ALR) exec -- $(GPRBUILD) -P $(TEST_DIR)/unit/unit_tests.gpr -p $(ALR_BUILD_FLAGS); \
-		echo "$(GREEN)✓ Unit tests built$(NC)"; \
+		$(ALR_BUILD_WRAPPER) $(ALR) exec -- $(GPRBUILD) -P $(TEST_DIR)/unit/unit_tests.gpr -p $(ALR_BUILD_FLAGS) \
+			&& echo "$(GREEN)✓ Unit tests built$(NC)" \
+			|| { echo "$(RED)✗ Unit test build failed$(NC)"; exit 1; }; \
 	else \
 		echo "$(YELLOW)Unit test project not found$(NC)"; \
 	fi
 	@if [ -f "$(TEST_DIR)/integration/integration_tests.gpr" ]; then \
-		$(ALR_BUILD_WRAPPER) $(ALR) exec -- $(GPRBUILD) -P $(TEST_DIR)/integration/integration_tests.gpr -p $(ALR_BUILD_FLAGS); \
-		echo "$(GREEN)✓ Integration tests built$(NC)"; \
+		$(ALR_BUILD_WRAPPER) $(ALR) exec -- $(GPRBUILD) -P $(TEST_DIR)/integration/integration_tests.gpr -p $(ALR_BUILD_FLAGS) \
+			&& echo "$(GREEN)✓ Integration tests built$(NC)" \
+			|| { echo "$(RED)✗ Integration test build failed$(NC)"; exit 1; }; \
 	else \
 		echo "$(YELLOW)Integration test project not found$(NC)"; \
 	fi
 	@if [ -f "$(TEST_DIR)/e2e/e2e_tests.gpr" ]; then \
-		$(ALR_BUILD_WRAPPER) $(ALR) exec -- $(GPRBUILD) -P $(TEST_DIR)/e2e/e2e_tests.gpr -p $(ALR_BUILD_FLAGS); \
-		echo "$(GREEN)✓ E2E tests built$(NC)"; \
+		$(ALR_BUILD_WRAPPER) $(ALR) exec -- $(GPRBUILD) -P $(TEST_DIR)/e2e/e2e_tests.gpr -p $(ALR_BUILD_FLAGS) \
+			&& echo "$(GREEN)✓ E2E tests built$(NC)" \
+			|| { echo "$(RED)✗ E2E test build failed$(NC)"; exit 1; }; \
 	else \
 		echo "$(YELLOW)E2E test project not found$(NC)"; \
 	fi
